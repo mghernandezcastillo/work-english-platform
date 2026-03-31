@@ -12,5 +12,9 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
+    // Use a stable storage key so it doesn't change across deploys
+    storageKey: 'efw-auth-session',
+    // Use localStorage (survives page reloads, SW updates, and deploys)
+    storage: window.localStorage,
   },
 })

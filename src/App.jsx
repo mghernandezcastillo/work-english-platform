@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { AppSettingsProvider } from './context/AppSettingsContext'
 import { LoadingSpinner } from './components/common/LoadingSpinner'
+import PWAUpdatePrompt from './components/common/PWAUpdatePrompt'
 
 // Layouts
 import AppLayout from './app/layout/AppLayout'
@@ -146,6 +147,7 @@ export default function App() {
       <AuthProvider>
         <AppSettingsProvider>
           <AppRoutes />
+          <PWAUpdatePrompt />
         </AppSettingsProvider>
       </AuthProvider>
     </BrowserRouter>
