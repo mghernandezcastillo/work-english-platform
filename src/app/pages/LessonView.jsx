@@ -112,7 +112,38 @@ export default function LessonView() {
     }
   }
 
-  if (loading) return <LoadingSpinner fullPage />
+  const MOTIVATIONAL = [
+    '🚀 Preparando tu lección...',
+    '💡 Cargando nuevo vocabulario...',
+    '🎯 Listo para aprender...',
+    '🗣️ Preparando ejercicios de práctica...',
+    '📖 Cargando contenido profesional...',
+  ]
+
+  if (loading) return (
+    <div className="lesson-skeleton animate-pulse" role="status" aria-label="Cargando lección">
+      {/* Motivational message */}
+      <p className="lesson-skeleton-msg">
+        {MOTIVATIONAL[Math.floor(Date.now() / 1000) % MOTIVATIONAL.length]}
+      </p>
+      {/* Step tabs skeleton */}
+      <div className="lesson-skeleton-tabs">
+        {[1,2,3,4,5,6,7].map(i => (
+          <div key={i} className="skeleton-block" style={{ width: 52, height: 36, borderRadius: 8 }} />
+        ))}
+      </div>
+      {/* Content skeleton */}
+      <div className="lesson-skeleton-content">
+        <div className="skeleton-block" style={{ width: '40%', height: 20, marginBottom: 20 }} />
+        <div className="skeleton-block" style={{ width: '100%', height: 28, marginBottom: 12 }} />
+        <div className="skeleton-block" style={{ width: '85%', height: 20, marginBottom: 8 }} />
+        <div className="skeleton-block" style={{ width: '92%', height: 20, marginBottom: 24 }} />
+        <div className="skeleton-block" style={{ width: '100%', height: 80, borderRadius: 12, marginBottom: 12 }} />
+        <div className="skeleton-block" style={{ width: '100%', height: 80, borderRadius: 12, marginBottom: 12 }} />
+        <div className="skeleton-block" style={{ width: '100%', height: 80, borderRadius: 12 }} />
+      </div>
+    </div>
+  )
   if (!lesson) return <div className="text-center" style={{ padding: 40 }}><h3>Lección no encontrada</h3></div>
 
   const content = lesson.content || {}

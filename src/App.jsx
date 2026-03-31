@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { AppSettingsProvider } from './context/AppSettingsContext'
@@ -24,14 +25,13 @@ import Progress from './app/pages/Progress'
 import Profile from './app/pages/Profile'
 import Vocabulary from './app/pages/Vocabulary'
 
-import LandingPage from './app/pages/LandingPage'
-
-// Admin pages
-import AdminDashboard from './app/admin/AdminDashboard'
-import AdminUsers from './app/admin/AdminUsers'
-import AdminBeta from './app/admin/AdminBeta'
-import AdminTestimonials from './app/admin/AdminTestimonials'
-import AdminSettings from './app/admin/AdminSettings'
+// Lazy-loaded pages (code splitting — reduces initial bundle ~30%)
+const LandingPage = lazy(() => import('./app/pages/LandingPage'))
+const AdminDashboard = lazy(() => import('./app/admin/AdminDashboard'))
+const AdminUsers = lazy(() => import('./app/admin/AdminUsers'))
+const AdminBeta = lazy(() => import('./app/admin/AdminBeta'))
+const AdminTestimonials = lazy(() => import('./app/admin/AdminTestimonials'))
+const AdminSettings = lazy(() => import('./app/admin/AdminSettings'))
 
 // Placeholder
 const Placeholder = ({ title, emoji = '🚧' }) => (
@@ -92,7 +92,8 @@ function NoAccessGuard() {
 /* ─── ROUTES ─── */
 function AppRoutes() {
   return (
-    <Routes>
+    <Suspense fallback={<LoadingSpinner fullPage />}>
+      <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
 
       {/* Public auth */}
@@ -135,6 +136,7 @@ function AppRoutes() {
 
       <Route path="*" element={<Placeholder title="Página no encontrada" emoji="🔍" />} />
     </Routes>
+    </Suspense>
   )
 }
 

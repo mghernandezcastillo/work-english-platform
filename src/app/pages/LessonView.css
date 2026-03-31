@@ -98,3 +98,53 @@
   gap: var(--space-3);
   padding-top: var(--space-3);
 }
+
+/* ── Skeleton loader ── */
+.lesson-skeleton {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+.lesson-skeleton-msg {
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-6);
+  font-weight: var(--font-medium);
+}
+.lesson-skeleton-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: var(--space-6);
+}
+.lesson-skeleton-content {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  padding: var(--space-6);
+}
+
+/* Generic skeleton block — shimmer animation */
+.skeleton-block {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-alt) 25%,
+    var(--color-border) 50%,
+    var(--color-surface-alt) 75%
+  );
+  background-size: 200% 100%;
+  border-radius: 6px;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+.animate-pulse { animation: pulse 2s ease-in-out infinite; }

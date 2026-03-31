@@ -117,3 +117,65 @@
   border-radius: var(--radius-lg);
   margin-top: var(--space-4);
 }
+
+/* Export button */
+.vocab-export-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Stats bar */
+.vocab-stats {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-4);
+}
+.vocab-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.vocab-stat-num {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--color-primary);
+  line-height: 1;
+}
+.vocab-stat-label {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* Card actions area */
+.vocab-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* Google Translate button */
+.vocab-translate-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  opacity: 0.5;
+}
+.vocab-translate-btn:hover {
+  background: #EFF6FF;
+  opacity: 1;
+}

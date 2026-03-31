@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import './Vocabulary.css'
@@ -9,6 +9,7 @@ export default function Vocabulary() {
   const [loading, setLoading] = useState(true)
   const [deletingId, setDeletingId] = useState(null)
   const [search, setSearch] = useState('')
+  const [exportSuccess, setExportSuccess] = useState(false)
 
   useEffect(() => {
     if (user) fetchWords()
@@ -30,6 +31,30 @@ export default function Vocabulary() {
     await supabase.from('saved_words').delete().eq('id', id)
     setWords(prev => prev.filter(w => w.id !== id))
     setDeletingId(null)
+  }
+
+  function openInTranslate(word) {
+    const url = `https://translate.google.com/?sl=en&tl=es&text=${encodeURIComponent(word)}&op=translate`
+    window.open(url, '_blank', 'noopener,noreferrer')
+  }
+
+  function exportVocabulary() {
+    if (words.length === 0) return
+    const lines = ['📖 Mi Vocabulario — English for Work', `Total: ${words.length} palabras`, '', '---', '']
+    words.forEach(w => {
+      lines.push(`${w.word.toUpperCase()}`)
+      lines.push(`  → ${w.translation}`)
+      lines.push('')
+    })
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'mi-vocabulario.txt'
+    a.click()
+    URL.revokeObjectURL(url)
+    setExportSuccess(true)
+    setTimeout(() => setExportSuccess(false), 2500)
   }
 
   const filtered = words.filter(w =>
@@ -59,7 +84,40 @@ export default function Vocabulary() {
               : `${words.length} palabra${words.length !== 1 ? 's' : ''} guardada${words.length !== 1 ? 's' : ''}`}
           </p>
         </div>
+
+        {/* Export button */}
+        {words.length > 0 && (
+          <button
+            className={`btn ${exportSuccess ? 'btn-primary' : 'btn-outline'} btn-sm vocab-export-btn`}
+            onClick={exportVocabulary}
+            title="Exportar vocabulario como archivo de texto"
+          >
+            {exportSuccess ? '✅ Exportado' : '⬇️ Exportar'}
+          </button>
+        )}
       </div>
+
+      {/* Stats bar */}
+      {words.length > 0 && (
+        <div className="vocab-stats">
+          <div className="vocab-stat">
+            <span className="vocab-stat-num">{words.length}</span>
+            <span className="vocab-stat-label">Total guardadas</span>
+          </div>
+          <div className="vocab-stat">
+            <span className="vocab-stat-num">
+              {new Set(words.map(w => new Date(w.created_at).toDateString())).size}
+            </span>
+            <span className="vocab-stat-label">Días de práctica</span>
+          </div>
+          {search && (
+            <div className="vocab-stat">
+              <span className="vocab-stat-num">{filtered.length}</span>
+              <span className="vocab-stat-label">Resultados</span>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Search */}
       {words.length > 0 && (
@@ -87,7 +145,7 @@ export default function Vocabulary() {
           <div className="vocab-empty-icon">📚</div>
           <h3>Aún no hay palabras guardadas</h3>
           <p className="text-muted text-sm">
-            Cuando estés en una lección, toca cualquier palabra subrayada y presiona
+            Cuando estés en una lección, toca cualquier palabra y presiona
             <strong> 📌 Guardar</strong> para agregarla aquí.
           </p>
         </div>
@@ -112,14 +170,25 @@ export default function Vocabulary() {
                   <span className="vocab-word">{word.word}</span>
                   <span className="vocab-translation">{word.translation}</span>
                 </div>
-                <button
-                  className="vocab-delete"
-                  onClick={() => deleteWord(word.id)}
-                  disabled={deletingId === word.id}
-                  title="Eliminar palabra"
-                >
-                  {deletingId === word.id ? '...' : '×'}
-                </button>
+                <div className="vocab-card-actions">
+                  <button
+                    className="vocab-translate-btn"
+                    onClick={() => openInTranslate(word.word)}
+                    title="Buscar en Google Translate"
+                    aria-label={`Buscar significado de ${word.word}`}
+                  >
+                    🔎
+                  </button>
+                  <button
+                    className="vocab-delete"
+                    onClick={() => deleteWord(word.id)}
+                    disabled={deletingId === word.id}
+                    title="Eliminar palabra"
+                    aria-label={`Eliminar ${word.word}`}
+                  >
+                    {deletingId === word.id ? '...' : '×'}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -131,8 +200,8 @@ export default function Vocabulary() {
         <div className="vocab-tip">
           <span>💡</span>
           <p className="text-xs text-muted">
-            Repasa estas palabras con regularidad para memorarlas mejor.
-            Puedes encontrar cada una en las lecciones donde la guardaste.
+            Repasa estas palabras con regularidad para memorizarlas mejor.
+            Usa 🔎 para ver el significado completo en Google Translate.
           </p>
         </div>
       )}
