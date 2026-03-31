@@ -1,0 +1,16 @@
+# Variables de entorno — NUNCA subir a GitHub
+.env
+.env.local
+.env.production
+
+# Dependencias
+node_modules/
+dist/
+build/
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
+
+.vercel

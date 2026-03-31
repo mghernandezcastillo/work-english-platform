@@ -1,0 +1,14 @@
+.profile-page { padding-bottom: var(--space-4); }
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.profile-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.profile-info-row:last-child { border-bottom: none; }

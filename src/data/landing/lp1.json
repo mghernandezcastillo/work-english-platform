@@ -1,0 +1,76 @@
+{
+  "lp1": {
+    "slug": "ingles-para-trabajo",
+    "title": "Inglés para Trabajo",
+    "hero": {
+      "tag": "🇺🇸 Inglés Profesional",
+      "headline": "El inglés que sí te sirve para trabajar",
+      "subheadline": "Aprende las frases exactas que necesitas en una entrevista, con tu jefe, con clientes — sin años de clases, sin gramática aburrida.",
+      "cta": "Quiero aprender ahora →",
+      "subtext": "Pago único · Acceso de por vida · Garantía 7 días"
+    },
+    "pain": {
+      "title": "¿Te identificas con alguna de estas situaciones?",
+      "items": [
+        { "icon": "😰", "text": "Sabes inglés básico pero te bloqueas cuando tienes que hablar en el trabajo" },
+        { "icon": "😤", "text": "Perdiste una oportunidad de empleo porque no podías comunicarte en inglés" },
+        { "icon": "😩", "text": "Llevas años estudiando inglés y sigues sin poder usar lo que 'sabes'" },
+        { "icon": "😟", "text": "Te da vergüenza hablar con clientes o compañeros que hablan inglés" },
+        { "icon": "💸", "text": "Ves cómo gente menos preparada que tú gana más porque habla inglés" },
+        { "icon": "📚", "text": "Has tomado cursos pero enseñan gramática, no cómo usarlo en situaciones reales" }
+      ]
+    },
+    "solution": {
+      "title": "English for Work es diferente",
+      "paragraphs": [
+        "No te enseñamos todos los 'tiempos verbales'. Te enseñamos exactamente qué decir cuando tu jefe te pregunta algo, cuando un cliente llama molesto, o cuando estás en tu primera entrevista en inglés.",
+        "Cada lección está diseñada para una situación real del trabajo. Ves la frase, escuchas el audio, la practicas, y la usas en una simulación. En 15 minutos diarios empiezas a notar la diferencia.",
+        "Esto fue construido para personas como tú: trabajadoras, con poco tiempo, que ya intentaron aprender inglés antes y saben lo que NOT funciona."
+      ]
+    },
+    "whatYouGet": {
+      "title": "¿Qué incluye?",
+      "items": [
+        { "icon": "💼", "title": "Ruta 1: Inglés para Conseguir Trabajo", "description": "12 lecciones sobre cómo describir tu experiencia, hacer una entrevista, y comunicarte en tu primer trabajo." },
+        { "icon": "🎯", "title": "Ruta 2: Inglés para Entrevistas", "description": "12 lecciones con las preguntas más comunes en entrevistas y cómo responderlas con confianza." },
+        { "icon": "🎧", "title": "Ruta 3: Inglés para Call Center", "description": "12 lecciones con frases de apertura, manejo de quejas, cierres naturales, y clientes difíciles." },
+        { "icon": "🔊", "title": "Audio profesional nativo", "description": "Cada frase tiene audio grabado por hablante nativo. Escucha, repite, imita el tono." },
+        { "icon": "✏️", "title": "Ejercicios interactivos", "description": "Ejercicios de opción múltiple y completar oraciones para reforzar lo aprendido." },
+        { "icon": "🎯", "title": "12 simulaciones reales", "description": "Pon en práctica lo aprendido en conversaciones simuladas de situaciones laborales reales." }
+      ]
+    },
+    "howItWorks": {
+      "title": "¿Cómo funciona?",
+      "steps": [
+        { "number": "1", "title": "Elige tu ruta", "description": "Selecciona según tu objetivo: conseguir trabajo, entrevistas, o call center." },
+        { "number": "2", "title": "Practica 15 min/día", "description": "Cada lección toma 10-15 minutos. Frases, audio, ejercicios, simulación." },
+        { "number": "3", "title": "Úsalo en tu trabajo", "description": "En semanas empiezas a usar estas frases con confianza en situaciones reales." }
+      ]
+    },
+    "guarantee": {
+      "days": 7,
+      "title": "Garantía de 7 días",
+      "text": "Si en 7 días no estás satisfecho con el curso, te devolvemos tu dinero completo. Sin preguntas, sin burocracia."
+    },
+    "faq": [
+      { "q": "¿Necesito tener conocimiento previo de inglés?", "a": "No. Las lecciones asumen un nivel básico (como el que la mayoría aprendió en el colegio). Empezamos desde cero en cada tema laboral." },
+      { "q": "¿Cuánto tiempo toma completar el curso?", "a": "Practicando 15 minutos al día, puedes completar las 3 rutas en 6-8 semanas. Pero el acceso es de por vida, así que puedes ir a tu ritmo." },
+      { "q": "¿El curso está en audio o video?", "a": "El curso usa texto + audio profesional. Sin videos lentos ni descarga de apps. Funciona directo en tu navegador, en cualquier celular." },
+      { "q": "¿Puedo acceder desde el celular?", "a": "Sí. La plataforma está optimizada para móvil. Puedes practicar en el bus, en el descanso del trabajo, donde quieras." },
+      { "q": "¿El pago es único o hay mensualidad?", "a": "Pago único. Paga una sola vez y tienes acceso de por vida a todo el contenido, incluyendo futuras actualizaciones." },
+      { "q": "¿Qué pasa si no me gusta?", "a": "Tienes 7 días de garantía total. Si no te sirve, escríbenos y te devolvemos el dinero sin preguntas." }
+    ],
+    "price": {
+      "original": "$97 USD",
+      "current": "$27 USD",
+      "currency": "USD",
+      "note": "Precio de lanzamiento — puede subir en cualquier momento"
+    },
+    "finalCta": {
+      "headline": "¿Listo para el inglés que cambia tu carrera?",
+      "subtext": "Únete a los estudiantes que ya están practicando",
+      "cta": "Obtener acceso ahora →",
+      "trust": ["✓ Pago único", "✓ Acceso inmediato", "✓ Garantía 7 días", "✓ Sin apps que descargar"]
+    }
+  }
+}

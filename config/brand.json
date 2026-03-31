@@ -1,0 +1,53 @@
+{
+  "name": "English for Work",
+  "tagline": "Aprende el inglés que sí te sirve para trabajar",
+  "shortDescription": "Inglés práctico para conseguir trabajo, entrevistas y call center.",
+  "logo": "/images/logo.svg",
+  "logoAlt": "/images/logo-alt.svg",
+  "favicon": "/favicon.ico",
+  "colors": {
+    "primary": "#10B981",
+    "primaryHover": "#059669",
+    "primaryLight": "#D1FAE5",
+    "secondary": "#2563EB",
+    "secondaryHover": "#1D4ED8",
+    "accent": "#F59E0B",
+    "accentHover": "#D97706",
+    "success": "#10B981",
+    "error": "#EF4444",
+    "warning": "#F59E0B",
+    "background": "#FFFFFF",
+    "surface": "#F8FAFC",
+    "surfaceAlt": "#F1F5F9",
+    "text": "#1E293B",
+    "textMuted": "#64748B",
+    "textInverse": "#FFFFFF",
+    "border": "#E2E8F0"
+  },
+  "fonts": {
+    "primary": "Inter",
+    "heading": "Inter",
+    "googleFontsUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+  },
+  "social": {
+    "ogImage": "/images/og.jpg",
+    "ogTitle": "English for Work — Aprende el inglés que sí te sirve para trabajar",
+    "ogDescription": "Frases reales, simulaciones prácticas, y la confianza que necesitas para trabajar en inglés. Pago único, acceso de por vida."
+  },
+  "contact": {
+    "whatsapp": "+57XXXXXXXXXX",
+    "email": "soporte@englishforwork.com",
+    "supportMessage": "¿Tienes preguntas? Escríbenos por WhatsApp"
+  },
+  "legal": {
+    "companyName": "English for Work",
+    "country": "Colombia",
+    "currency": "COP",
+    "privacyPolicyUrl": "/politica-privacidad",
+    "termsUrl": "/terminos"
+  },
+  "hotmart": {
+    "checkoutUrl": "https://pay.hotmart.com/V105122662R",
+    "guaranteeDays": 7
+  }
+}

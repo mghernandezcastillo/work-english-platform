@@ -1,0 +1,21 @@
+{
+  "name": "English for Work",
+  "short_name": "Eng4Work",
+  "description": "Aprende el inglés profesional que necesitas para tu trabajo",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#2563EB",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["education", "productivity"]
+}

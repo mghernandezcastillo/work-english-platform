@@ -1,0 +1,58 @@
+{
+  "landingPages": {
+    "active": ["ingles-para-trabajo", "ingles-call-center"],
+    "planned": ["entrevistas-en-ingles", "habla-con-clientes", "deja-de-estudiar-al-azar", "ingles-que-usan-en-trabajos"]
+  },
+  "pricing": {
+    "primary": {
+      "amount": 47000,
+      "currency": "COP",
+      "display": "$47,000 COP",
+      "hotmartCheckoutUrl": "https://pay.hotmart.com/PRODUCT_ID?checkoutMode=10"
+    },
+    "testVariants": [
+      { "amount": 37000, "display": "$37,000 COP", "hotmartCheckoutUrl": "" },
+      { "amount": 57000, "display": "$57,000 COP", "hotmartCheckoutUrl": "" },
+      { "amount": 67000, "display": "$67,000 COP", "hotmartCheckoutUrl": "" }
+    ]
+  },
+  "adSets": [
+    {
+      "id": "as-1",
+      "name": "English Learners — Colombia",
+      "targeting": "Interest: English language, Learn English, British Council",
+      "demographics": "22-38, All genders, Colombia",
+      "landingPage": "ingles-para-trabajo",
+      "dailyBudget": "$5 USD"
+    },
+    {
+      "id": "as-2",
+      "name": "Job Seekers — Colombia",
+      "targeting": "Interest: Job search, LinkedIn, Career development",
+      "demographics": "22-38, All genders, Colombia",
+      "landingPage": "ingles-para-trabajo",
+      "dailyBudget": "$5 USD"
+    },
+    {
+      "id": "as-3",
+      "name": "Call Center Workers — Colombia",
+      "targeting": "Interest: Call center, Customer service, BPO, Teleperformance",
+      "demographics": "20-35, All genders, Colombia",
+      "landingPage": "ingles-call-center",
+      "dailyBudget": "$5 USD"
+    }
+  ],
+  "geo": {
+    "primary": { "country": "Colombia", "code": "CO", "currency": "COP" },
+    "future": [
+      { "country": "México", "code": "MX", "currency": "MXN" },
+      { "country": "Peru", "code": "PE", "currency": "PEN" }
+    ]
+  },
+  "pixelId": "",
+  "budgetPhases": {
+    "testing": { "dailyUSD": 10, "durationDays": 14 },
+    "scaling": { "dailyUSD": 30, "durationDays": 14 },
+    "optimization": { "dailyUSD": 50, "durationDays": -1 }
+  }
+}
