@@ -27,12 +27,29 @@
       'https://connect.facebook.net/en_US/fbevents.js');
       fbq('init', '1789279795363607');
       fbq('track', 'PageView');
+
+      // Fire route-specific events inline (bypasses React bundle / SW cache)
+      (function() {
+        var path = window.location.pathname;
+        var landingRoutes = ['/ingles-para-trabajo', '/ingles-call-center'];
+        if (landingRoutes.indexOf(path) !== -1) {
+          // Use setTimeout to ensure fbq script has loaded
+          setTimeout(function() {
+            fbq('track', 'ViewContent', {
+              content_name: 'English for Work',
+              content_type: 'product',
+              currency: 'USD'
+            });
+          }, 500);
+        }
+      })();
     </script>
     <noscript>
       <img height="1" width="1" style="display:none"
         src="https://www.facebook.com/tr?id=1789279795363607&ev=PageView&noscript=1"/>
     </noscript>
     <!-- End Meta Pixel Code -->
+
   </head>
   <body>
     <div id="root"></div>
