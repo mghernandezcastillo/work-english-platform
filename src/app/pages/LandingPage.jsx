@@ -182,20 +182,23 @@ export default function LandingPage() {
           <div className="price-card">
             <div className="price-badge">🔥 Precio de lanzamiento</div>
             <div className="price-original">{copy.price.original}</div>
-            <div className="price-current">{copy.price.current} <span className="price-currency">USD</span></div>
+            <div className="price-current">{copy.price.current}</div>
             <p className="text-sm text-muted">{copy.price.note}</p>
             <a
               href={ctaUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-cta btn-cta-hero"
-              onClick={() => pixel.initiateCheckout(copy.price.current, 'USD')}
+              onClick={() => pixel.initiateCheckout(47000, 'COP')}
             >
               {copy.hero.cta}
             </a>
             <div className="trust-list">
               {copy.finalCta.trust.map((t, i) => <span key={i}>{t}</span>)}
             </div>
+            {copy.price.terms && (
+              <p className="price-terms">{copy.price.terms}</p>
+            )}
           </div>
         </div>
       </section>

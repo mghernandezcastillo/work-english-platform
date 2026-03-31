@@ -61,10 +61,11 @@
       { "q": "¿Qué pasa si no me gusta?", "a": "Tienes 7 días de garantía total. Si no te sirve, escríbenos y te devolvemos el dinero sin preguntas." }
     ],
     "price": {
-      "original": "$97 USD",
-      "current": "$27 USD",
-      "currency": "USD",
-      "note": "Precio de lanzamiento — puede subir en cualquier momento"
+      "original": "$150.000 COP",
+      "current": "$47.000 COP",
+      "currency": "COP",
+      "note": "Precio de lanzamiento — puede subir en cualquier momento",
+      "terms": "Precio en pesos colombianos. Pago único procesado por Hotmart. Garantía de 7 días aplica si se ha consumido menos del 30% del contenido."
     },
     "finalCta": {
       "headline": "¿Listo para el inglés que cambia tu carrera?",
