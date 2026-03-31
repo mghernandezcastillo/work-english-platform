@@ -1,9 +1,12 @@
-import { useNavigate, Link } from 'react-router-dom'
-import { brand, checkoutUrl } from '../../lib/brand'
+import { useNavigate } from 'react-router-dom'
+import { useAppSettings } from '../../context/AppSettingsContext'
 import './NoAccess.css'
 
 export default function NoAccess() {
   const navigate = useNavigate()
+  const { settings } = useAppSettings()
+  const ctaUrl = settings.hotmart_checkout_url || '#'
+  const guaranteeDays = settings.guarantee_days || 7
 
   return (
     <div className="no-access-page animate-fadeIn">
@@ -22,7 +25,7 @@ export default function NoAccess() {
             <h3>Acceso Completo</h3>
             <p className="text-sm text-muted">36 lecciones · 3 rutas · 12 simulaciones · Audio profesional</p>
             <a
-              href={checkoutUrl}
+              href={ctaUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-primary btn-full btn-lg"
@@ -31,7 +34,7 @@ export default function NoAccess() {
               Obtener acceso →
             </a>
             <p className="text-xs text-muted" style={{ marginTop: 'var(--space-2)' }}>
-              ✓ Pago único · ✓ Garantía 7 días · ✓ Acceso de por vida
+              ✓ Pago único · ✓ Garantía {guaranteeDays} días · ✓ Acceso de por vida
             </p>
           </div>
 

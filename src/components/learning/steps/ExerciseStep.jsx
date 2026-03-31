@@ -143,8 +143,22 @@ export default function ExerciseStep({ data, onComplete }) {
   }
 
   // --- Exercise in progress ---
+  const progressPct = Math.round((currentIndex / exercises.length) * 100)
+
   return (
     <div className="step-container animate-fadeIn">
+
+      {/* Progress bar */}
+      <div className="exercise-progress-bar-wrap">
+        <div className="exercise-progress-bar-track">
+          <div
+            className="exercise-progress-bar-fill"
+            style={{ width: `${progressPct}%` }}
+          />
+        </div>
+        <span className="exercise-progress-label">{currentIndex + 1} / {exercises.length}</span>
+      </div>
+
       <div className="step-badge">✏️ Ejercicio {currentIndex + 1}/{exercises.length}</div>
 
       {/* Question */}
