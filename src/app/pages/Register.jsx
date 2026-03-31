@@ -5,6 +5,7 @@ import { brand } from '../../lib/brand'
 import { Button } from '../../components/common/Button'
 import { Input } from '../../components/common/Input'
 import { useToast } from '../../components/common/Toast'
+import { pixel } from '../../lib/pixel'
 
 export default function Register() {
   const navigate = useNavigate()
@@ -58,6 +59,9 @@ export default function Register() {
       if (betaInvite && user) {
         await consumeBetaToken(form.betaToken, user.id)
       }
+
+      // Fire Lead event on successful registration
+      pixel.lead()
 
       navigate('/dashboard')
     } catch (err) {

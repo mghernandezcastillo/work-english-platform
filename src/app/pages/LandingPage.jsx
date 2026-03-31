@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { brand } from '../../lib/brand'
 import { useAppSettings } from '../../context/AppSettingsContext'
+import { pixel } from '../../lib/pixel'
 import lp1 from '../../data/landing/lp1.json'
 import './LandingPage.css'
 
@@ -23,7 +24,13 @@ function StickyCtaBar() {
         <span className="font-semibold">English for Work</span>
         <span className="sticky-price">{copy.price.current} USD</span>
       </div>
-      <a href={ctaUrl} target="_blank" rel="noopener noreferrer" className="btn-cta">
+      <a
+        href={ctaUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn-cta"
+        onClick={() => pixel.initiateCheckout(copy.price.current, 'USD')}
+      >
         Obtener acceso →
       </a>
     </div>
@@ -49,6 +56,9 @@ export default function LandingPage() {
   const ctaUrl = settings.hotmart_checkout_url || '#'
 
   useEffect(() => {
+    // Fire ViewContent when landing page loads
+    pixel.viewContent('English for Work Landing')
+
     supabase
       .from('testimonials')
       .select('display_name, city, rating, text')
@@ -71,7 +81,13 @@ export default function LandingPage() {
           <span className="landing-tag">{copy.hero.tag}</span>
           <h1 className="landing-h1">{copy.hero.headline}</h1>
           <p className="landing-subheadline">{copy.hero.subheadline}</p>
-          <a href={ctaUrl} target="_blank" rel="noopener noreferrer" className="btn-cta btn-cta-hero">
+          <a
+            href={ctaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-cta btn-cta-hero"
+            onClick={() => pixel.initiateCheckout(copy.price.current, 'USD')}
+          >
             {copy.hero.cta}
           </a>
           <p className="landing-subtext">{copy.hero.subtext}</p>
@@ -168,7 +184,13 @@ export default function LandingPage() {
             <div className="price-original">{copy.price.original}</div>
             <div className="price-current">{copy.price.current} <span className="price-currency">USD</span></div>
             <p className="text-sm text-muted">{copy.price.note}</p>
-            <a href={ctaUrl} target="_blank" rel="noopener noreferrer" className="btn-cta btn-cta-hero">
+            <a
+              href={ctaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-cta btn-cta-hero"
+              onClick={() => pixel.initiateCheckout(copy.price.current, 'USD')}
+            >
               {copy.hero.cta}
             </a>
             <div className="trust-list">
@@ -229,7 +251,13 @@ export default function LandingPage() {
         <div className="landing-container text-center">
           <h2 className="landing-h2">{copy.finalCta.headline}</h2>
           <p className="text-muted" style={{ marginBottom: 24 }}>{copy.finalCta.subtext}</p>
-          <a href={ctaUrl} target="_blank" rel="noopener noreferrer" className="btn-cta btn-cta-hero">
+          <a
+            href={ctaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-cta btn-cta-hero"
+            onClick={() => pixel.initiateCheckout(copy.price.current, 'USD')}
+          >
             {copy.finalCta.cta}
           </a>
           <div className="trust-list" style={{ marginTop: 16 }}>
