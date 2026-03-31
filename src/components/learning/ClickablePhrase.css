@@ -1,19 +1,21 @@
 .clickable-phrase {
   position: relative;
   display: inline;
-  line-height: 1.7;
+  line-height: 1.8;
 }
 
-/* Words with a definition get subtle underline */
+/* All word tokens are clickable */
 .word-token {
   display: inline;
-}
-.word-has-def {
   cursor: pointer;
-  border-bottom: 1.5px dotted var(--color-primary);
+  border-radius: 3px;
+  padding: 1px 2px;
   transition: background var(--transition-fast), color var(--transition-fast);
-  border-radius: 2px;
-  padding: 0 1px;
+}
+
+/* Words WITH definition — green dotted underline */
+.word-has-def {
+  border-bottom: 1.5px dotted var(--color-primary);
 }
 .word-has-def:hover {
   background: var(--color-primary-light);
@@ -22,6 +24,38 @@
 .word-has-def:active {
   background: var(--color-primary);
   color: white;
+}
+
+/* Words WITHOUT definition — subtle gray underline on hover */
+.word-no-def {
+  border-bottom: 1px dotted transparent;
+}
+.word-no-def:hover {
+  border-bottom-color: #CBD5E1;
+  background: #F8FAFC;
+}
+.word-no-def:active {
+  background: #E2E8F0;
+}
+
+/* Compound words — subtle background to show they're a unit */
+.word-compound {
+  border-bottom: 1.5px dotted var(--color-secondary);
+  background: rgba(37, 99, 235, 0.05);
+}
+.word-compound:hover {
+  background: rgba(37, 99, 235, 0.12);
+  color: var(--color-secondary);
+}
+.word-compound:active {
+  background: var(--color-secondary);
+  color: white;
+}
+
+/* Focus visible for keyboard navigation */
+.word-token:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
 }
 
 /* Tooltip */
@@ -35,7 +69,7 @@
   border-radius: 10px;
   padding: 10px 14px;
   min-width: 160px;
-  max-width: 220px;
+  max-width: 250px;
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -69,6 +103,12 @@
 .word-tooltip-translation {
   font-size: 13px;
   color: #94A3B8;
+  font-style: italic;
+}
+
+.word-tooltip-no-def {
+  font-size: 11px;
+  color: #F59E0B;
   font-style: italic;
 }
 

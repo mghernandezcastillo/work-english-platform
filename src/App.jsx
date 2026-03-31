@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { AppSettingsProvider } from './context/AppSettingsContext'
 import { LoadingSpinner } from './components/common/LoadingSpinner'
 
 // Layouts
@@ -30,6 +31,7 @@ import AdminDashboard from './app/admin/AdminDashboard'
 import AdminUsers from './app/admin/AdminUsers'
 import AdminBeta from './app/admin/AdminBeta'
 import AdminTestimonials from './app/admin/AdminTestimonials'
+import AdminSettings from './app/admin/AdminSettings'
 
 // Placeholder
 const Placeholder = ({ title, emoji = '🚧' }) => (
@@ -124,6 +126,7 @@ function AppRoutes() {
         <Route path="/admin/usuarios" element={<AdminUsers />} />
         <Route path="/admin/beta" element={<AdminBeta />} />
         <Route path="/admin/testimonios" element={<AdminTestimonials />} />
+        <Route path="/admin/ajustes" element={<AdminSettings />} />
       </Route>
 
       {/* Legal */}
@@ -139,7 +142,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppRoutes />
+        <AppSettingsProvider>
+          <AppRoutes />
+        </AppSettingsProvider>
       </AuthProvider>
     </BrowserRouter>
   )

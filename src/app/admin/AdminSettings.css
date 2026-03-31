@@ -1,0 +1,58 @@
+.admin-settings {
+  max-width: 720px;
+}
+
+.settings-group {
+  margin-bottom: var(--space-6);
+}
+
+.settings-group-title {
+  margin-bottom: var(--space-3);
+  font-size: var(--text-lg);
+}
+
+.settings-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.settings-field-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.settings-label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text);
+}
+
+.settings-changed-badge {
+  font-size: 10px;
+  font-weight: 600;
+  color: #F59E0B;
+  background: #FEF3C7;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.3px;
+}
+
+.settings-field-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+
+.settings-field-row .input-group {
+  flex: 1;
+}
+
+.settings-hint {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+  display: block;
+}
