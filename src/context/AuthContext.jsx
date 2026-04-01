@@ -4,6 +4,16 @@ import { getProfile } from '../lib/auth'
 
 const AuthContext = createContext(null)
 
+// Wrap any promise with a hard timeout
+function withTimeout(promise, ms, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
+    )
+  ])
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
@@ -13,28 +23,32 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let mounted = true
 
-    // ═══════════════════════════════════════════════════════════
-    // KEY INSIGHT from debugging:
-    // supabase.auth.getSession() HANGS when there is an active
-    // session — it never resolves. This was causing the infinite
-    // spinner on F5.
-    //
-    // SOLUTION: Use ONLY onAuthStateChange. It fires reliably:
-    //   - INITIAL_SESSION  → on page load (with or without session)
-    //   - SIGNED_IN        → after login
-    //   - SIGNED_OUT       → after logout
-    //   - TOKEN_REFRESHED  → after token refresh
-    //
-    // We handle INITIAL_SESSION here (previously we skipped it).
-    // ═══════════════════════════════════════════════════════════
+    // Helper: load profile with a hard timeout so it NEVER hangs
+    async function loadProfile(userId) {
+      try {
+        const p = await withTimeout(getProfile(userId), 6000, 'getProfile')
+        if (mounted) setProfile(p)
+      } catch (err) {
+        console.warn('[Auth] getProfile error/timeout:', err.message)
+        if (mounted) setProfile(null)
+      } finally {
+        if (mounted) {
+          setProfileLoaded(true)
+          setLoading(false)
+          console.log('[Auth] Ready')
+        }
+      }
+    }
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         if (!mounted) return
         console.log('[Auth] event:', event, '| user:', session?.user?.email ?? 'none')
 
         const currentUser = session?.user ?? null
 
-        if (event === 'SIGNED_OUT' || (!session && event === 'INITIAL_SESSION')) {
+        // No session cases
+        if (!currentUser) {
           setUser(null)
           setProfile(null)
           setProfileLoaded(true)
@@ -42,39 +56,25 @@ export function AuthProvider({ children }) {
           return
         }
 
-        if (event === 'TOKEN_REFRESHED' && !session) {
-          setUser(null)
-          setProfile(null)
-          setProfileLoaded(true)
-          setLoading(false)
-          return
-        }
-
-        // INITIAL_SESSION with user, SIGNED_IN, TOKEN_REFRESHED with user
-        if (currentUser) {
-          // Only show loading spinner for INITIAL_SESSION and SIGNED_IN
-          // TOKEN_REFRESHED should update silently (user already sees content)
-          if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
-            setLoading(true)
-            setProfileLoaded(false)
-          }
-
+        // Has session:
+        // - INITIAL_SESSION: fresh page load with existing session
+        // - SIGNED_IN: login or token refresh on F5
+        // - TOKEN_REFRESHED: background token refresh (don't flash spinner)
+        if (event === 'TOKEN_REFRESHED') {
+          // Silent update — don't reset loading state (user already sees content)
           setUser(currentUser)
-
-          try {
-            const p = await getProfile(currentUser.id)
-            if (mounted) setProfile(p)
-          } catch (err) {
-            console.warn('[Auth] Profile load error:', err.message)
-            if (mounted) setProfile(null)
-          }
-
-          if (mounted) {
-            setProfileLoaded(true)
-            setLoading(false)
-            console.log('[Auth] Ready — loading=false, profileLoaded=true')
-          }
+          // Update profile silently in background
+          getProfile(currentUser.id)
+            .then(p => { if (mounted) setProfile(p) })
+            .catch(() => {})
+          return
         }
+
+        // For INITIAL_SESSION and SIGNED_IN: show spinner + load profile
+        setLoading(true)
+        setProfileLoaded(false)
+        setUser(currentUser)
+        loadProfile(currentUser.id)
       }
     )
 
