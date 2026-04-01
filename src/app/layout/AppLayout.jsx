@@ -7,8 +7,8 @@ import './AppLayout.css'
 
 const navItems = [
   { to: '/dashboard', icon: '🏠', label: 'Inicio' },
+  { to: '/simulaciones', icon: '🎧', label: 'Simulaciones' },
   { to: '/progreso', icon: '📊', label: 'Progreso' },
-  { to: '/vocabulario', icon: '📖', label: 'Vocab' },
   { to: '/perfil', icon: '👤', label: 'Perfil' },
 ]
 
