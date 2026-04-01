@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { signOut } from '../../lib/auth'
@@ -15,6 +16,7 @@ const adminNav = [
 export default function AdminLayout() {
   const { profile } = useAuth()
   const navigate = useNavigate()
+  const [menuOpen, setMenuOpen] = useState(false)
 
   async function handleLogout() {
     try {
@@ -26,52 +28,76 @@ export default function AdminLayout() {
     }
   }
 
+  function handleNavClick() {
+    setMenuOpen(false)
+  }
+
   return (
-    <div className="admin-layout">
-      {/* Sidebar */}
-      <aside className="admin-sidebar">
-        <div className="admin-sidebar-header">
-          <span style={{ fontSize: 20 }}>🇺🇸</span>
+    <div className="adm-layout">
+      {/* ── Mobile topbar ── */}
+      <header className="adm-mobile-topbar">
+        <div className="adm-mobile-topbar-left">
+          <button
+            className="adm-hamburger"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Menú"
+          >
+            <span className={`adm-hamburger-line ${menuOpen ? 'open' : ''}`} />
+            <span className={`adm-hamburger-line ${menuOpen ? 'open' : ''}`} />
+            <span className={`adm-hamburger-line ${menuOpen ? 'open' : ''}`} />
+          </button>
+          <span className="adm-mobile-title">🇺🇸 Admin Panel</span>
+        </div>
+        <button
+          className="adm-mobile-back"
+          onClick={() => navigate('/dashboard')}
+        >
+          🏠 App
+        </button>
+      </header>
+
+      {/* ── Sidebar (desktop always visible, mobile toggleable) ── */}
+      {menuOpen && (
+        <div className="adm-overlay" onClick={() => setMenuOpen(false)} />
+      )}
+      <aside className={`adm-sidebar ${menuOpen ? 'open' : ''}`}>
+        <div className="adm-sidebar-header">
+          <span style={{ fontSize: 22 }}>🇺🇸</span>
           <div>
-            <div className="admin-sidebar-title">Admin</div>
-            <div className="admin-sidebar-sub">{profile?.full_name}</div>
+            <div className="adm-sidebar-title">Admin Panel</div>
+            <div className="adm-sidebar-sub">{profile?.full_name || profile?.email}</div>
           </div>
         </div>
 
-        <nav className="admin-nav">
+        <nav className="adm-nav">
           {adminNav.map(item => (
             <NavLink
               key={item.to}
               to={item.to}
               end={item.end}
-              className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}
+              className={({ isActive }) => `adm-nav-item ${isActive ? 'active' : ''}`}
+              onClick={handleNavClick}
             >
-              <span>{item.icon}</span>
+              <span className="adm-nav-icon">{item.icon}</span>
               <span>{item.label}</span>
             </NavLink>
           ))}
         </nav>
 
-        <div className="admin-sidebar-footer">
-          <button
-            className="admin-nav-item"
-            onClick={() => navigate('/dashboard')}
-          >
-            <span>🏠</span>
+        <div className="adm-sidebar-footer">
+          <button className="adm-nav-item" onClick={() => { navigate('/dashboard'); setMenuOpen(false) }}>
+            <span className="adm-nav-icon">🏠</span>
             <span>Ver app</span>
           </button>
-          <button
-            className="admin-nav-item danger"
-            onClick={handleLogout}
-          >
-            <span>🚪</span>
-            <span>Salir</span>
+          <button className="adm-nav-item danger" onClick={handleLogout}>
+            <span className="adm-nav-icon">🚪</span>
+            <span>Cerrar sesión</span>
           </button>
         </div>
       </aside>
 
-      {/* Main */}
-      <main className="admin-main">
+      {/* ── Main content ── */}
+      <main className="adm-main">
         <Outlet />
       </main>
     </div>
