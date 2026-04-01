@@ -6,8 +6,6 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      // Auto-update: new SW activates immediately on page load
-      // This prevents stale cache issues after deploys
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'images/*.png', 'images/*.svg'],
       manifest: {
@@ -25,36 +23,36 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // Only precache static assets — NOT HTML (served network-first)
+        // ═══════════════════════════════════════════════════════════
+        // CRITICAL: Do NOT precache JS/CSS/HTML.
+        // Only precache icons and fonts that are truly immutable.
+        // This prevents the #1 cause of "stuck loading": the SW
+        // serving stale HTML that references dead JS chunk hashes.
+        // ═══════════════════════════════════════════════════════════
         globPatterns: ['**/*.{ico,png,svg,woff2}'],
-        navigateFallback: '/index.html',
-        navigateFallbackAllowlist: [/^\//],
+
+        // NO navigateFallback — let ALL navigation requests hit the
+        // network. Vercel serves index.html via its own rewrite rule.
+        // This is the ONLY reliable way to guarantee F5 always works.
+        // navigateFallback: '/index.html',  ← REMOVED
+
         cleanupOutdatedCaches: true,
-        // Activate new SW immediately — no stale versions
         skipWaiting: true,
         clientsClaim: true,
+
         runtimeCaching: [
           {
-            // Supabase API calls — always network first
-            urlPattern: /^https:\/\/mtobgwfknefjlpoxznqx\.supabase\.co\/.*/i,
+            // Supabase API — always network first
+            urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'supabase-api',
-              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 },
+              expiration: { maxEntries: 50, maxAgeSeconds: 3600 },
               networkTimeoutSeconds: 10,
             },
           },
           {
-            // JS and CSS chunks — network first with fallback to cache
-            urlPattern: /\.(?:js|css)$/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'app-assets',
-              expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 },
-            },
-          },
-          {
-            // Audio files — cache first (they don't change)
+            // Audio files — cache first (immutable content)
             urlPattern: /\.(?:mp3|wav|ogg)$/i,
             handler: 'CacheFirst',
             options: {
@@ -62,6 +60,19 @@ export default defineConfig({
               expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 },
             },
           },
+          {
+            // Simulation audio from Supabase storage — cache first
+            urlPattern: /supabase.*storage.*sim-audios/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'sim-audio-cache',
+              expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 },
+            },
+          },
+          // NOTE: JS/CSS are NOT cached by the SW at all.
+          // Vite hashes them (app-abc123.js), so the browser cache
+          // naturally busts on each deploy. The Vercel header gives
+          // /assets/* immutable caching. No SW intervention needed.
         ],
       },
     }),
