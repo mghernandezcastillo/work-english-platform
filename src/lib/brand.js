@@ -1,6 +1,10 @@
 import brand from '../../config/brand.json'
 
-// Apply brand CSS variables to document root
+// Apply brand CSS variables to document root.
+// IMPORTANT: Only brand/accent colors are set here as inline styles.
+// Background, surface, text & border colors are controlled by
+// [data-theme="light"|"dark"] in CSS — inline styles would override those
+// and prevent the dark mode toggle from working.
 export function applyBrandTheme() {
   const root = document.documentElement
   const { colors, fonts } = brand
@@ -14,13 +18,7 @@ export function applyBrandTheme() {
   root.style.setProperty('--color-success', colors.success)
   root.style.setProperty('--color-error', colors.error)
   root.style.setProperty('--color-warning', colors.warning)
-  root.style.setProperty('--color-background', colors.background)
-  root.style.setProperty('--color-surface', colors.surface)
-  root.style.setProperty('--color-surface-alt', colors.surfaceAlt)
-  root.style.setProperty('--color-text', colors.text)
-  root.style.setProperty('--color-text-muted', colors.textMuted)
-  root.style.setProperty('--color-text-inverse', colors.textInverse)
-  root.style.setProperty('--color-border', colors.border)
+  // Note: background/surface/text/border NOT set here so [data-theme] works
   root.style.setProperty('--font-primary', fonts.primary)
   root.style.setProperty('--font-heading', fonts.heading)
 }

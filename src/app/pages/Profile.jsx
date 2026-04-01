@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useTheme } from '../../context/ThemeContext'
 import { updateProfile, signOut } from '../../lib/auth'
 import { brand } from '../../lib/brand'
 import { Card, CardBody } from '../../components/common/Card'
@@ -12,6 +13,7 @@ import './Profile.css'
 
 export default function Profile() {
   const { user, profile, refreshProfile } = useAuth()
+  const { theme, toggleTheme, isDark } = useTheme()
   const navigate = useNavigate()
   const { toast, showToast, Toast: ToastComponent } = useToast()
   const [editing, setEditing] = useState(false)
@@ -113,6 +115,34 @@ export default function Profile() {
           <div className="profile-info-row">
             <span className="text-sm text-muted">Miembro desde</span>
             <span className="text-sm">{new Date(profile?.created_at).toLocaleDateString('es-CO')}</span>
+          </div>
+        </CardBody>
+      </Card>
+
+      {/* Apariencia */}
+      <Card style={{ marginTop: 'var(--space-3)' }}>
+        <CardBody>
+          <h4 style={{ marginBottom: 'var(--space-3)' }}>Apariencia</h4>
+          <div className="profile-info-row">
+            <div>
+              <p className="text-sm font-medium">
+                {isDark ? '🌙 Modo oscuro' : '☀️ Modo claro'}
+              </p>
+              <p className="text-xs text-muted" style={{ marginTop: 2 }}>
+                {isDark ? 'La app usa colores oscuros' : 'La app usa colores claros'}
+              </p>
+            </div>
+            <button
+              className={`theme-toggle-switch ${isDark ? 'active' : ''}`}
+              onClick={toggleTheme}
+              aria-label={isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+              role="switch"
+              aria-checked={isDark}
+            >
+              <span className="theme-toggle-thumb">
+                {isDark ? '🌙' : '☀️'}
+              </span>
+            </button>
           </div>
         </CardBody>
       </Card>
