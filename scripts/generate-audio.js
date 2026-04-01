@@ -119,8 +119,8 @@ async function processLesson(lesson, stats) {
     if (!sc.phrase) continue
     if (sc.audioUrl) { console.log(`  ⏭ Practice ${i+1}: ya tiene audio`); continue }
 
-    // Only short practice phrases (< 120 chars) to save quota
-    if (sc.phrase.length > 120) {
+    // Only short practice phrases (< 300 chars) to save quota
+    if (sc.phrase.length > 300) {
       console.log(`  ⏭ Practice ${i+1}: demasiado larga (${sc.phrase.length} chars), Web Speech fallback`)
       continue
     }
