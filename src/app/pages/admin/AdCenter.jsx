@@ -1,0 +1,239 @@
+import { useState } from 'react'
+import campaigns from '../../data/ads/ad-campaigns.json'
+import './AdCenter.css'
+
+function CopyButton({ text, label = 'Copiar' }) {
+  const [copied, setCopied] = useState(false)
+  function handleCopy() {
+    navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+  return (
+    <button className={`copy-btn ${copied ? 'copied' : ''}`} onClick={handleCopy}>
+      {copied ? '✓ Copiado' : label}
+    </button>
+  )
+}
+
+function AdCard({ ad }) {
+  const [showCards, setShowCards] = useState(false)
+  const isCarousel = ad.formato?.toLowerCase().includes('carousel')
+
+  return (
+    <div className="ad-card">
+      {/* Header */}
+      <div className="ad-card-header">
+        <span className="ad-format-badge">{ad.formato}</span>
+        <h3 className="ad-card-name">{ad.nombre}</h3>
+      </div>
+
+      <div className="ad-card-body">
+        {/* Image preview */}
+        <div className="ad-image-col">
+          <div className="ad-image-wrap">
+            <img src={ad.imagen} alt={ad.nombre} className="ad-preview-img" />
+          </div>
+          <a
+            className="download-btn"
+            href={ad.imagen}
+            download
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            ⬇ Descargar imagen
+          </a>
+
+          {isCarousel && ad.imagenCards && (
+            <div style={{ marginTop: 8 }}>
+              <button
+                className="copy-btn"
+                style={{ width: '100%' }}
+                onClick={() => setShowCards(s => !s)}
+              >
+                {showCards ? '▲ Ocultar tarjetas' : '▼ Ver las 4 tarjetas'}
+              </button>
+              {showCards && (
+                <div className="carousel-cards-grid">
+                  {ad.imagenCards.map((card, i) => (
+                    <div key={i} className="carousel-card-thumb">
+                      <img src={card.archivo} alt={`Card ${i + 1}`} />
+                      <p className="carousel-card-caption">{card.titular}</p>
+                      <a
+                        className="download-btn"
+                        href={card.archivo}
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ fontSize: 11 }}
+                      >
+                        ⬇ Card {i + 1}
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Copy fields */}
+        <div className="ad-copy-col">
+          <div className="copy-field">
+            <div className="copy-field-label">
+              <span>📝 Texto principal</span>
+              <CopyButton text={ad.primaryText} />
+            </div>
+            <textarea
+              className="copy-field-textarea"
+              readOnly
+              value={ad.primaryText}
+              rows={8}
+              onClick={e => e.target.select()}
+            />
+          </div>
+
+          <div className="copy-field-row">
+            <div className="copy-field copy-field-half">
+              <div className="copy-field-label">
+                <span>🏷 Título (Headline)</span>
+                <CopyButton text={ad.headline} />
+              </div>
+              <input
+                className="copy-field-input"
+                readOnly
+                value={ad.headline}
+                onClick={e => e.target.select()}
+              />
+            </div>
+            <div className="copy-field copy-field-half">
+              <div className="copy-field-label">
+                <span>📄 Descripción</span>
+                <CopyButton text={ad.descripcion} />
+              </div>
+              <input
+                className="copy-field-input"
+                readOnly
+                value={ad.descripcion}
+                onClick={e => e.target.select()}
+              />
+            </div>
+          </div>
+
+          <div className="copy-field-row">
+            <div className="copy-field copy-field-quarter">
+              <div className="copy-field-label">
+                <span>🖱 Botón CTA</span>
+              </div>
+              <div className="cta-badge">{ad.ctaBoton}</div>
+            </div>
+          </div>
+
+          <div className="copy-field">
+            <div className="copy-field-label">
+              <span>🔗 URL con UTM</span>
+              <CopyButton text={ad.url} label="Copiar URL" />
+            </div>
+            <input
+              className="copy-field-input copy-field-url"
+              readOnly
+              value={ad.url}
+              onClick={e => e.target.select()}
+            />
+          </div>
+
+          <a
+            className="ads-manager-btn"
+            href="https://adsmanager.facebook.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Abrir Ads Manager →
+          </a>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function AdCenter() {
+  const [openCampaign, setOpenCampaign] = useState(null)
+
+  return (
+    <div className="ad-center">
+      <div className="ad-center-header">
+        <div>
+          <h1 className="ad-center-title">📢 Centro de Anuncios</h1>
+          <p className="ad-center-subtitle">
+            Todo listo para publicar en Facebook Ads Manager. Copia el texto, descarga la imagen y sigue la guía.
+          </p>
+        </div>
+        <a
+          href="https://adsmanager.facebook.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ads-manager-btn ads-manager-btn-main"
+        >
+          Abrir Ads Manager
+        </a>
+      </div>
+
+      {/* How-to strip */}
+      <div className="how-to-strip">
+        {[
+          { n: '1', t: 'Elige un anuncio', d: 'Abre la campaña y elige el anuncio' },
+          { n: '2', t: 'Descarga la imagen', d: 'Haz clic en "Descargar imagen"' },
+          { n: '3', t: 'Copia el texto', d: 'Usa los botones "Copiar" de cada campo' },
+          { n: '4', t: 'Pégalo en Ads Manager', d: 'Crea el anuncio y actívalo' },
+        ].map(s => (
+          <div key={s.n} className="how-to-step">
+            <div className="how-to-num">{s.n}</div>
+            <div>
+              <strong>{s.t}</strong>
+              <p>{s.d}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Campaigns */}
+      <div className="campaigns-list">
+        {campaigns.map(campaign => (
+          <div key={campaign.id} className="campaign-section">
+            <button
+              className={`campaign-header ${openCampaign === campaign.id ? 'open' : ''}`}
+              onClick={() => setOpenCampaign(
+                openCampaign === campaign.id ? null : campaign.id
+              )}
+            >
+              <div className="campaign-header-left">
+                <span className="campaign-name">{campaign.nombre}</span>
+                <div className="campaign-meta">
+                  <span>🎯 {campaign.objetivo}</span>
+                  <span>💰 {campaign.presupuesto}</span>
+                  <span>👥 {campaign.audiencia}</span>
+                </div>
+              </div>
+              <div className="campaign-chevron">
+                {openCampaign === campaign.id ? '▲' : '▼'}
+              </div>
+            </button>
+
+            {openCampaign === campaign.id && (
+              <div className="campaign-ads">
+                {campaign.ads.map(ad => (
+                  <AdCard key={ad.id} ad={ad} />
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Footer note */}
+      <div className="ad-center-footer">
+        <p>💡 ¿Necesitas un anuncio diferente? Pídelo directamente en el chat con IA — describe el ángulo, el precio y el estilo visual y lo generamos en minutos.</p>
+      </div>
+    </div>
+  )
+}

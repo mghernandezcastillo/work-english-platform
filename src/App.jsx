@@ -33,6 +33,7 @@ const AdminUsers = lazy(() => import('./app/admin/AdminUsers'))
 const AdminBeta = lazy(() => import('./app/admin/AdminBeta'))
 const AdminTestimonials = lazy(() => import('./app/admin/AdminTestimonials'))
 const AdminSettings = lazy(() => import('./app/admin/AdminSettings'))
+const AdminAdCenter = lazy(() => import('./app/pages/admin/AdCenter'))
 
 // Placeholder
 const Placeholder = ({ title, emoji = '🚧' }) => (
@@ -129,6 +130,7 @@ function AppRoutes() {
         <Route path="/admin/beta" element={<AdminBeta />} />
         <Route path="/admin/testimonios" element={<AdminTestimonials />} />
         <Route path="/admin/ajustes" element={<AdminSettings />} />
+        <Route path="/admin/anuncios" element={<AdminAdCenter />} />
       </Route>
 
       {/* Legal */}

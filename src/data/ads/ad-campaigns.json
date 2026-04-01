@@ -1,0 +1,110 @@
+[
+  {
+    "id": "campana-dolor",
+    "nombre": "Campaña 1 — Ángulo Dolor",
+    "objetivo": "Tráfico",
+    "presupuesto": "$15.000 COP/día",
+    "audiencia": "Colombia · 22-45 años · Intereses: empleo, inglés, Duolingo",
+    "ads": [
+      {
+        "id": "ad-01",
+        "nombre": "Ad 01 — ¿Pierdes trabajos por no hablar inglés?",
+        "imagen": "/ads/01_dolor_pierdes_trabajos.png",
+        "formato": "Imagen única",
+        "primaryText": "¿Sabes inglés básico pero cuando tienes que hablar en el trabajo te bloqueas?\n\nEso pasa porque nunca te enseñaron el inglés que realmente se usa en el trabajo.\n\nEnglish for Work te enseña exactamente qué decir en:\n✅ Entrevistas de trabajo en inglés\n✅ Llamadas con clientes en inglés\n✅ Tu primer día en un trabajo bilingüe\n\n15 minutos al día. Frases reales. Audio nativo. Simulaciones prácticas.\n\n🔥 Solo $47.000 COP — Pago único, acceso de por vida.\nGarantía de 7 días.",
+        "headline": "¿Pierdes oportunidades por no hablar inglés?",
+        "descripcion": "36 lecciones · Audio nativo · Garantía 7 días",
+        "ctaBoton": "Más información",
+        "url": "https://work-english-platform.vercel.app/ingles-para-trabajo?utm_source=facebook&utm_medium=cpc&utm_campaign=dolor_frio&utm_content=pain"
+      },
+      {
+        "id": "ad-03",
+        "nombre": "Ad 03 — Deja de estudiar gramática",
+        "imagen": "/ads/03_contraste_gramatica_vs_real.png",
+        "formato": "Imagen única",
+        "primaryText": "Gramática. Tiempos verbales. Ejercicios del libro.\n\nY después de todo eso... ¿puedes hablar inglés en tu trabajo hoy? 🤔\n\nEl problema no eres tú. Es el método.\n\nEnglish for Work funciona diferente:\n❌ No memorizas reglas aburridas\n✅ Aprendes frases exactas de situaciones reales\n\n\"What are your strengths?\" → sabrás responder con seguridad\n\"The client is on hold\" → sabrás exactamente qué decir\n\"Can you follow up on that?\" → lo harás sin dudar\n\n$47.000 COP. Una sola vez. Acceso de por vida.",
+        "headline": "Deja de estudiar gramática. Empieza a hablar.",
+        "descripcion": "El inglés que realmente se usa en el trabajo colombiano",
+        "ctaBoton": "Más información",
+        "url": "https://work-english-platform.vercel.app/ingles-para-trabajo?utm_source=facebook&utm_medium=cpc&utm_campaign=dolor_frio&utm_content=contraste"
+      }
+    ]
+  },
+  {
+    "id": "campana-beneficio",
+    "nombre": "Campaña 2 — Ángulo Beneficio",
+    "objetivo": "Tráfico",
+    "presupuesto": "$15.000 COP/día",
+    "audiencia": "Colombia · 22-40 años · Intereses: trabajo remoto, idiomas, LinkedIn",
+    "ads": [
+      {
+        "id": "ad-02",
+        "nombre": "Ad 02 — Habla inglés con confianza",
+        "imagen": "/ads/02_beneficio_confianza.png",
+        "formato": "Imagen única",
+        "primaryText": "Imagina llegar a tu próxima entrevista y responder en inglés con seguridad.\n\nImagina atender una llamada en inglés sin que te tiemble la voz.\n\nImagina que te asignen proyectos en inglés porque confían en ti.\n\nEso es lo que logran los estudiantes de English for Work.\n\n📚 36 lecciones de inglés laboral real\n🔊 Audio con hablante nativo en cada frase\n🎯 12 simulaciones de situaciones reales del trabajo\n💳 Solo $47.000 pesos — sin mensualidades, sin renovaciones\n\n👇 Empieza hoy.",
+        "headline": "Habla inglés en el trabajo con confianza",
+        "descripcion": "36 lecciones + 12 simulaciones + audio nativo",
+        "ctaBoton": "Registrarse",
+        "url": "https://work-english-platform.vercel.app/ingles-para-trabajo?utm_source=facebook&utm_medium=cpc&utm_campaign=beneficio_frio&utm_content=confianza"
+      }
+    ]
+  },
+  {
+    "id": "campana-callcenter",
+    "nombre": "Campaña 3 — Call Center / BPO",
+    "objetivo": "Tráfico",
+    "presupuesto": "$15.000 COP/día",
+    "audiencia": "Colombia · 20-38 años · Intereses: Call center, Teleperformance, Concentrix, BPO Colombia",
+    "ads": [
+      {
+        "id": "ad-05",
+        "nombre": "Ad 05 — ¿Listo para trabajar en un Call Center?",
+        "imagen": "/ads/05_callcenter_listo_trabajar.png",
+        "formato": "Imagen única",
+        "primaryText": "Los call centers en Colombia buscan personas que hablen inglés.\n\nEl problema: la mayoría saben un poco, pero no lo suficiente para pasar la prueba.\n\nEnglish for Work tiene una ruta completa de Call Center en inglés:\n\n📞 Frases exactas para abrir y cerrar llamadas\n😤 Cómo manejar clientes difíciles en inglés\n✅ Vocabulario BPO que los jefes esperan que sepas\n\nEs diferente a aprender inglés en el colegio. Son las frases reales que usan en el trabajo.\n\n$47.000 COP — Pago único.\nEmpieza hoy y practica 15 minutos al día.",
+        "headline": "¿Listo para trabajar en un Call Center en inglés?",
+        "descripcion": "Frases reales de BPO · Audio nativo · 12 simulaciones",
+        "ctaBoton": "Más información",
+        "url": "https://work-english-platform.vercel.app/ingles-call-center?utm_source=facebook&utm_medium=cpc&utm_campaign=callcenter_empleo&utm_content=job_ready"
+      },
+      {
+        "id": "ad-carousel",
+        "nombre": "Ad Carousel — Las 3 Rutas",
+        "imagen": "/ads/06_carousel_ruta1_conseguir_trabajo.png",
+        "imagenCards": [
+          { "archivo": "/ads/06_carousel_ruta1_conseguir_trabajo.png", "titular": "Consigue el trabajo bilingüe que quieres" },
+          { "archivo": "/ads/07_carousel_ruta2_entrevistas.png", "titular": "Domina tu próxima entrevista en inglés" },
+          { "archivo": "/ads/08_carousel_ruta3_callcenter.png", "titular": "Destácate en cualquier call center" },
+          { "archivo": "/ads/09_carousel_cta_47k.png", "titular": "Todo por $47.000 COP — empieza hoy" }
+        ],
+        "formato": "Carousel (4 tarjetas)",
+        "primaryText": "¿Cuál es tu situación ahora mismo?\n\n👉 Desliza para ver cuál de las 3 rutas es para ti:\n\n📌 Conseguir un trabajo que requiera inglés\n📌 Pasar una entrevista en inglés\n📌 Destacarte en call center o BPO\n\nTodo en una plataforma. $47.000 COP pago único.",
+        "headline": "Elige la ruta que necesitas",
+        "descripcion": "3 rutas · 36 lecciones · $47.000 COP pago único",
+        "ctaBoton": "Más información",
+        "url": "https://work-english-platform.vercel.app/ingles-call-center?utm_source=facebook&utm_medium=cpc&utm_campaign=callcenter_carousel&utm_content=3rutas"
+      }
+    ]
+  },
+  {
+    "id": "campana-precio",
+    "nombre": "Campaña 4 — Precio (Retargeting)",
+    "objetivo": "Conversiones",
+    "presupuesto": "$10.000 COP/día",
+    "audiencia": "Visitantes de la landing en los últimos 30 días (Audiencia personalizada del Pixel)",
+    "ads": [
+      {
+        "id": "ad-04",
+        "nombre": "Ad 04 — Solo $47.000 COP pago único",
+        "imagen": "/ads/04_precio_47k.png",
+        "formato": "Imagen única",
+        "primaryText": "Si ya viste English for Work y no te has inscrito... esto es para ti 👇\n\n🔥 El precio de lanzamiento es $47.000 pesos (pago único).\n\nCuando terminemos el lanzamiento, sube a $150.000.\n\n¿Qué incluye?\n✅ 36 lecciones de inglés para el trabajo\n✅ Audio profesional en cada frase\n✅ 12 simulaciones de situaciones reales\n✅ Garantía de 7 días (sin preguntas)\n\nSon $47.000 pesos. Menos que una noche de salida.\nY puede ser el inglés que te cambia el trabajo.\n\n⏳ No lo dejes para después.",
+        "headline": "$47.000 COP — pago único antes de que suba el precio",
+        "descripcion": "Pago único · Acceso de por vida · Garantía 7 días",
+        "ctaBoton": "Registrarse",
+        "url": "https://work-english-platform.vercel.app/ingles-para-trabajo?utm_source=facebook&utm_medium=cpc&utm_campaign=retargeting&utm_content=precio"
+      }
+    ]
+  }
+]

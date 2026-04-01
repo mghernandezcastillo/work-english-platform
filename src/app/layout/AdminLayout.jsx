@@ -8,6 +8,7 @@ const adminNav = [
   { to: '/admin/usuarios', icon: '👥', label: 'Usuarios' },
   { to: '/admin/beta', icon: '🔑', label: 'Acceso Beta' },
   { to: '/admin/testimonios', icon: '⭐', label: 'Testimonios' },
+  { to: '/admin/anuncios', icon: '📢', label: 'Anuncios' },
   { to: '/admin/ajustes', icon: '⚙️', label: 'Ajustes' },
 ]
 
