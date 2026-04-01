@@ -4,16 +4,6 @@ import { getProfile } from '../lib/auth'
 
 const AuthContext = createContext(null)
 
-// Wrap any promise with a timeout so it NEVER hangs forever
-function withTimeout(promise, ms, label) {
-  return Promise.race([
-    promise,
-    new Promise((_, reject) =>
-      setTimeout(() => reject(new Error(`[Auth] ${label} timed out after ${ms}ms`)), ms)
-    )
-  ])
-}
-
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
@@ -23,70 +13,34 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let mounted = true
 
-    async function init() {
-      try {
-        console.log('[Auth] init: calling getSession...')
-        const { data: { session }, error } = await withTimeout(
-          supabase.auth.getSession(), 8000, 'getSession'
-        )
-        console.log('[Auth] init: getSession done', { hasSession: !!session, error: error?.message })
-
+    // ═══════════════════════════════════════════════════════════
+    // KEY INSIGHT from debugging:
+    // supabase.auth.getSession() HANGS when there is an active
+    // session — it never resolves. This was causing the infinite
+    // spinner on F5.
+    //
+    // SOLUTION: Use ONLY onAuthStateChange. It fires reliably:
+    //   - INITIAL_SESSION  → on page load (with or without session)
+    //   - SIGNED_IN        → after login
+    //   - SIGNED_OUT       → after logout
+    //   - TOKEN_REFRESHED  → after token refresh
+    //
+    // We handle INITIAL_SESSION here (previously we skipped it).
+    // ═══════════════════════════════════════════════════════════
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
         if (!mounted) return
+        console.log('[Auth] event:', event, '| user:', session?.user?.email ?? 'none')
 
-        if (error) {
-          console.warn('[Auth] Session error:', error.message)
-          await supabase.auth.signOut().catch(() => {})
+        const currentUser = session?.user ?? null
+
+        if (event === 'SIGNED_OUT' || (!session && event === 'INITIAL_SESSION')) {
           setUser(null)
           setProfile(null)
           setProfileLoaded(true)
           setLoading(false)
           return
         }
-
-        const currentUser = session?.user ?? null
-        setUser(currentUser)
-
-        if (currentUser) {
-          try {
-            console.log('[Auth] init: calling getProfile...')
-            const p = await withTimeout(
-              getProfile(currentUser.id), 8000, 'getProfile'
-            )
-            console.log('[Auth] init: getProfile done', { hasProfile: !!p })
-            if (mounted) setProfile(p)
-          } catch (err) {
-            console.warn('[Auth] Profile error:', err.message)
-            if (mounted) setProfile(null)
-          }
-          if (mounted) setProfileLoaded(true)
-        } else {
-          setProfileLoaded(true)
-        }
-
-        if (mounted) {
-          console.log('[Auth] init: setting loading=false')
-          setLoading(false)
-        }
-      } catch (err) {
-        console.warn('[Auth] Init error:', err.message)
-        if (mounted) {
-          setUser(null)
-          setProfile(null)
-          setProfileLoaded(true)
-          setLoading(false)
-        }
-      }
-    }
-
-    init()
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (!mounted) return
-        console.log('[Auth] onAuthStateChange:', event)
-
-        // Skip INITIAL_SESSION — init() handles it
-        if (event === 'INITIAL_SESSION') return
 
         if (event === 'TOKEN_REFRESHED' && !session) {
           setUser(null)
@@ -96,45 +50,30 @@ export function AuthProvider({ children }) {
           return
         }
 
-        if (event === 'SIGNED_OUT') {
-          setUser(null)
-          setProfile(null)
-          setProfileLoaded(false)
-          setLoading(false)
-          return
-        }
+        // INITIAL_SESSION with user, SIGNED_IN, TOKEN_REFRESHED with user
+        if (currentUser) {
+          // Only show loading spinner for INITIAL_SESSION and SIGNED_IN
+          // TOKEN_REFRESHED should update silently (user already sees content)
+          if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
+            setLoading(true)
+            setProfileLoaded(false)
+          }
 
-        if (event === 'SIGNED_IN' && session?.user) {
-          setLoading(true)
-          setProfileLoaded(false)
-          setUser(session.user)
+          setUser(currentUser)
+
           try {
-            const p = await withTimeout(
-              getProfile(session.user.id), 8000, 'getProfile (SIGNED_IN)'
-            )
+            const p = await getProfile(currentUser.id)
             if (mounted) setProfile(p)
-          } catch {
+          } catch (err) {
+            console.warn('[Auth] Profile load error:', err.message)
             if (mounted) setProfile(null)
           }
+
           if (mounted) {
             setProfileLoaded(true)
             setLoading(false)
+            console.log('[Auth] Ready — loading=false, profileLoaded=true')
           }
-          return
-        }
-
-        // TOKEN_REFRESHED with valid session — update silently
-        if (event === 'TOKEN_REFRESHED' && session?.user) {
-          setUser(session.user)
-          try {
-            const p = await withTimeout(
-              getProfile(session.user.id), 8000, 'getProfile (TOKEN_REFRESHED)'
-            )
-            if (mounted) setProfile(p)
-          } catch {
-            if (mounted) setProfile(null)
-          }
-          if (mounted) setProfileLoaded(true)
         }
       }
     )
