@@ -43,6 +43,56 @@
   gap: var(--space-1);
 }
 
+/* --- Theme Toggle (header) --- */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 20px;
+  transition: background 0.2s;
+}
+.theme-toggle:hover {
+  background: var(--color-border);
+}
+.theme-toggle-icon {
+  font-size: 14px;
+  line-height: 1;
+  transition: transform 0.3s ease;
+}
+.theme-toggle:hover .theme-toggle-icon {
+  transform: rotate(20deg) scale(1.15);
+}
+.theme-toggle-track {
+  position: relative;
+  width: 34px;
+  height: 18px;
+  background: var(--color-border);
+  border-radius: 10px;
+  transition: background 0.3s;
+  flex-shrink: 0;
+}
+.theme-toggle:hover .theme-toggle-track {
+  background: var(--color-primary);
+  opacity: 0.5;
+}
+.theme-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              background 0.25s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+.theme-toggle-thumb.dark  { left: 2px; }
+.theme-toggle-thumb.light { left: calc(100% - 16px); }
+
 /* --- Main Content --- */
 .app-main {
   flex: 1;

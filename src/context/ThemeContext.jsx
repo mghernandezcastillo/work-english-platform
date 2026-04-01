@@ -4,10 +4,10 @@ const ThemeContext = createContext(null)
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
-    // Restore from localStorage, fallback to system preference
+    // Restore from localStorage, fallback to dark by default
     const saved = localStorage.getItem('ew-theme')
     if (saved === 'dark' || saved === 'light') return saved
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    return 'dark' // Default: dark mode
   })
 
   useEffect(() => {

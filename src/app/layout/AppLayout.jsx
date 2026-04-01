@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useAppSettings } from '../../context/AppSettingsContext'
+import { useTheme } from '../../context/ThemeContext'
 import { signOut } from '../../lib/auth'
 import { brand } from '../../lib/brand'
 import './AppLayout.css'
@@ -14,6 +15,7 @@ const navItems = [
 
 export default function AppLayout() {
   const { profile, isAdmin } = useAuth()
+  const { isDark, toggleTheme } = useTheme()
   const { settings } = useAppSettings()
   const navigate = useNavigate()
 
@@ -40,6 +42,19 @@ export default function AppLayout() {
             <span className="app-topbar-title">{brand.name}</span>
           </div>
           <div className="app-topbar-right">
+            {/* Theme toggle */}
+            <button
+              className="theme-toggle"
+              onClick={toggleTheme}
+              title={isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+              aria-label="Cambiar tema"
+            >
+              <span className="theme-toggle-icon">{isDark ? '🌙' : '☀️'}</span>
+              <span className="theme-toggle-track">
+                <span className={`theme-toggle-thumb ${isDark ? 'dark' : 'light'}`} />
+              </span>
+            </button>
+
             {isAdmin && (
               <button className="btn btn-ghost btn-sm" onClick={() => navigate('/admin')} title="Panel Admin" aria-label="Panel Admin">
                 ⚙️
