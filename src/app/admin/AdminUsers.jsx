@@ -8,6 +8,22 @@ import { Modal } from '../../components/common/Modal'
 import { useToast } from '../../components/common/Toast'
 import './AdminUsers.css'
 
+// Helper: call an admin Edge Function with the current admin's JWT
+async function callAdminFn(fnName, body) {
+  const { data: { session } } = await supabase.auth.getSession()
+  const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/${fnName}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify(body),
+  })
+  const result = await res.json()
+  if (!res.ok) throw new Error(result.error || 'Error del servidor')
+  return result
+}
+
 const ACCESS_OPTIONS = ['none', 'beta', 'paid', 'unlimited']
 const accessVariant = { none: 'gray', beta: 'blue', paid: 'green', unlimited: 'green' }
 
@@ -18,6 +34,7 @@ export default function AdminUsers() {
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(null)
   const [saving, setSaving] = useState(false)
+  const [confirmAction, setConfirmAction] = useState(null) // { type: 'reset'|'delete', user }
   const { toast, showToast, Toast: ToastComponent } = useToast()
 
   // Quick access form
@@ -63,6 +80,39 @@ export default function AdminUsers() {
     await supabase.from('profiles').update({ is_admin: !isAdmin }).eq('id', userId)
     showToast(isAdmin ? 'Admin removido' : 'Admin asignado', 'success')
     loadUsers()
+  }
+
+  async function resetUserProgress(user) {
+    setSaving(true)
+    try {
+      const { error } = await supabase
+        .from('user_progress')
+        .delete()
+        .eq('user_id', user.id)
+      if (error) throw error
+      showToast(`Progreso de ${user.full_name || user.email} reiniciado`, 'success')
+      setSelected(null)
+      setConfirmAction(null)
+    } catch (err) {
+      showToast('Error al reiniciar: ' + err.message, 'error')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function deleteUser(user) {
+    setSaving(true)
+    try {
+      await callAdminFn('admin-delete-user', { userId: user.id })
+      showToast(`Cuenta de ${user.email} eliminada`, 'success')
+      setSelected(null)
+      setConfirmAction(null)
+      loadUsers()
+    } catch (err) {
+      showToast('Error al eliminar: ' + err.message, 'error')
+    } finally {
+      setSaving(false)
+    }
   }
 
   async function handleQuickAccess(e) {
@@ -192,6 +242,73 @@ export default function AdminUsers() {
             >
               {selected.is_admin ? '❌ Remover admin' : '✅ Hacer admin'}
             </Button>
+            <div className="divider" />
+            {/* ── Danger zone ── */}
+            <div className="admin-danger-zone">
+              <p className="admin-danger-label">⚠️ Zona de peligro</p>
+              <button
+                className="admin-danger-btn"
+                onClick={() => setConfirmAction({ type: 'reset', user: selected })}
+                disabled={saving}
+              >
+                🔄 Reiniciar progreso de lecciones
+              </button>
+              <button
+                className="admin-danger-btn delete"
+                onClick={() => setConfirmAction({ type: 'delete', user: selected })}
+                disabled={saving}
+              >
+                🗑️ Eliminar cuenta permanentemente
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Confirm destructive action modal */}
+      <Modal
+        isOpen={!!confirmAction}
+        onClose={() => setConfirmAction(null)}
+        title={confirmAction?.type === 'delete' ? '⚠️ Eliminar cuenta' : '⚠️ Reiniciar progreso'}
+      >
+        {confirmAction && (
+          <div className="flex flex-col gap-4">
+            <p className="text-sm" style={{ lineHeight: 1.6 }}>
+              {confirmAction.type === 'delete' ? (
+                <>
+                  Vas a eliminar <strong>permanentemente</strong> la cuenta de{' '}
+                  <strong>{confirmAction.user.email}</strong>.
+                  <br /><br />
+                  ✅ El email podrá usarse para registrarse de nuevo.<br />
+                  ❌ Se borrarán todos sus datos y progreso.
+                </>
+              ) : (
+                <>
+                  Vas a borrar <strong>todo el progreso</strong> de lecciones de{' '}
+                  <strong>{confirmAction.user.email}</strong>.
+                  <br /><br />
+                  La cuenta y el acceso se mantienen. Solo se reinicia el avance.
+                </>
+              )}
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant={confirmAction.type === 'delete' ? 'ghost' : 'primary'}
+                loading={saving}
+                onClick={() =>
+                  confirmAction.type === 'delete'
+                    ? deleteUser(confirmAction.user)
+                    : resetUserProgress(confirmAction.user)
+                }
+                style={confirmAction.type === 'delete' ? { color: 'var(--color-error)', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)' } : {}}
+                full
+              >
+                {confirmAction.type === 'delete' ? '🗑️ Sí, eliminar cuenta' : '🔄 Sí, reiniciar progreso'}
+              </Button>
+              <Button variant="outline" onClick={() => setConfirmAction(null)} full>
+                Cancelar
+              </Button>
+            </div>
           </div>
         )}
       </Modal>

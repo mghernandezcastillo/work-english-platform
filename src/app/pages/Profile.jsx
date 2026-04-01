@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useTheme } from '../../context/ThemeContext'
 import { updateProfile, signOut } from '../../lib/auth'
+import { supabase } from '../../lib/supabase'
 import { brand } from '../../lib/brand'
 import { Card, CardBody } from '../../components/common/Card'
 import { Button } from '../../components/common/Button'
 import { Input } from '../../components/common/Input'
+import { Modal } from '../../components/common/Modal'
 import { useToast } from '../../components/common/Toast'
 import { Badge } from '../../components/common/Badge'
 import './Profile.css'
@@ -19,6 +21,8 @@ export default function Profile() {
   const [editing, setEditing] = useState(false)
   const [fullName, setFullName] = useState(profile?.full_name || '')
   const [saving, setSaving] = useState(false)
+  const [showResetConfirm, setShowResetConfirm] = useState(false)
+  const [resetting, setResetting] = useState(false)
 
   async function handleSave() {
     setSaving(true)
@@ -37,6 +41,23 @@ export default function Profile() {
   async function handleLogout() {
     await signOut()
     navigate('/login')
+  }
+
+  async function handleResetProgress() {
+    setResetting(true)
+    try {
+      const { error } = await supabase
+        .from('user_progress')
+        .delete()
+        .eq('user_id', user.id)
+      if (error) throw error
+      showToast('Progreso reiniciado desde cero 🔄', 'success')
+      setShowResetConfirm(false)
+    } catch (err) {
+      showToast('Error al reiniciar: ' + err.message, 'error')
+    } finally {
+      setResetting(false)
+    }
   }
 
   const accessLabels = {
@@ -147,6 +168,24 @@ export default function Profile() {
         </CardBody>
       </Card>
 
+      {/* ── Danger zone ── */}
+      <Card style={{ marginTop: 'var(--space-3)', border: '1px solid rgba(239,68,68,0.15)' }}>
+        <CardBody>
+          <h4 style={{ marginBottom: 'var(--space-1)', color: 'var(--color-error)', opacity: 0.8 }}>
+            ⚠️ Zona de peligro
+          </h4>
+          <p className="text-xs text-muted" style={{ marginBottom: 'var(--space-3)', lineHeight: 1.5 }}>
+            Reiniciar tu progreso borra todo tu avance en lecciones. Tu cuenta y acceso no se ven afectados.
+          </p>
+          <button
+            className="profile-danger-btn"
+            onClick={() => setShowResetConfirm(true)}
+          >
+            🔄 Reiniciar mi progreso desde cero
+          </button>
+        </CardBody>
+      </Card>
+
       {/* Actions */}
       <div style={{ marginTop: 'var(--space-6)' }}>
         <Button variant="ghost" full onClick={handleLogout} style={{ color: 'var(--color-error)' }}>
@@ -157,6 +196,32 @@ export default function Profile() {
       <p className="text-center text-xs text-muted" style={{ marginTop: 'var(--space-4)' }}>
         {brand.name} v1.0 · {brand.legal.country}
       </p>
+
+      {/* Confirm reset modal */}
+      <Modal
+        isOpen={showResetConfirm}
+        onClose={() => setShowResetConfirm(false)}
+        title="⚠️ Reiniciar progreso"
+      >
+        <div className="flex flex-col gap-4">
+          <p className="text-sm" style={{ lineHeight: 1.6 }}>
+            Vas a borrar <strong>todo tu progreso</strong> en lecciones y simulaciones.
+            <br /><br />
+            Tu cuenta y tipo de acceso <strong>no cambian</strong>. Podrás empezar de nuevo desde cero.
+          </p>
+          <Button
+            variant="primary"
+            loading={resetting}
+            onClick={handleResetProgress}
+            full
+          >
+            🔄 Sí, reiniciar mi progreso
+          </Button>
+          <Button variant="ghost" onClick={() => setShowResetConfirm(false)} full>
+            Cancelar
+          </Button>
+        </div>
+      </Modal>
 
       {toast && <ToastComponent message={toast.message} type={toast.type} />}
     </div>
