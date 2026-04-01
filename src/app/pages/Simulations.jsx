@@ -25,6 +25,7 @@ export default function Simulations() {
       const { data: sims } = await supabase
         .from('simulations')
         .select('id, title, description, route_id, sort_order')
+        .not('description', 'is', null)   // only show rich sims that have a description
         .order('route_id')
         .order('sort_order')
 
@@ -33,13 +34,16 @@ export default function Simulations() {
         .select('id, title, sort_order')
         .order('sort_order')
 
-      const { data: progress } = await supabase
-        .from('user_simulation_progress')
-        .select('simulation_id')
-        .eq('user_id', profile?.id)
-        .eq('completed', true)
-
-      const completed = new Set((progress || []).map(p => p.simulation_id))
+      // Gracefully handle missing table or no progress yet
+      let completed = new Set()
+      try {
+        const { data: progress } = await supabase
+          .from('user_simulation_progress')
+          .select('simulation_id')
+          .eq('user_id', profile?.id)
+          .eq('completed', true)
+        completed = new Set((progress || []).map(p => p.simulation_id))
+      } catch { /* table may be empty */ }
       setCompletedSims(completed)
 
       // Group simulations by route

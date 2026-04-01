@@ -57,12 +57,29 @@ export default function SimulationView() {
     const turns = simulation?.content?.turns || []
     if (currentTurn + 1 >= turns.length) {
       setFinished(true)
+      saveProgress(turns)
     } else {
       setCurrentTurn(t => t + 1)
       setSelectedOption(null)
       setShowFeedback(false)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
+  }
+
+  async function saveProgress(turns) {
+    if (!profile?.id || !simulation?.id) return
+    const correct = [...responses, { turn: currentTurn, choice: selectedOption }]
+      .filter((r, i) => turns[i] && r.choice === turns[i].correct).length
+    try {
+      await supabase.from('user_simulation_progress').upsert({
+        user_id: profile.id,
+        simulation_id: simulation.id,
+        completed: true,
+        score: correct,
+        total_turns: turns.length,
+        completed_at: new Date().toISOString(),
+      }, { onConflict: 'user_id,simulation_id' })
+    } catch { /* non-critical */ }
   }
 
   function restart() {
