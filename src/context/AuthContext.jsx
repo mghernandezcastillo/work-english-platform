@@ -8,11 +8,12 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
+  // profileLoaded = true once we've ATTEMPTED to load profile (success or failure)
+  const [profileLoaded, setProfileLoaded] = useState(false)
 
   useEffect(() => {
     let mounted = true
 
-    // ─── Get initial session ───
     async function init() {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
@@ -23,6 +24,7 @@ export function AuthProvider({ children }) {
           await supabase.auth.signOut().catch(() => {})
           setUser(null)
           setProfile(null)
+          setProfileLoaded(true)
           setLoading(false)
           return
         }
@@ -38,6 +40,9 @@ export function AuthProvider({ children }) {
             console.warn('[Auth] Profile error:', err.message)
             if (mounted) setProfile(null)
           }
+          if (mounted) setProfileLoaded(true)
+        } else {
+          setProfileLoaded(true)
         }
 
         if (mounted) setLoading(false)
@@ -46,6 +51,7 @@ export function AuthProvider({ children }) {
         if (mounted) {
           setUser(null)
           setProfile(null)
+          setProfileLoaded(true)
           setLoading(false)
         }
       }
@@ -53,17 +59,15 @@ export function AuthProvider({ children }) {
 
     init()
 
-    // ─── Listen for auth changes ───
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (!mounted) return
-
-        // Skip INITIAL_SESSION — init() handles it
         if (event === 'INITIAL_SESSION') return
 
         if (event === 'TOKEN_REFRESHED' && !session) {
           setUser(null)
           setProfile(null)
+          setProfileLoaded(true)
           setLoading(false)
           return
         }
@@ -71,12 +75,14 @@ export function AuthProvider({ children }) {
         if (event === 'SIGNED_OUT') {
           setUser(null)
           setProfile(null)
+          setProfileLoaded(false)
           setLoading(false)
           return
         }
 
         if (event === 'SIGNED_IN' && session?.user) {
           setLoading(true)
+          setProfileLoaded(false)
           setUser(session.user)
           try {
             const p = await getProfile(session.user.id)
@@ -84,11 +90,14 @@ export function AuthProvider({ children }) {
           } catch {
             if (mounted) setProfile(null)
           }
-          if (mounted) setLoading(false)
+          if (mounted) {
+            setProfileLoaded(true)
+            setLoading(false)
+          }
           return
         }
 
-        // TOKEN_REFRESHED with valid session — update silently
+        // TOKEN_REFRESHED with valid session
         setUser(session?.user ?? null)
         if (session?.user) {
           try {
@@ -97,6 +106,7 @@ export function AuthProvider({ children }) {
           } catch {
             if (mounted) setProfile(null)
           }
+          if (mounted) setProfileLoaded(true)
         }
       }
     )
@@ -121,14 +131,10 @@ export function AuthProvider({ children }) {
   const isAdmin = profile?.is_admin === true
   const hasAccess = ['beta', 'paid', 'unlimited'].includes(profile?.access_type)
 
-  // profileReady: true when we've finished trying to load the profile.
-  // This is different from `loading` — it tells guards whether the
-  // profile data is available to make access decisions.
-  const profileReady = !loading && (user ? profile !== null : true)
-
   return (
     <AuthContext.Provider value={{
-      user, profile, loading, isAdmin, hasAccess, refreshProfile, profileReady
+      user, profile, loading, profileLoaded,
+      isAdmin, hasAccess, refreshProfile
     }}>
       {children}
     </AuthContext.Provider>

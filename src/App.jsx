@@ -55,38 +55,38 @@ function PublicOnly({ children }) {
 }
 
 function AppLayoutGuard() {
-  const { user, profile, loading } = useAuth()
+  const { user, profile, loading, profileLoaded } = useAuth()
   if (loading) return <LoadingSpinner fullPage />
   if (!user) return <Navigate to="/login" replace />
-  // Wait for profile before checking onboarding — don't redirect prematurely
-  if (user && !profile) return <LoadingSpinner fullPage />
+  // Wait for profile fetch to COMPLETE before making decisions
+  if (!profileLoaded) return <LoadingSpinner fullPage />
   if (profile && !profile.onboarding_completed) return <Navigate to="/onboarding" replace />
   return <AppLayout />
 }
 
 function AccessRequired({ children }) {
-  const { user, profile, hasAccess, loading } = useAuth()
+  const { user, hasAccess, loading, profileLoaded } = useAuth()
   if (loading) return <LoadingSpinner fullPage />
-  // CRITICAL: If user exists but profile hasn't loaded yet,
-  // keep showing loading — do NOT redirect to /sin-acceso.
-  if (user && !profile) return <LoadingSpinner fullPage />
+  // Wait for profile fetch to COMPLETE (success or failure)
+  if (user && !profileLoaded) return <LoadingSpinner fullPage />
   if (!hasAccess) return <Navigate to="/sin-acceso" replace />
   return children
 }
 
 function AdminLayoutGuard() {
-  const { user, profile, isAdmin, loading } = useAuth()
+  const { user, isAdmin, loading, profileLoaded } = useAuth()
   if (loading) return <LoadingSpinner fullPage />
   if (!user) return <Navigate to="/login" replace />
-  if (user && !profile) return <LoadingSpinner fullPage />
+  if (!profileLoaded) return <LoadingSpinner fullPage />
   if (!isAdmin) return <Navigate to="/dashboard" replace />
   return <AdminLayout />
 }
 
 function OnboardingGuard() {
-  const { user, profile, loading } = useAuth()
+  const { user, profile, loading, profileLoaded } = useAuth()
   if (loading) return <LoadingSpinner fullPage />
   if (!user) return <Navigate to="/login" replace />
+  if (!profileLoaded) return <LoadingSpinner fullPage />
   if (profile?.onboarding_completed) return <Navigate to="/dashboard" replace />
   return <Onboarding />
 }
