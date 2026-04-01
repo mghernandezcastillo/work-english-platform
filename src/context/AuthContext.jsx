@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useRef } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { getProfile } from '../lib/auth'
 
@@ -8,27 +8,11 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
-  const loadingRef = useRef(true)
-
-  // Keep ref in sync so the safety timeout can read the CURRENT value
-  function setLoadingSafe(val) {
-    loadingRef.current = val
-    setLoading(val)
-  }
 
   useEffect(() => {
     let mounted = true
 
-    // ═══ SAFETY TIMEOUT ═══
-    // NEVER let the app stay in loading state for more than 5 seconds.
-    const safetyTimer = setTimeout(() => {
-      if (mounted && loadingRef.current) {
-        console.warn('[Auth] Safety timeout: forcing loading=false after 5s')
-        setLoadingSafe(false)
-      }
-    }, 5000)
-
-    // ─── 1. Get initial session ───
+    // ─── Get initial session ───
     async function init() {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
@@ -39,7 +23,7 @@ export function AuthProvider({ children }) {
           await supabase.auth.signOut().catch(() => {})
           setUser(null)
           setProfile(null)
-          setLoadingSafe(false)
+          setLoading(false)
           return
         }
 
@@ -56,41 +40,43 @@ export function AuthProvider({ children }) {
           }
         }
 
-        if (mounted) setLoadingSafe(false)
+        if (mounted) setLoading(false)
       } catch (err) {
         console.warn('[Auth] Init error:', err)
         if (mounted) {
           setUser(null)
           setProfile(null)
-          setLoadingSafe(false)
+          setLoading(false)
         }
       }
     }
 
     init()
 
-    // ─── 2. Listen for auth changes ───
+    // ─── Listen for auth changes ───
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (!mounted) return
+
+        // Skip INITIAL_SESSION — init() handles it
         if (event === 'INITIAL_SESSION') return
 
         if (event === 'TOKEN_REFRESHED' && !session) {
           setUser(null)
           setProfile(null)
-          setLoadingSafe(false)
+          setLoading(false)
           return
         }
 
         if (event === 'SIGNED_OUT') {
           setUser(null)
           setProfile(null)
-          setLoadingSafe(false)
+          setLoading(false)
           return
         }
 
         if (event === 'SIGNED_IN' && session?.user) {
-          setLoadingSafe(true)
+          setLoading(true)
           setUser(session.user)
           try {
             const p = await getProfile(session.user.id)
@@ -98,7 +84,7 @@ export function AuthProvider({ children }) {
           } catch {
             if (mounted) setProfile(null)
           }
-          if (mounted) setLoadingSafe(false)
+          if (mounted) setLoading(false)
           return
         }
 
@@ -117,7 +103,6 @@ export function AuthProvider({ children }) {
 
     return () => {
       mounted = false
-      clearTimeout(safetyTimer)
       subscription.unsubscribe()
     }
   }, [])
@@ -136,8 +121,15 @@ export function AuthProvider({ children }) {
   const isAdmin = profile?.is_admin === true
   const hasAccess = ['beta', 'paid', 'unlimited'].includes(profile?.access_type)
 
+  // profileReady: true when we've finished trying to load the profile.
+  // This is different from `loading` — it tells guards whether the
+  // profile data is available to make access decisions.
+  const profileReady = !loading && (user ? profile !== null : true)
+
   return (
-    <AuthContext.Provider value={{ user, profile, loading, isAdmin, hasAccess, refreshProfile }}>
+    <AuthContext.Provider value={{
+      user, profile, loading, isAdmin, hasAccess, refreshProfile, profileReady
+    }}>
       {children}
     </AuthContext.Provider>
   )
