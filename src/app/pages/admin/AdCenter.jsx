@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import campaigns from '../../data/ads/ad-campaigns.json'
+import campaigns from '../../../data/ads/ad-campaigns.json'
 import './AdCenter.css'
 
 function CopyButton({ text, label = 'Copiar' }) {

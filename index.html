@@ -33,7 +33,6 @@
         var path = window.location.pathname;
         var landingRoutes = ['/ingles-para-trabajo', '/ingles-call-center'];
         if (landingRoutes.indexOf(path) !== -1) {
-          // Use setTimeout to ensure fbq script has loaded
           setTimeout(function() {
             fbq('track', 'ViewContent', {
               content_name: 'English for Work',
@@ -44,25 +43,26 @@
         }
       })();
     </script>
-    <noscript>
-      <img height="1" width="1" style="display:none"
-        src="https://www.facebook.com/tr?id=1789279795363607&ev=PageView&noscript=1"/>
-    </noscript>
     <!-- End Meta Pixel Code -->
 
   </head>
   <body>
+    <!-- Meta Pixel noscript fallback (must be in body, not head) -->
+    <noscript>
+      <img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=1789279795363607&ev=PageView&noscript=1"/>
+    </noscript>
+
     <div id="root"></div>
 
     <!-- ═══ SERVICE WORKER RECOVERY ═══
-         This runs BEFORE React. If a stale SW is serving this HTML and
-         the React chunks fail to load, this ensures users NEVER get stuck.
-         Once the new SW (without navigateFallback) is installed, this
-         script becomes a harmless no-op (the flag is set on first run). -->
+         Runs BEFORE React. Detects stale SW, unregisters it,
+         clears all caches, and reloads once for a clean slate.
+         After first run, sets a flag so it becomes a no-op. -->
     <script>
       (function() {
         var RECOVERY_KEY = 'ew-sw-v2-clean';
-        if (localStorage.getItem(RECOVERY_KEY)) return; // Already done
+        if (localStorage.getItem(RECOVERY_KEY)) return;
 
         if ('serviceWorker' in navigator) {
           navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -76,7 +76,6 @@
               }
               localStorage.setItem(RECOVERY_KEY, '1');
               if (hadOldSW) {
-                // Reload once to get a clean slate
                 window.location.reload();
               }
             });
