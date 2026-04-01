@@ -4,11 +4,20 @@ import { getProfile } from '../lib/auth'
 
 const AuthContext = createContext(null)
 
+// Wrap any promise with a timeout so it NEVER hangs forever
+function withTimeout(promise, ms, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`[Auth] ${label} timed out after ${ms}ms`)), ms)
+    )
+  ])
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
-  // profileLoaded = true once we've ATTEMPTED to load profile (success or failure)
   const [profileLoaded, setProfileLoaded] = useState(false)
 
   useEffect(() => {
@@ -16,7 +25,12 @@ export function AuthProvider({ children }) {
 
     async function init() {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession()
+        console.log('[Auth] init: calling getSession...')
+        const { data: { session }, error } = await withTimeout(
+          supabase.auth.getSession(), 8000, 'getSession'
+        )
+        console.log('[Auth] init: getSession done', { hasSession: !!session, error: error?.message })
+
         if (!mounted) return
 
         if (error) {
@@ -34,7 +48,11 @@ export function AuthProvider({ children }) {
 
         if (currentUser) {
           try {
-            const p = await getProfile(currentUser.id)
+            console.log('[Auth] init: calling getProfile...')
+            const p = await withTimeout(
+              getProfile(currentUser.id), 8000, 'getProfile'
+            )
+            console.log('[Auth] init: getProfile done', { hasProfile: !!p })
             if (mounted) setProfile(p)
           } catch (err) {
             console.warn('[Auth] Profile error:', err.message)
@@ -45,9 +63,12 @@ export function AuthProvider({ children }) {
           setProfileLoaded(true)
         }
 
-        if (mounted) setLoading(false)
+        if (mounted) {
+          console.log('[Auth] init: setting loading=false')
+          setLoading(false)
+        }
       } catch (err) {
-        console.warn('[Auth] Init error:', err)
+        console.warn('[Auth] Init error:', err.message)
         if (mounted) {
           setUser(null)
           setProfile(null)
@@ -62,6 +83,9 @@ export function AuthProvider({ children }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (!mounted) return
+        console.log('[Auth] onAuthStateChange:', event)
+
+        // Skip INITIAL_SESSION — init() handles it
         if (event === 'INITIAL_SESSION') return
 
         if (event === 'TOKEN_REFRESHED' && !session) {
@@ -85,7 +109,9 @@ export function AuthProvider({ children }) {
           setProfileLoaded(false)
           setUser(session.user)
           try {
-            const p = await getProfile(session.user.id)
+            const p = await withTimeout(
+              getProfile(session.user.id), 8000, 'getProfile (SIGNED_IN)'
+            )
             if (mounted) setProfile(p)
           } catch {
             if (mounted) setProfile(null)
@@ -97,11 +123,13 @@ export function AuthProvider({ children }) {
           return
         }
 
-        // TOKEN_REFRESHED with valid session
-        setUser(session?.user ?? null)
-        if (session?.user) {
+        // TOKEN_REFRESHED with valid session — update silently
+        if (event === 'TOKEN_REFRESHED' && session?.user) {
+          setUser(session.user)
           try {
-            const p = await getProfile(session.user.id)
+            const p = await withTimeout(
+              getProfile(session.user.id), 8000, 'getProfile (TOKEN_REFRESHED)'
+            )
             if (mounted) setProfile(p)
           } catch {
             if (mounted) setProfile(null)
