@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import { getProfile } from '../lib/auth'
 
@@ -8,41 +8,62 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
+  const initialLoad = useRef(true)
 
   useEffect(() => {
-    // Get initial session — handle stale/expired sessions gracefully
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
+    let mounted = true
+
+    // ─── 1. Get initial session ───
+    supabase.auth.getSession().then(async ({ data: { session }, error }) => {
+      if (!mounted) return
+
       if (error) {
         console.warn('Session error, clearing:', error.message)
         supabase.auth.signOut().catch(() => {})
         setUser(null)
         setProfile(null)
         setLoading(false)
+        initialLoad.current = false
         return
       }
-      setUser(session?.user ?? null)
-      if (session?.user) {
-        getProfile(session.user.id)
-          .then(setProfile)
-          .catch((err) => {
-            console.warn('Profile load error:', err.message)
-            setProfile(null)
-          })
-          .finally(() => setLoading(false))
-      } else {
+
+      const currentUser = session?.user ?? null
+      setUser(currentUser)
+
+      if (currentUser) {
+        try {
+          const p = await getProfile(currentUser.id)
+          if (mounted) setProfile(p)
+        } catch (err) {
+          console.warn('Profile load error:', err.message)
+          if (mounted) setProfile(null)
+        }
+      }
+
+      if (mounted) {
         setLoading(false)
+        initialLoad.current = false
       }
     }).catch(() => {
-      // Total failure — clear everything gracefully
-      setUser(null)
-      setProfile(null)
-      setLoading(false)
+      if (mounted) {
+        setUser(null)
+        setProfile(null)
+        setLoading(false)
+        initialLoad.current = false
+      }
     })
 
-    // Listen for auth changes
+    // ─── 2. Listen for auth changes (login, logout, token refresh) ───
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        // Handle token refresh failures (stale session after deploy)
+        if (!mounted) return
+
+        // Skip the INITIAL_SESSION event — we already handle it above
+        // via getSession(). Processing it again causes a race condition
+        // where loading gets set back to true after getSession set it false.
+        if (event === 'INITIAL_SESSION') return
+
+        // Handle token refresh failures
         if (event === 'TOKEN_REFRESHED' && !session) {
           console.warn('Token refresh failed, signing out')
           setUser(null)
@@ -58,30 +79,39 @@ export function AuthProvider({ children }) {
           return
         }
 
-        // IMPORTANT: Set loading=true BEFORE updating user state.
-        // This prevents the flash where user is set but profile hasn't
-        // loaded yet, which causes AccessRequired to briefly redirect
-        // to /sin-acceso before profile arrives.
-        if (session?.user) {
+        // For SIGNED_IN events: set loading true to prevent flash,
+        // then load profile, then set loading false.
+        if (event === 'SIGNED_IN' && session?.user) {
           setLoading(true)
+          setUser(session.user)
+          try {
+            const p = await getProfile(session.user.id)
+            if (mounted) setProfile(p)
+          } catch {
+            if (mounted) setProfile(null)
+          }
+          if (mounted) setLoading(false)
+          return
         }
 
+        // For any other event (TOKEN_REFRESHED with session, etc.)
+        // just update user silently without flashing loading state
         setUser(session?.user ?? null)
         if (session?.user) {
           try {
             const p = await getProfile(session.user.id)
-            setProfile(p)
+            if (mounted) setProfile(p)
           } catch {
-            setProfile(null)
+            if (mounted) setProfile(null)
           }
-        } else {
-          setProfile(null)
         }
-        setLoading(false)
       }
     )
 
-    return () => subscription.unsubscribe()
+    return () => {
+      mounted = false
+      subscription.unsubscribe()
+    }
   }, [])
 
   const refreshProfile = async () => {
