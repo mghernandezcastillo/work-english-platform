@@ -92,14 +92,62 @@ export default function LessonView() {
     }
   }
 
-  async function handleLessonComplete() {
-    // Wait for progress to save BEFORE navigating
-    const saved = await markComplete()
-    if (!saved) {
-      console.warn('Progress may not have been saved')
+  const [showStreakModal, setShowStreakModal] = useState(false)
+  const [streakCount, setStreakCount] = useState(0)
+
+  const STREAK_MESSAGES = [
+    { min: 1, msg: '¡Gran comienzo! Cada día cuenta 💪', sub: 'Sigue aprendiendo para construir tu racha' },
+    { min: 2, msg: '¡Vas en racha! No pares ahora 🚀', sub: 'La consistencia es la clave del éxito' },
+    { min: 3, msg: '¡3 días seguidos! Eres imparable 🔥', sub: 'Los mejores resultados vienen con la práctica diaria' },
+    { min: 5, msg: '¡5 días! Tu inglés está subiendo de nivel ⭐', sub: 'Los empleadores notan la diferencia' },
+    { min: 7, msg: '¡Una semana completa! Eres un crack 🏆', sub: 'Tu futuro profesional te lo agradece' },
+    { min: 14, msg: '¡2 semanas! Tu dedicación es inspiradora 👑', sub: 'Ya estás en otro nivel' },
+    { min: 30, msg: '¡1 MES! Eres una leyenda 🌟', sub: 'Nada te detiene' },
+  ]
+
+  function getStreakMessage(days) {
+    for (let i = STREAK_MESSAGES.length - 1; i >= 0; i--) {
+      if (days >= STREAK_MESSAGES[i].min) return STREAK_MESSAGES[i]
     }
-    // Small delay to ensure DB write completes
+    return STREAK_MESSAGES[0]
+  }
+
+  async function calculateCurrentStreak() {
+    if (!profile?.id) return 0
+    const { data } = await supabase
+      .from('user_progress')
+      .select('completed_at')
+      .eq('user_id', profile.id)
+      .eq('completed', true)
+      .order('completed_at', { ascending: false })
+    if (!data?.length) return 1 // First lesson = day 1
+
+    const dates = [...new Set(data.map(r => new Date(r.completed_at).toDateString()))]
+    let streak = 0
+    const today = new Date()
+    for (let i = 0; i < 365; i++) {
+      const check = new Date(today)
+      check.setDate(check.getDate() - i)
+      if (dates.includes(check.toDateString())) {
+        streak++
+      } else if (i > 0) break // Allow today to not be counted yet
+    }
+    return Math.max(streak, 1)
+  }
+
+  async function handleLessonComplete() {
+    const saved = await markComplete()
+    if (!saved) console.warn('Progress may not have been saved')
     await new Promise(r => setTimeout(r, 300))
+
+    // Calculate and show streak
+    const days = await calculateCurrentStreak()
+    setStreakCount(days)
+    setShowStreakModal(true)
+  }
+
+  function handleStreakContinue() {
+    setShowStreakModal(false)
     const routeId = lesson.modules?.route_id || lesson.modules?.routes?.id
     if (routeId) navigate(`/ruta/${routeId}`)
     else navigate('/dashboard')
@@ -215,6 +263,37 @@ export default function LessonView() {
           </Button>
         </div>
       )}
+
+      {/* ── Streak Celebration Modal ── */}
+      {showStreakModal && (() => {
+        const streakMsg = getStreakMessage(streakCount)
+        return (
+          <div className="streak-overlay" onClick={handleStreakContinue}>
+            <div className="streak-modal" onClick={e => e.stopPropagation()}>
+              <div className="streak-confetti-wrap">
+                {['🔥','⭐','🎉','✨','💪','🏆','🇺🇸','🎯'].map((e, i) => (
+                  <span key={i} className="streak-confetti-piece" style={{
+                    left: `${8 + Math.random() * 84}%`,
+                    animationDelay: `${i * 0.18}s`,
+                  }}>{e}</span>
+                ))}
+              </div>
+
+              <div className="streak-fire-badge">🔥</div>
+              <div className="streak-count-display">
+                <span className="streak-number">{streakCount}</span>
+                <span className="streak-unit">{streakCount === 1 ? 'día' : 'días'}</span>
+              </div>
+              <h2 className="streak-main-msg">{streakMsg.msg}</h2>
+              <p className="streak-sub-msg">{streakMsg.sub}</p>
+
+              <button className="streak-continue-btn" onClick={handleStreakContinue}>
+                Continuar →
+              </button>
+            </div>
+          </div>
+        )
+      })()}
     </div>
   )
 }

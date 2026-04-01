@@ -58,6 +58,14 @@ export function AuthProvider({ children }) {
           return
         }
 
+        // IMPORTANT: Set loading=true BEFORE updating user state.
+        // This prevents the flash where user is set but profile hasn't
+        // loaded yet, which causes AccessRequired to briefly redirect
+        // to /sin-acceso before profile arrives.
+        if (session?.user) {
+          setLoading(true)
+        }
+
         setUser(session?.user ?? null)
         if (session?.user) {
           try {

@@ -6,8 +6,9 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      // prompt strategy — shows an update toast instead of silently caching
-      registerType: 'prompt',
+      // Auto-update: new SW activates immediately on page load
+      // This prevents stale cache issues after deploys
+      registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'images/*.png', 'images/*.svg'],
       manifest: {
         name: 'English for Work',
@@ -24,19 +25,14 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // Only precache the HTML shell and large static assets
-        // JS/CSS get content-hashed filenames from Vite, so they naturally
-        // bust the cache. We just need the SW to let them through.
-        globPatterns: ['**/*.{html,ico,png,svg,woff2}'],
-        // Don't precache JS/CSS chunks — serve them network-first
-        // so new deploys are picked up immediately
+        // Only precache static assets — NOT HTML (served network-first)
+        globPatterns: ['**/*.{ico,png,svg,woff2}'],
         navigateFallback: '/index.html',
         navigateFallbackAllowlist: [/^\//],
-        // Clean up old caches from previous SW versions automatically
         cleanupOutdatedCaches: true,
-        // Skip waiting + claim immediately when the user accepts the update
-        skipWaiting: false,
-        clientsClaim: false,
+        // Activate new SW immediately — no stale versions
+        skipWaiting: true,
+        clientsClaim: true,
         runtimeCaching: [
           {
             // Supabase API calls — always network first

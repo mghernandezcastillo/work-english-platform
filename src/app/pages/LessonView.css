@@ -148,3 +148,154 @@
   50% { opacity: 0.6; }
 }
 .animate-pulse { animation: pulse 2s ease-in-out infinite; }
+
+/* ── Streak Celebration Overlay ── */
+.streak-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: streakFadeIn 0.3s ease;
+  padding: var(--space-4);
+}
+
+.streak-modal {
+  background: linear-gradient(145deg, #0F172A, #1E293B);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 28px;
+  padding: 40px 32px 36px;
+  text-align: center;
+  max-width: 340px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(251,191,36,0.15);
+  animation: streakScaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Glowing top border */
+.streak-modal::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #F59E0B, #EF4444, #F59E0B);
+  border-radius: 28px 28px 0 0;
+}
+
+/* Confetti container */
+.streak-confetti-wrap {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.streak-confetti-piece {
+  position: absolute;
+  top: -30px;
+  font-size: 20px;
+  animation: streakConfettiFall 2.5s ease-in forwards;
+  opacity: 0.9;
+}
+
+/* Fire badge */
+.streak-fire-badge {
+  font-size: 56px;
+  margin-bottom: 8px;
+  display: block;
+  animation: streakFirePulse 1s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.6));
+}
+
+/* Counter */
+.streak-count-display {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.streak-number {
+  font-size: 72px;
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(135deg, #FCD34D, #F59E0B, #EF4444);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-variant-numeric: tabular-nums;
+}
+
+.streak-unit {
+  font-size: 22px;
+  font-weight: 700;
+  color: #94A3B8;
+  padding-bottom: 10px;
+}
+
+.streak-main-msg {
+  font-size: 18px;
+  font-weight: 700;
+  color: #F1F5F9;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.streak-sub-msg {
+  font-size: 13px;
+  color: #64748B;
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+.streak-continue-btn {
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #F59E0B, #EF4444);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
+  font-family: var(--font-primary, Inter, system-ui);
+}
+
+.streak-continue-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(245, 158, 11, 0.45);
+}
+
+.streak-continue-btn:active {
+  transform: translateY(0);
+}
+
+/* Animations */
+@keyframes streakFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes streakScaleIn {
+  from { opacity: 0; transform: scale(0.7) translateY(40px); }
+  to   { opacity: 1; transform: scale(1)   translateY(0); }
+}
+
+@keyframes streakFirePulse {
+  from { transform: scale(1) rotate(-3deg); }
+  to   { transform: scale(1.1) rotate(3deg); }
+}
+
+@keyframes streakConfettiFall {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 0.9; }
+  80%  { opacity: 0.7; }
+  100% { transform: translateY(400px) rotate(720deg); opacity: 0; }
+}
