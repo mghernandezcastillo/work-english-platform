@@ -53,6 +53,40 @@
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- ═══ SERVICE WORKER RECOVERY ═══
+         This runs BEFORE React. If a stale SW is serving this HTML and
+         the React chunks fail to load, this ensures users NEVER get stuck.
+         Once the new SW (without navigateFallback) is installed, this
+         script becomes a harmless no-op (the flag is set on first run). -->
+    <script>
+      (function() {
+        var RECOVERY_KEY = 'ew-sw-v2-clean';
+        if (localStorage.getItem(RECOVERY_KEY)) return; // Already done
+
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function(regs) {
+            var hadOldSW = regs.length > 0;
+            var promises = regs.map(function(r) { return r.unregister(); });
+            Promise.all(promises).then(function() {
+              if ('caches' in window) {
+                caches.keys().then(function(names) {
+                  names.forEach(function(n) { caches.delete(n); });
+                });
+              }
+              localStorage.setItem(RECOVERY_KEY, '1');
+              if (hadOldSW) {
+                // Reload once to get a clean slate
+                window.location.reload();
+              }
+            });
+          });
+        } else {
+          localStorage.setItem(RECOVERY_KEY, '1');
+        }
+      })();
+    </script>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
