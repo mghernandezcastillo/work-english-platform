@@ -2,20 +2,23 @@
 
 ---
 
-## 📊 Estado actual — última ejecución: 2026-03-30
+## 📊 Estado actual — última ejecución: 2026-03-31
 
 ### ✅ Lo que ya está generado
-- **193 MP3s** subidos a Supabase Storage (`lesson-audios` bucket)
-- **Frases principales (phrases)**: 188/200 generadas — casi todas ✅
-- Voz usada: **Sarah** (`EXAVITQu4vr4xnSDxMaL`) — inglés americano, plan gratuito
+- **193 MP3s** en lecciones subidos a Supabase Storage (`lesson-audios` bucket)
+- **~23 MP3s** de simulaciones en bucket `sim-audios` (7/sim × 3 simulaciones principales)
+- **Frases principales (phrases)**: 188/200 generadas
+- Voz usada en lecciones: **Sarah** (`EXAVITQu4vr4xnSDxMaL`) — inglés americano, plan gratuito
+- Voces usadas en simulaciones: **Sarah** (female) + **Callum** (`N2lVS1w4EtoT3dr4eOWO`) (male)
 
 ### ⏳ Pendiente (próxima sesión)
 
 | Tipo | Items pendientes | Chars necesarios | Cuota necesaria |
 |------|-----------------|-------------------|-----------------|
-| **Phrases** (12 frases fallidas al final) | 12 | 484 | ~484 |
+| **Phrases** (12 frases fallidas) | 12 | 484 | ~484 |
 | **Practice scenarios** | 32 | 8,563 | ~8,563 |
 | **Examples** (diálogos largos) | 53 | 19,842 | ~20K — requiere 2 meses |
+| **Simulations audio** ✅ | sim-r1/r2/r3 | ~2,302 | ✅ DONE |
 | **TOTAL prioritario** (phrases + practice) | **44** | **~9,047** | **Cabe en 1 mes** |
 
 > 💡 Los *examples* son diálogos largos (emails, conversaciones). Dado su tamaño (19K chars),
@@ -50,17 +53,20 @@ Lecciones `les-3-3-3` y `les-3-3-4` — se quedaron sin cuota:
 
 El 1 de cada mes ElevenLabs resetea la cuota a 10,000 chars.
 
-**Próxima ejecución:** ~2026-05-01
-- El script ya está listo en `scripts/generate-audio.js`
-- Es idempotente: omite automáticamente las frases que ya tienen `audioUrl`
-- Solo debe ejecutarse con la cuota reseteada
-- Generará: 12 frases pendientes + 32 practice scenarios = **~9,047 chars** (dentro del límite)
+**Próxima ejecución:** ~2026-05-01 (cuando resetee la cuota)
+- Script de lecciones: `scripts/generate-audio.js` (idempotente)
+- Script de simulaciones: `scripts/update-rich-simulations.js` (idempotente)
+- Generará: 12 frases pendientes + 32 practice scenarios = **~9,047 chars**
+- Cuota restante en API key `sk_fe54ecb7...`: **~7,698 chars** (corre el 1° de mayo con cuota fresh)
 
 ```powershell
-# Ejecutar el 1° de mayo (o cuando haya cuota disponible):
-$env:ELEVENLABS_API_KEY="sk_8152573d944331e81a3ce867a82ee9b388d25f27abcc83c4"
+# Ejecutar el 1° de mayo (cuota se resetea):
+$env:ELEVENLABS_API_KEY="sk_fe54ecb7a1ad52e8a41923cf22d110dbfdd55da3acf0dfc9"
 $env:SUPABASE_SERVICE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10b2Jnd2ZrbmVmamxwb3h6bnF4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDcyMTM5NCwiZXhwIjoyMDkwMjk3Mzk0fQ.VLZEvsAWPPzSHQ6PELBuFFUeaj8rtGPZ6ZWUJNoQolQ"
+# Lecciones (frases + practice)
 node scripts/generate-audio.js
+# Simulaciones (ya completadas, pero se pueden re-ejecutar si hay nuevas)
+# node scripts/update-rich-simulations.js
 ```
 
 > ⚠️ Los examples (53 items, 19,842 chars) quedan con Web Speech API de respaldo.
