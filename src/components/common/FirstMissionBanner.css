@@ -1,0 +1,142 @@
+/* ── First Mission Banner ── */
+.fmb-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg,
+    rgba(16, 185, 129, 0.08) 0%,
+    rgba(59, 130, 246, 0.06) 100%
+  );
+  border: 1.5px dashed rgba(16, 185, 129, 0.35);
+  margin-bottom: var(--space-4);
+  animation: fmb-appear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes fmb-appear {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── Animated figure ── */
+.fmb-figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 2px;
+}
+
+.fmb-head {
+  position: relative;
+  animation: fmb-nod 2.4s ease-in-out infinite;
+}
+.fmb-face {
+  font-size: 36px;
+  display: block;
+  line-height: 1;
+}
+@keyframes fmb-nod {
+  0%, 100% { transform: rotate(0deg); }
+  25%  { transform: rotate(-6deg); }
+  75%  { transform: rotate(6deg); }
+}
+
+.fmb-body {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.fmb-torso {
+  width: 20px;
+  height: 28px;
+  background: var(--color-primary);
+  border-radius: 4px 4px 6px 6px;
+}
+
+.fmb-arm {
+  font-size: 20px;
+  line-height: 1;
+}
+.fmb-arm-left {
+  animation: fmb-carry 1.8s ease-in-out infinite;
+}
+@keyframes fmb-carry {
+  0%, 100% { transform: translateY(0); }
+  50%  { transform: translateY(-3px); }
+}
+
+.fmb-arm-right.fmb-wave {
+  transform-origin: bottom center;
+  animation: fmb-wave-hand 1.2s ease-in-out infinite;
+}
+@keyframes fmb-wave-hand {
+  0%, 100% { transform: rotate(0deg); }
+  30%  { transform: rotate(-25deg); }
+  60%  { transform: rotate(15deg); }
+}
+
+/* ── Bouncing arrow ── */
+.fmb-arrow-row {
+  margin-top: 6px;
+}
+.fmb-arrow-bounce {
+  font-size: 20px;
+  color: var(--color-primary);
+  font-weight: 800;
+  animation: fmb-bounce 1s ease-in-out infinite;
+}
+@keyframes fmb-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%  { transform: translateY(6px); }
+}
+
+/* ── Text side ── */
+.fmb-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.fmb-title {
+  font-size: var(--text-base);
+  font-weight: var(--font-bold);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.fmb-tip {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+  min-height: 40px;
+  animation: fmb-tip-fade 0.4s ease;
+}
+@keyframes fmb-tip-fade {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.fmb-cta {
+  align-self: flex-start;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 9px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+}
+.fmb-cta:hover {
+  background: var(--color-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.45);
+}
+.fmb-cta:active { transform: translateY(0); }

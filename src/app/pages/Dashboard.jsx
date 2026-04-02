@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { RoutesLoader } from '../../components/common/RoutesLoader'
 import { DailyPhrase } from '../../components/common/DailyPhrase'
+import { FirstMissionBanner } from '../../components/common/FirstMissionBanner'
 import './Dashboard.css'
 
 const routeMeta = {
@@ -206,6 +207,11 @@ export default function Dashboard() {
 
       {/* ── Routes ── */}
       <h3 className="mc-section-title">Elige tu ruta</h3>
+
+      {/* First-time user nudge — only when 0% and loaded */}
+      {!loading && pct === 0 && routes.length > 0 && (
+        <FirstMissionBanner firstRoute={routes[0]} />
+      )}
 
       {loading ? (
         <RoutesLoader />
