@@ -97,7 +97,11 @@ export default function AudioPlayer({ src, label }) {
         onClick={togglePlay}
         title={playing ? 'Pausar' : 'Reproducir'}
       >
-        {playing ? '⏸' : '▶'}
+        {playing ? (
+          <span className="audio-wave">
+            <span /><span /><span /><span />
+          </span>
+        ) : '▶'}
       </button>
       <div className="audio-info">
         {label && <span className="audio-label">{label}</span>}

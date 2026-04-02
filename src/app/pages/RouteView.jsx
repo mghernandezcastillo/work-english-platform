@@ -15,6 +15,8 @@ export default function RouteView() {
   const [modules, setModules] = useState([])
   const [completedLessons, setCompletedLessons] = useState(new Set())
   const [loading, setLoading] = useState(true)
+  const [shakingLesson, setShakingLesson] = useState(null)
+  const [lockedToast, setLockedToast] = useState(false)
 
   useEffect(() => {
     loadRoute()
@@ -60,6 +62,13 @@ export default function RouteView() {
     }
   }
 
+  function handleLockedClick(lessonId) {
+    setShakingLesson(lessonId)
+    setLockedToast(true)
+    setTimeout(() => setShakingLesson(null), 600)
+    setTimeout(() => setLockedToast(false), 2500)
+  }
+
   if (loading) return <LoadingSpinner fullPage />
   if (!route) return <div className="text-center" style={{ padding: 40 }}><h3>Ruta no encontrada</h3></div>
 
@@ -67,6 +76,12 @@ export default function RouteView() {
 
   return (
     <div className="route-view animate-fadeIn">
+      {/* Locked lesson toast */}
+      {lockedToast && (
+        <div className="route-locked-toast">
+          🔒 Completa la lección anterior primero 💪
+        </div>
+      )}
       {/* Header */}
       <button className="route-back" onClick={() => navigate('/dashboard')}>
         ← Volver
@@ -113,8 +128,8 @@ export default function RouteView() {
                     <Card
                       key={lesson.id}
                       hover={!isLocked}
-                      onClick={() => !isLocked && navigate(`/leccion/${lesson.id}`)}
-                      className={`route-lesson-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''}`}
+                      onClick={() => isLocked ? handleLockedClick(lesson.id) : navigate(`/leccion/${lesson.id}`)}
+                      className={`route-lesson-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''} ${shakingLesson === lesson.id ? 'shaking' : ''}`}
                     >
                       <CardBody>
                         <div className="flex items-center gap-3">

@@ -10,6 +10,7 @@ export default function Progress() {
   const { profile } = useAuth()
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [heatmapDays, setHeatmapDays] = useState({})
 
   useEffect(() => { loadProgress() }, [profile])
 
@@ -42,6 +43,19 @@ export default function Progress() {
       const totalAll = routeStats.reduce((s, r) => s + r.totalLessons, 0)
       const completedAll = routeStats.reduce((s, r) => s + r.completedLessons, 0)
 
+      // Build heatmap: count completions per day over last 91 days (13 weeks)
+      const heatmap = {}
+      const cutoff = new Date()
+      cutoff.setDate(cutoff.getDate() - 90)
+      ;(progressData || []).forEach(p => {
+        if (!p.completed || !p.completed_at) return
+        const d = new Date(p.completed_at)
+        if (d < cutoff) return
+        const key = d.toISOString().slice(0, 10)
+        heatmap[key] = (heatmap[key] || 0) + 1
+      })
+
+      setHeatmapDays(heatmap)
       setStats({ routes: routeStats, totalAll, completedAll })
     } catch (err) {
       console.error('Error loading progress:', err)
@@ -55,6 +69,22 @@ export default function Progress() {
   }
 
   const overallPercent = stats?.totalAll ? Math.round((stats.completedAll / stats.totalAll) * 100) : 0
+
+  // Build last 91 days array for heatmap
+  function buildHeatmapGrid() {
+    const days = []
+    const today = new Date()
+    for (let i = 90; i >= 0; i--) {
+      const d = new Date(today)
+      d.setDate(d.getDate() - i)
+      const key = d.toISOString().slice(0, 10)
+      const count = heatmapDays[key] || 0
+      days.push({ key, count, date: d })
+    }
+    return days
+  }
+  const heatGrid = buildHeatmapGrid()
+  const activeDays = heatGrid.filter(d => d.count > 0).length
 
   return (
     <div className="progress-page animate-fadeIn">
@@ -75,6 +105,36 @@ export default function Progress() {
           </CardBody>
         </Card>
       </div>
+
+      {/* GitHub-style heatmap */}
+      <Card style={{ marginBottom: 'var(--space-4)' }}>
+        <CardBody>
+          <div className="heatmap-header">
+            <span className="heatmap-title">🗓️ Tu actividad</span>
+            <span className="heatmap-subtitle">{activeDays} días activos en los últimos 3 meses</span>
+          </div>
+          <div className="heatmap-grid">
+            {heatGrid.map(({ key, count, date }) => {
+              const intensity = count === 0 ? 0 : count === 1 ? 1 : count <= 3 ? 2 : 3
+              return (
+                <div
+                  key={key}
+                  className={`heatmap-cell intensity-${intensity}`}
+                  title={`${date.toLocaleDateString('es-CO', { month: 'short', day: 'numeric' })}: ${count} lección${count !== 1 ? 'es' : ''}`}
+                />
+              )
+            })}
+          </div>
+          <div className="heatmap-legend">
+            <span>Menos</span>
+            <div className="heatmap-cell intensity-0" />
+            <div className="heatmap-cell intensity-1" />
+            <div className="heatmap-cell intensity-2" />
+            <div className="heatmap-cell intensity-3" />
+            <span>Más</span>
+          </div>
+        </CardBody>
+      </Card>
 
       {/* Progress by route */}
       <h3 style={{ marginTop: 'var(--space-6)', marginBottom: 'var(--space-3)' }}>Por ruta</h3>

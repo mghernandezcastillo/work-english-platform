@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { LoadingSpinner } from '../../components/common/LoadingSpinner'
+import { XPNotification } from '../../components/common/XPNotification'
 import { Button } from '../../components/common/Button'
 import ObjectiveStep from '../../components/learning/steps/ObjectiveStep'
 import PhrasesStep from '../../components/learning/steps/PhrasesStep'
@@ -92,6 +93,7 @@ export default function LessonView() {
     }
   }
 
+  const [showXP, setShowXP] = useState(false)
   const [showStreakModal, setShowStreakModal] = useState(false)
   const [streakCount, setStreakCount] = useState(0)
 
@@ -138,9 +140,12 @@ export default function LessonView() {
   async function handleLessonComplete() {
     const saved = await markComplete()
     if (!saved) console.warn('Progress may not have been saved')
-    await new Promise(r => setTimeout(r, 300))
 
-    // Calculate and show streak
+    // Show XP first
+    setShowXP(true)
+    await new Promise(r => setTimeout(r, 900))
+
+    // Then show streak modal
     const days = await calculateCurrentStreak()
     setStreakCount(days)
     setShowStreakModal(true)
@@ -203,6 +208,7 @@ export default function LessonView() {
 
   return (
     <div className="lesson-view animate-fadeIn">
+      <XPNotification xp={25} show={showXP} />
       {/* Header */}
       <div className="lesson-header">
         <button className="route-back" onClick={() => {

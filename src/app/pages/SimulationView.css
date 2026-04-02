@@ -67,3 +67,44 @@
 }
 .sim-feedback.correct { background: var(--color-primary-light); color: var(--color-primary-hover); }
 .sim-feedback.wrong { background: var(--color-error-light); color: #B91C1C; }
+
+/* ── Typing bubble ── */
+.sim-typing-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+  animation: sim-bubble-in 0.25s ease;
+}
+@keyframes sim-bubble-in {
+  from { opacity: 0; transform: translateY(6px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+.sim-typing-speaker {
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-muted);
+}
+.sim-typing-dots {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  padding: 2px 0;
+}
+.sim-typing-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  opacity: 0.4;
+  animation: typing-bounce 1.2s ease-in-out infinite;
+}
+.sim-typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.sim-typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30%            { transform: translateY(-6px); opacity: 1; }
+}

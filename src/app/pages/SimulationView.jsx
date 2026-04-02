@@ -19,6 +19,7 @@ export default function SimulationView() {
   const [responses, setResponses] = useState([])
   const [finished, setFinished] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [showTyping, setShowTyping] = useState(false)
 
   useEffect(() => { loadSimulation() }, [simId])
 
@@ -59,10 +60,14 @@ export default function SimulationView() {
       setFinished(true)
       saveProgress(turns)
     } else {
-      setCurrentTurn(t => t + 1)
-      setSelectedOption(null)
-      setShowFeedback(false)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      setShowTyping(true)
+      setTimeout(() => {
+        setCurrentTurn(t => t + 1)
+        setSelectedOption(null)
+        setShowFeedback(false)
+        setShowTyping(false)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }, 1200)
     }
   }
 
@@ -150,7 +155,14 @@ export default function SimulationView() {
       )}
 
       {/* Other person speaks */}
-      {turn?.prompt && (
+      {showTyping ? (
+        <div className="sim-typing-bubble">
+          <div className="sim-typing-speaker">👤 {turn?.speaker || 'Otra persona'}</div>
+          <div className="sim-typing-dots">
+            <span /><span /><span />
+          </div>
+        </div>
+      ) : turn?.prompt && (
         <Card className="sim-prompt-card">
           <CardBody>
             <div className="sim-speaker">👤 {turn.speaker || 'Otra persona'}:</div>
