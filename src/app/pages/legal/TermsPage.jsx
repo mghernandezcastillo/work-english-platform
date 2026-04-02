@@ -8,7 +8,7 @@ export default function TermsPage() {
     <div className="legal-page">
       <div className="legal-container">
         {/* Header */}
-        <a href="/ingles-para-trabajo" className="legal-back">← Volver al inicio</a>
+        <button className="legal-back" onClick={() => window.history.back()}>← Volver</button>
         <h1 className="legal-title">📄 Términos y Condiciones de Uso</h1>
         <p className="legal-meta">
           Última actualización: 2 de abril de {YEAR} · Aplicable desde la fecha de compra.

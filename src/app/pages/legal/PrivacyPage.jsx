@@ -8,7 +8,7 @@ export default function PrivacyPage() {
     <div className="legal-page">
       <div className="legal-container">
         {/* Header */}
-        <a href="/ingles-para-trabajo" className="legal-back">← Volver al inicio</a>
+        <button className="legal-back" onClick={() => window.history.back()}>← Volver</button>
         <h1 className="legal-title">🔏 Política de Privacidad y Tratamiento de Datos Personales</h1>
         <p className="legal-meta">
           Última actualización: 2 de abril de {YEAR} · Vigente desde la fecha de compra o registro.
