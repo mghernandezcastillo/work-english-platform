@@ -46,7 +46,9 @@ export default function LessonView() {
         .eq('id', lessonId)
         .single()
       setLesson(data)
-      setCurrentStep(0)
+      // Restore last step if user was interrupted (screen lock, reload, etc.)
+      const saved = parseInt(localStorage.getItem(`lesson_step_${lessonId}`))
+      setCurrentStep(Number.isFinite(saved) && saved > 0 ? saved : 0)
     } catch (err) {
       console.error('Error loading lesson:', err)
     } finally {
@@ -141,6 +143,9 @@ export default function LessonView() {
     const saved = await markComplete()
     if (!saved) console.warn('Progress may not have been saved')
 
+    // Clear saved step — lesson is done
+    localStorage.removeItem(`lesson_step_${lessonId}`)
+
     // Show XP first
     setShowXP(true)
     await new Promise(r => setTimeout(r, 900))
@@ -161,6 +166,8 @@ export default function LessonView() {
   function goToStep(index) {
     if (index >= 0 && index < STEPS.length) {
       setCurrentStep(index)
+      // Persist step so interruptions (screen lock, reload) don't reset progress
+      localStorage.setItem(`lesson_step_${lessonId}`, index)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
