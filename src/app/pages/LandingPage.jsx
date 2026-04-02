@@ -274,15 +274,16 @@ export default function LandingPage() {
         <div className="landing-container text-center">
           <p>🇺🇸 {brand.name} · {brand.legal.country}</p>
           <div className="footer-links">
-            <a href="/terminos">Términos de Uso</a>
+            <a href="/terminos">Términos y Condiciones</a>
             <a href="/politica-privacidad">Política de Privacidad</a>
             <a href="/login">Ingresar</a>
           </div>
-          <p className="text-xs" style={{ marginTop: 8, color: '#94A3B8' }}>
-            {brand.legal.company} · {brand.legal.country}
+          <p className="text-xs" style={{ marginTop: 10, color: '#94A3B8' }}>
+            © {new Date().getFullYear()} {brand.name} · Todos los derechos reservados · Colombia
           </p>
         </div>
       </footer>
+
     </div>
   )
 }

@@ -35,6 +35,8 @@ const AdminBeta = lazy(() => import('./app/admin/AdminBeta'))
 const AdminTestimonials = lazy(() => import('./app/admin/AdminTestimonials'))
 const AdminSettings = lazy(() => import('./app/admin/AdminSettings'))
 const AdminAdCenter = lazy(() => import('./app/pages/admin/AdCenter'))
+const TermsPage = lazy(() => import('./app/pages/legal/TermsPage'))
+const PrivacyPage = lazy(() => import('./app/pages/legal/PrivacyPage'))
 
 // Placeholder
 const Placeholder = ({ title, emoji = '🚧' }) => (
@@ -142,8 +144,8 @@ function AppRoutes() {
       </Route>
 
       {/* Legal */}
-      <Route path="/terminos" element={<Placeholder title="Términos de Uso" emoji="📄" />} />
-      <Route path="/politica-privacidad" element={<Placeholder title="Política de Privacidad" emoji="🔏" />} />
+      <Route path="/terminos" element={<TermsPage />} />
+      <Route path="/politica-privacidad" element={<PrivacyPage />} />
 
       <Route path="*" element={<Placeholder title="Página no encontrada" emoji="🔍" />} />
     </Routes>
