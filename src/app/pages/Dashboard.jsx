@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { RoutesLoader } from '../../components/common/RoutesLoader'
+import { DailyPhrase } from '../../components/common/DailyPhrase'
 import './Dashboard.css'
 
 const routeMeta = {
@@ -238,11 +239,8 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── Tip del día ── */}
-      <div className="mc-tip">
-        <span>💡</span>
-        <p>La constancia importa más que la intensidad. <strong>15 min al día</strong> es suficiente.</p>
-      </div>
+      {/* ── Frase del día ── */}
+      <DailyPhrase />
     </div>
   )
 }

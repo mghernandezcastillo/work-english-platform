@@ -61,3 +61,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ErrorBoundary>
   </React.StrictMode>,
 )
+
+// ═══ SERVICE WORKER (production only) ═══
+// Caches static assets (JS/CSS/fonts) with stale-while-revalidate.
+// NEVER caches Supabase API/auth calls — no stale-content risk.
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/sw.js', { scope: '/' })
+      .then(reg => console.log('[EFW] SW registered:', reg.scope))
+      .catch(err => console.warn('[EFW] SW registration failed (non-fatal):', err))
+  })
+}

@@ -15,6 +15,27 @@
 }
 .route-back:hover { color: var(--color-primary); }
 .route-header { margin-bottom: var(--space-6); }
+
+.route-cert-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: var(--space-4);
+  background: linear-gradient(135deg, #F59E0B, #FBBF24);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);
+  transition: all var(--transition-fast);
+}
+.route-cert-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+}
 .route-modules { display: flex; flex-direction: column; gap: var(--space-6); }
 .route-module-header {
   display: flex;

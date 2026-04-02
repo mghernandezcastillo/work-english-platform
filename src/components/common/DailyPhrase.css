@@ -1,0 +1,102 @@
+/* ── Daily Phrase card ── */
+.dp-card {
+  background: linear-gradient(135deg, var(--color-surface), var(--color-surface-alt));
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.dp-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dp-ctx {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: var(--color-surface-alt);
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+}
+
+.dp-en {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.5;
+  font-style: italic;
+  margin: 0;
+}
+
+.dp-es {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Speak button ── */
+.dp-speak-btn {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: all var(--transition-fast);
+  min-width: 110px;
+  justify-content: center;
+}
+.dp-speak-btn:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  transform: scale(1.03);
+}
+.dp-speak-btn:disabled { cursor: default; }
+.dp-speak-btn.dp-speaking {
+  background: var(--color-primary-hover);
+}
+
+/* Waveform bars while speaking */
+.dp-wave {
+  display: flex;
+  align-items: center;
+  gap: 2.5px;
+  height: 16px;
+}
+.dp-wave span {
+  width: 3px;
+  border-radius: 2px;
+  background: white;
+  animation: dp-wave-bar 0.9s ease-in-out infinite;
+}
+.dp-wave span:nth-child(1) { height: 6px;  animation-delay: 0s; }
+.dp-wave span:nth-child(2) { height: 12px; animation-delay: 0.15s; }
+.dp-wave span:nth-child(3) { height: 16px; animation-delay: 0.30s; }
+.dp-wave span:nth-child(4) { height: 9px;  animation-delay: 0.45s; }
+@keyframes dp-wave-bar {
+  0%, 100% { transform: scaleY(0.5); opacity: 0.7; }
+  50%       { transform: scaleY(1.0); opacity: 1; }
+}

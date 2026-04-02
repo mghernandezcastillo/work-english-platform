@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext'
 import { Card, CardBody } from '../../components/common/Card'
 import { Badge, ProgressBar } from '../../components/common/Badge'
 import { LoadingSpinner } from '../../components/common/LoadingSpinner'
+import { CertificateModal } from '../../components/common/CertificateModal'
 import './RouteView.css'
 
 export default function RouteView() {
@@ -17,6 +18,7 @@ export default function RouteView() {
   const [loading, setLoading] = useState(true)
   const [shakingLesson, setShakingLesson] = useState(null)
   const [lockedToast, setLockedToast] = useState(false)
+  const [showCertificate, setShowCertificate] = useState(false)
 
   useEffect(() => {
     loadRoute()
@@ -73,9 +75,19 @@ export default function RouteView() {
   if (!route) return <div className="text-center" style={{ padding: 40 }}><h3>Ruta no encontrada</h3></div>
 
   const totalLessons = modules.reduce((s, m) => s + (m.lessons?.length || 0), 0)
+  const isComplete = totalLessons > 0 && completedLessons.size === totalLessons
 
   return (
     <div className="route-view animate-fadeIn">
+      {/* Certificate modal */}
+      {showCertificate && (
+        <CertificateModal
+          userName={profile?.full_name || 'Estudiante'}
+          routeName={route.title}
+          onClose={() => setShowCertificate(false)}
+        />
+      )}
+
       {/* Locked lesson toast */}
       {lockedToast && (
         <div className="route-locked-toast">
@@ -98,6 +110,15 @@ export default function RouteView() {
             showPercent
           />
         </div>
+        {/* Certificate CTA — only when 100% */}
+        {isComplete && (
+          <button
+            className="route-cert-btn"
+            onClick={() => setShowCertificate(true)}
+          >
+            🏆 Ver mi certificado
+          </button>
+        )}
       </div>
 
       {/* Modules */}
