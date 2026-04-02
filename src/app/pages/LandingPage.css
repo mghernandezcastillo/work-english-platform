@@ -387,3 +387,55 @@
   text-decoration: none;
 }
 .footer-links a:hover { color: var(--color-primary); }
+
+/* ─── APP DEMO ─── */
+.landing-demo { background: var(--color-surface); }
+.demo-screenshots {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+.demo-phone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: 280px;
+  transition: transform 0.3s ease;
+}
+.demo-phone:hover { transform: translateY(-6px); }
+.demo-phone img {
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  border: 2px solid var(--color-border);
+}
+.demo-label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-muted);
+}
+
+/* ─── WhatsApp FAB (landing) ─── */
+.landing-wa-fab {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #25D366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(37,211,102,0.4);
+  z-index: 999;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+}
+.landing-wa-fab:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 24px rgba(37,211,102,0.5);
+}
+.landing-wa-fab:active { transform: scale(0.95); }
