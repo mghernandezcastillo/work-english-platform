@@ -6,6 +6,40 @@ import { Input } from '../../components/common/Input'
 import { Toast, useToast } from '../../components/common/Toast'
 import './AdminSettings.css'
 
+function ToggleField({ label, hint, settingKey, settings, updateSetting, showToast }) {
+  const enabled = settings[settingKey] !== 'false'
+  const [saving, setSaving] = useState(false)
+
+  async function handleToggle() {
+    setSaving(true)
+    const newVal = enabled ? 'false' : 'true'
+    const { error } = await updateSetting(settingKey, newVal)
+    if (!error) showToast(newVal === 'true' ? '✅ Activado' : '✅ Desactivado', 'success')
+    else showToast('Error al guardar', 'error')
+    setSaving(false)
+  }
+
+  return (
+    <div className="settings-field">
+      <div className="settings-field-header">
+        <label className="settings-label">{label}</label>
+      </div>
+      <div className="settings-toggle-row">
+        <button
+          className={`settings-toggle ${enabled ? 'on' : 'off'}`}
+          onClick={handleToggle}
+          disabled={saving}
+          aria-label={label}
+        >
+          <span className="settings-toggle-thumb" />
+        </button>
+        <span className="settings-toggle-status">{enabled ? 'Activado' : 'Desactivado'}</span>
+      </div>
+      {hint && <span className="settings-hint">{hint}</span>}
+    </div>
+  )
+}
+
 const FIELDS = [
   { category: 'contact', title: '📞 Contacto y Soporte', fields: [
     { key: 'whatsapp_number', label: 'Número WhatsApp', placeholder: '+573001234567', hint: 'Incluye código de país. Ej: +573212455895' },
@@ -17,6 +51,12 @@ const FIELDS = [
     { key: 'guarantee_days', label: 'Días de garantía', placeholder: '7', type: 'number' },
   ]},
 ]
+
+const TOGGLES = {
+  contact: [
+    { key: 'whatsapp_enabled', label: 'Botón de WhatsApp visible', hint: 'Cuando está desactivado, se muestra el email de soporte en el footer.' },
+  ],
+}
 
 export default function AdminSettings() {
   const { settings, updateSetting } = useAppSettings()
@@ -62,6 +102,19 @@ export default function AdminSettings() {
           <Card>
             <CardBody>
               <div className="settings-fields">
+                {/* Toggle fields for this category */}
+                {(TOGGLES[group.category] || []).map(toggle => (
+                  <ToggleField
+                    key={toggle.key}
+                    label={toggle.label}
+                    hint={toggle.hint}
+                    settingKey={toggle.key}
+                    settings={settings}
+                    updateSetting={updateSetting}
+                    showToast={showToast}
+                  />
+                ))}
+                {/* Text input fields */}
                 {group.fields.map(field => (
                   <div key={field.key} className="settings-field">
                     <div className="settings-field-header">

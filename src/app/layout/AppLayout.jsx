@@ -21,6 +21,8 @@ export default function AppLayout() {
 
   const waNumber = (settings.whatsapp_number || '').replace(/\D/g, '')
   const waMsg = encodeURIComponent(settings.support_message || 'Hola, tengo una pregunta sobre English for Work 👋')
+  const waEnabled = settings.whatsapp_enabled !== 'false'
+  const supportEmail = settings.support_email || ''
 
   async function handleLogout() {
     try {
@@ -91,7 +93,7 @@ export default function AppLayout() {
       </nav>
 
       {/* WhatsApp floating button — reads from app_settings */}
-      {waNumber && (
+      {waEnabled && waNumber && (
         <a
           href={`https://wa.me/${waNumber}?text=${waMsg}`}
           target="_blank"
@@ -105,6 +107,16 @@ export default function AppLayout() {
           </svg>
           <span className="whatsapp-fab-label">Soporte</span>
         </a>
+      )}
+
+      {/* Support email footer — shown when WhatsApp button is disabled */}
+      {!waEnabled && supportEmail && (
+        <footer className="app-support-footer">
+          <span>¿Tienes dudas?</span>
+          <a href={`mailto:${supportEmail}`} className="app-support-email">
+            ✉️ {supportEmail}
+          </a>
+        </footer>
       )}
     </div>
   )

@@ -11,6 +11,7 @@ const DEFAULTS = {
   support_message: brand.contact?.supportMessage || '',
   hotmart_checkout_url: brand.hotmart?.checkoutUrl || '',
   guarantee_days: String(brand.hotmart?.guaranteeDays || 7),
+  whatsapp_enabled: 'true',
 }
 
 export function AppSettingsProvider({ children }) {

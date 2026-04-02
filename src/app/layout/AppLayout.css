@@ -205,3 +205,39 @@
     right: 24px;
   }
 }
+
+/* --- Support email footer (shown when WhatsApp is disabled) --- */
+.app-support-footer {
+  position: fixed;
+  bottom: var(--bottom-nav-height);
+  left: 0;
+  right: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 8px var(--space-4);
+  background: var(--color-background);
+  border-top: 1px solid var(--color-border);
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.app-support-email {
+  color: var(--color-primary);
+  font-weight: var(--font-semibold);
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.app-support-email:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+@media (min-width: 768px) {
+  .app-support-footer {
+    bottom: 0;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  }
+}

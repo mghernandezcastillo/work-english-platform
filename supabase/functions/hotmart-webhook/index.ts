@@ -146,6 +146,16 @@ Deno.serve(async (req: Request) => {
       await logWebhook('success')
       console.log(`[hotmart-webhook] ✅ Acceso paid otorgado a ${buyerEmail}`)
 
+      // Disparar email de bienvenida (día 0) de forma asíncrona
+      try {
+        const dripUrl = Deno.env.get('SUPABASE_URL')!.replace('/v1', '') + '/functions/v1/send-drip-emails'
+        fetch(dripUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ targetDay: 0 }),
+        }).catch(() => {}) // fire-and-forget
+      } catch { /* no bloquear el webhook */ }
+
       return ok({
         success: true,
         message: `Acceso otorgado a ${buyerEmail}`,
