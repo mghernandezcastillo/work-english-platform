@@ -233,16 +233,31 @@ export default function ClickablePhrase({ text, className = '' }) {
           ) : (
             <span className="word-tooltip-no-def">Significado no disponible</span>
           )}
-          {user && (
+          <div className="word-tooltip-actions">
             <button
-              className={`word-tooltip-save ${saved ? 'saved' : ''}`}
-              onClick={handleSave}
-              disabled={saved || saving}
-              aria-label={saved ? 'Palabra guardada' : 'Guardar palabra'}
+              className="word-tooltip-speak"
+              onClick={() => {
+                const utterance = new SpeechSynthesisUtterance(activeWord.word)
+                utterance.lang = 'en-US'
+                utterance.rate = 0.85
+                speechSynthesis.cancel()
+                speechSynthesis.speak(utterance)
+              }}
+              aria-label={`Pronunciar ${activeWord.word}`}
             >
-              {saved ? '✅ Guardado' : saving ? '...' : '📌 Guardar'}
+              🔊 Pronunciar
             </button>
-          )}
+            {user && (
+              <button
+                className={`word-tooltip-save ${saved ? 'saved' : ''}`}
+                onClick={handleSave}
+                disabled={saved || saving}
+                aria-label={saved ? 'Palabra guardada' : 'Guardar palabra'}
+              >
+                {saved ? '✅ Guardado' : saving ? '...' : '📌 Guardar'}
+              </button>
+            )}
+          </div>
         </span>
       )}
     </span>

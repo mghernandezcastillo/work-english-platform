@@ -11,7 +11,7 @@ export default function PhrasesStep({ data }) {
       <div className="step-badge">💬 Frases clave</div>
       <p className="step-subtitle">Aprende estas frases esenciales. <strong>Escúchalas y repítelas en voz alta:</strong></p>
       <p className="text-xs text-muted" style={{ marginBottom: 'var(--space-3)' }}>
-        💡 Toca cualquier palabra subrayada para ver su significado
+        💡 Toca cualquier palabra para escuchar su pronunciación y ver su significado
       </p>
 
       <div className="phrases-list">

@@ -112,8 +112,35 @@
   font-style: italic;
 }
 
-.word-tooltip-save {
+.word-tooltip-actions {
+  display: flex;
+  gap: 6px;
   margin-top: 6px;
+  width: 100%;
+  justify-content: center;
+}
+
+.word-tooltip-speak {
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1.5px solid #22D3EE;
+  background: transparent;
+  color: #67E8F9;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+.word-tooltip-speak:hover {
+  background: #22D3EE;
+  color: #0F172A;
+}
+.word-tooltip-speak:active {
+  transform: scale(0.95);
+}
+
+.word-tooltip-save {
   padding: 5px 12px;
   border-radius: 20px;
   border: 1.5px solid #6366F1;

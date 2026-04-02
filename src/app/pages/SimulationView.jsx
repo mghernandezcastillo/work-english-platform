@@ -6,6 +6,7 @@ import { Card, CardBody } from '../../components/common/Card'
 import { Button } from '../../components/common/Button'
 import { LoadingSpinner } from '../../components/common/LoadingSpinner'
 import AudioPlayer from '../../components/learning/AudioPlayer'
+import ClickablePhrase from '../../components/learning/ClickablePhrase'
 import './SimulationView.css'
 
 export default function SimulationView() {
@@ -166,7 +167,7 @@ export default function SimulationView() {
         <Card className="sim-prompt-card">
           <CardBody>
             <div className="sim-speaker">👤 {turn.speaker || 'Otra persona'}:</div>
-            <p className="sim-prompt-text">"{turn.prompt}"</p>
+            <p className="sim-prompt-text">"<ClickablePhrase text={turn.prompt} />"</p>
             {turn.promptEs && <p className="text-sm text-muted" style={{ marginTop: 4 }}>({turn.promptEs})</p>}
             {turn.audioUrl && <AudioPlayer src={turn.audioUrl} label="Escuchar" />}
           </CardBody>
