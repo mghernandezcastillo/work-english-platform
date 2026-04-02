@@ -214,6 +214,9 @@ export default function ExerciseStep({ data, onComplete }) {
               {selectedAnswer?.toLowerCase().trim() === current.correct?.toLowerCase().trim()
                 ? '✅ ¡Correcto!'
                 : `❌ La respuesta correcta es: "${current.correct}"`}
+              {current.explanation && (
+                <p className="text-sm" style={{ marginTop: 6 }}>💡 {current.explanation}</p>
+              )}
             </div>
           )}
         </div>
