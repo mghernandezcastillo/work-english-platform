@@ -1,0 +1,118 @@
+/* ── RoutesLoader — Briefcase Animation ── */
+
+.rl-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px 8px;
+  gap: 16px;
+}
+
+/* ── Scene container ── */
+.rl-scene {
+  position: relative;
+  width: 140px;
+  height: 120px;
+}
+
+/* ── SVG briefcase ── */
+.rl-svg {
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  width: 120px;
+  height: 100px;
+  overflow: visible;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.13));
+}
+
+/* Colors */
+.rl-body        { fill: var(--color-primary); }
+.rl-lid         { fill: var(--color-primary); filter: brightness(1.12); }
+.rl-clasp       { fill: rgba(255, 255, 255, 0.22); }
+.rl-clasp-inner { fill: rgba(255, 255, 255, 0.42); }
+.rl-handle      { fill: none; stroke: var(--color-primary); filter: brightness(1.18); }
+.rl-side        { stroke: var(--color-primary); stroke-width: 4; stroke-linecap: round; opacity: 0.55; }
+
+/* ── Lid opens on mount ── */
+.rl-lid-group {
+  transform-box: fill-box;
+  transform-origin: 50% 100%; /* hinge = bottom edge of lid */
+  animation: rl-lid-open 0.75s cubic-bezier(0.34, 1.4, 0.64, 1) 0.35s both;
+}
+
+@keyframes rl-lid-open {
+  from {
+    transform: translateY(0) scaleY(1);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-28px) scaleY(0.15);
+    opacity: 0;
+  }
+}
+
+/* ── Floating icons ── */
+.rl-fi {
+  position: absolute;
+  font-size: 22px;
+  line-height: 1;
+  animation: rl-float 2.3s ease-in-out infinite;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Staggered positions + delays */
+.rl-fi-1 { left: 14px;  bottom: 40px; animation-delay: 0.90s; }
+.rl-fi-2 { left: 56px;  bottom: 40px; animation-delay: 1.15s; }
+.rl-fi-3 { right: 14px; bottom: 40px; animation-delay: 1.40s; }
+
+@keyframes rl-float {
+  0%   { opacity: 0;   transform: translateY(0)    scale(0.55); }
+  18%  { opacity: 1;   transform: translateY(-16px) scale(1.08); }
+  60%  { opacity: 0.75; transform: translateY(-42px) scale(1);   }
+  100% { opacity: 0;   transform: translateY(-60px) scale(0.8);  }
+}
+
+/* ── Cycling message ── */
+.rl-msg {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-align: center;
+  animation: rl-fade-in 0.35s ease both;
+  letter-spacing: 0.1px;
+}
+
+@keyframes rl-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── Shimmer progress bar ── */
+.rl-bar-track {
+  width: 160px;
+  height: 4px;
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.rl-bar-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent       0%,
+    var(--color-primary) 50%,
+    transparent       100%
+  );
+  background-size: 200% 100%;
+  animation: rl-shimmer 1.5s linear infinite;
+}
+
+@keyframes rl-shimmer {
+  from { background-position: -100% 0; }
+  to   { background-position: 200% 0; }
+}

@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
-import { SkeletonCard } from '../../components/common/LoadingSpinner'
+import { RoutesLoader } from '../../components/common/RoutesLoader'
 import './Dashboard.css'
 
 const routeMeta = {
@@ -207,9 +207,7 @@ export default function Dashboard() {
       <h3 className="mc-section-title">Elige tu ruta</h3>
 
       {loading ? (
-        <div className="flex flex-col gap-3">
-          <SkeletonCard /><SkeletonCard /><SkeletonCard />
-        </div>
+        <RoutesLoader />
       ) : (
         <div className="mc-routes">
           {routes.map(route => {
