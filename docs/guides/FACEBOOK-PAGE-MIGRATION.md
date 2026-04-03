@@ -131,11 +131,16 @@ Aprende el inglés que realmente se usa en entrevistas, call centers y trabajo b
 2. Debajo de la foto de portada verás los botones **"Editar"** y **"···"** (tres puntos)
 3. Haz clic en **"···"** (tres puntos)
 4. En el menú desplegable selecciona **"Editar botón de acción"** o **"Agregar botón de acción"**
-5. Selecciona la categoría: **"Ir a un sitio web"** o **"Comprar"**
-6. Escribe la URL: `https://pay.hotmart.com/V105122662R`
+5. Selecciona la categoría: **"Ir a un sitio web"**
+6. Escribe la URL:
+   ```
+   https://work-english-platform.vercel.app/ingles-para-trabajo?utm_source=facebook&utm_medium=organic&utm_campaign=page_button
+   ```
 7. Haz clic en **"Guardar"**
 
-> ✅ Listo — aparecerá un botón visible para todos los visitantes con acceso directo al checkout de Hotmart.
+> ✅ Listo — los visitantes orgánicos de la página verán primero la landing (el pitch completo, testimonios, precio, garantía) y desde ahí irán a comprar. El `utm_campaign=page_button` te permite medir este tráfico separado de los anuncios pagados.
+
+> ⚠️ **¿Por qué NO poner Hotmart directo aquí?** Un visitante que llega a tu página de Facebook no sabe nada del producto todavía. Mandarlo directo al checkout sin contexto = abandono inmediato. La landing page convierte primero.
 
 ---
 
