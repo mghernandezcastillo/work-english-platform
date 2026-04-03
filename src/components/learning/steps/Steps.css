@@ -616,7 +616,7 @@
   background: var(--color-surface);
   border: 2px solid var(--color-border);
   border-radius: var(--radius-md);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   line-height: 1.4;
   color: var(--color-text);
   text-align: left;
@@ -681,7 +681,7 @@
 }
 .match-result-en {
   flex: 1;
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   font-weight: var(--font-semibold);
   color: var(--color-text);
 }
@@ -692,7 +692,7 @@
 }
 .match-result-es {
   flex: 1;
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   color: var(--color-text-muted);
   text-align: right;
 }
@@ -700,9 +700,9 @@
 @media (max-width: 480px) {
   .match-columns { gap: var(--space-2); }
   .match-card {
-    padding: var(--space-2);
-    font-size: 11px;
-    min-height: 42px;
+    padding: 10px 8px;
+    font-size: 13px;
+    min-height: 44px;
   }
 }
 
