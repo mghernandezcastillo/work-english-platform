@@ -118,23 +118,24 @@ Aprende el inglés que realmente se usa en entrevistas, call centers y trabajo b
 
 ## PASO 8 — Agregar el botón de acción de la página
 
-> ⚠️ En la nueva experiencia de páginas de Facebook, esto **NO está en Configuración**. Sigue estos pasos exactos:
+> ⚠️ **El error más común:** intentarlo desde el Panel Profesional o Configuración. El botón NO está ahí. Está en la vista pública de la página, pero solo aparece cuando navegas como tu Página (no como tu perfil personal).
 
-1. Ve a tu página **English for Work** (la vista pública, no configuración)
-2. Debajo de tu foto de portada, busca el botón **"+ Agregar botón"** o **"Editar botón"**
-   - Si no lo ves ahí, haz clic en **"Editar"** (el lápiz junto a "Anunciarte")
-   - Baja hasta la sección **"Botón de acción"**
-3. Haz clic en **"+ Agregar botón"**
-4. Selecciona: **"Hacer una compra o donación"** → **"Comprar"**
-5. En el campo URL escribe: `https://pay.hotmart.com/V105122662R`
-6. Haz clic en **Guardar**
+### Paso previo obligatorio — cambiar a perfil de Página:
+1. Haz clic en tu **foto de perfil** (esquina superior derecha de Facebook)
+2. Selecciona **"Ver todos los perfiles"**
+3. Haz clic en **"English for Work"** (tu página)
+4. Ahora estás navegando Facebook **como la página**, no como tu cuenta personal
 
-**Si no aparece el botón "+ Agregar botón":**
-- Ve a **Panel profesional** (botón azul en tu página)
-- En el panel busca la sección **"Tu página"** o **"Botón de acción"**
-- Haz clic en **"Añadir"** o **"Editar"**
+### Ahora sí — agregar el botón:
+1. Ve a tu página **English for Work** haciendo clic en su nombre
+2. Debajo de la foto de portada verás los botones **"Editar"** y **"···"** (tres puntos)
+3. Haz clic en **"···"** (tres puntos)
+4. En el menú desplegable selecciona **"Editar botón de acción"** o **"Agregar botón de acción"**
+5. Selecciona la categoría: **"Ir a un sitio web"** o **"Comprar"**
+6. Escribe la URL: `https://pay.hotmart.com/V105122662R`
+7. Haz clic en **"Guardar"**
 
-> ✅ Cuando esté listo, aparecerá un botón azul **"Comprar"** visible para todos los visitantes de tu página — directo al checkout de Hotmart.
+> ✅ Listo — aparecerá un botón visible para todos los visitantes con acceso directo al checkout de Hotmart.
 
 ---
 
