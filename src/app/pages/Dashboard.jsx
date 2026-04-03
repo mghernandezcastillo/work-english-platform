@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext'
 import { RoutesLoader } from '../../components/common/RoutesLoader'
 import { DailyPhrase } from '../../components/common/DailyPhrase'
 import { FirstMissionBanner } from '../../components/common/FirstMissionBanner'
+import { BadgesPanel } from '../../components/common/BadgesPanel'
 import './Dashboard.css'
 
 const routeMeta = {
@@ -183,6 +184,19 @@ export default function Dashboard() {
         )}
       </div>
 
+      {/* ── XP Bar ── */}
+      <div className="mc-xp-bar">
+        <span className="mc-xp-icon">⭐</span>
+        <span className="mc-xp-label">{profile?.xp ?? 0} XP</span>
+        <div className="mc-xp-track">
+          <div
+            className="mc-xp-fill"
+            style={{ width: `${Math.min(((profile?.xp ?? 0) % 100), 100)}%` }}
+          />
+        </div>
+        <span className="mc-xp-next">Siguiente nivel: {100 - ((profile?.xp ?? 0) % 100)} XP</span>
+      </div>
+
       {/* ── Progress Ring Hero ── */}
       <div className="mc-hero">
         <div className="mc-ring-wrap">
@@ -247,6 +261,9 @@ export default function Dashboard() {
 
       {/* ── Frase del día ── */}
       <DailyPhrase />
+
+      {/* ── Logros / Badges ── */}
+      <BadgesPanel />
     </div>
   )
 }

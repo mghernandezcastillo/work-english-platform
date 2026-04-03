@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { LoadingSpinner } from '../../components/common/LoadingSpinner'
 import { XPNotification } from '../../components/common/XPNotification'
+import { awardLessonXP } from '../../lib/xp'
 import { Button } from '../../components/common/Button'
 import ObjectiveStep from '../../components/learning/steps/ObjectiveStep'
 import PhrasesStep from '../../components/learning/steps/PhrasesStep'
@@ -13,6 +14,7 @@ import ExerciseStep from '../../components/learning/steps/ExerciseStep'
 import GuidedPracticeStep from '../../components/learning/steps/GuidedPracticeStep'
 import ReinforcementStep from '../../components/learning/steps/ReinforcementStep'
 import './LessonView.css'
+import '../../components/common/BadgesPanel.css'
 
 const STEPS = [
   { key: 'objective', label: 'Objetivo', icon: '🎯', component: ObjectiveStep },
@@ -26,7 +28,7 @@ const STEPS = [
 
 export default function LessonView() {
   const { lessonId } = useParams()
-  const { profile } = useAuth()
+  const { profile, refreshProfile } = useAuth()
   const navigate = useNavigate()
   const [lesson, setLesson] = useState(null)
   const [currentStep, setCurrentStep] = useState(0)
@@ -98,6 +100,8 @@ export default function LessonView() {
   const [showXP, setShowXP] = useState(false)
   const [showStreakModal, setShowStreakModal] = useState(false)
   const [streakCount, setStreakCount] = useState(0)
+  const [newBadges, setNewBadges] = useState([])
+  const [activeBadgeToast, setActiveBadgeToast] = useState(null)
 
   const STREAK_MESSAGES = [
     { min: 1, msg: '¡Gran comienzo! Cada día cuenta 💪', sub: 'Sigue aprendiendo para construir tu racha' },
@@ -146,13 +150,37 @@ export default function LessonView() {
     // Clear saved step — lesson is done
     localStorage.removeItem(`lesson_step_${lessonId}`)
 
-    // Show XP first
+    // Show XP animation first
     setShowXP(true)
-    await new Promise(r => setTimeout(r, 900))
 
-    // Then show streak modal
-    const days = await calculateCurrentStreak()
-    setStreakCount(days)
+    // Award XP + check badges in DB
+    if (profile?.id) {
+      const days = await calculateCurrentStreak()
+      const { data: progressData } = await supabase
+        .from('user_progress')
+        .select('id')
+        .eq('user_id', profile.id)
+        .eq('completed', true)
+      const lessonsCount = progressData?.length ?? 1
+      const { newBadges: badges } = await awardLessonXP(profile.id, lessonsCount, days)
+      // Update profile in context so XP shows immediately on dashboard
+      await refreshProfile()
+      if (badges?.length) {
+        setNewBadges(badges)
+        // Show badge toasts sequentially
+        for (let i = 0; i < badges.length; i++) {
+          await new Promise(r => setTimeout(r, i === 0 ? 900 : 4200))
+          setActiveBadgeToast(badges[i])
+          setTimeout(() => setActiveBadgeToast(null), 4000)
+        }
+      }
+      setStreakCount(days)
+    } else {
+      await new Promise(r => setTimeout(r, 900))
+      const days = await calculateCurrentStreak()
+      setStreakCount(days)
+    }
+
     setShowStreakModal(true)
   }
 
@@ -216,6 +244,16 @@ export default function LessonView() {
   return (
     <div className="lesson-view animate-fadeIn">
       <XPNotification xp={25} show={showXP} />
+      {/* Badge earned toast */}
+      {activeBadgeToast && (
+        <div className="badge-toast">
+          <span className="badge-toast-emoji">{activeBadgeToast.emoji}</span>
+          <span className="badge-toast-text">
+            <span className="badge-toast-label">🏅 ¡Nuevo logro desbloqueado!</span>
+            <span className="badge-toast-name">{activeBadgeToast.name}</span>
+          </span>
+        </div>
+      )}
       {/* Header */}
       <div className="lesson-header">
         <button className="route-back" onClick={() => {
