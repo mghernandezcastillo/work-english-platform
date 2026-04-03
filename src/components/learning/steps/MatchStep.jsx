@@ -6,6 +6,32 @@ import './Steps.css'
  * Match English phrases to their Spanish translations.
  * Uses the same phrase data that already exists in every lesson.
  */
+
+/**
+ * Produces a derangement — a shuffle where NO element stays at its original index.
+ * This guarantees no Spanish phrase sits directly next to its English pair.
+ */
+function derange(arr) {
+  const n = arr.length
+  if (n <= 1) return [...arr]
+  if (n === 2) return [arr[1], arr[0]] // Only one derangement possible
+
+  // Fisher-Yates with rejection: shuffle until no element is in its original position
+  // For n >= 3, ~63% of permutations are derangements, so this converges fast
+  let result
+  let attempts = 0
+  do {
+    result = [...arr]
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[result[i], result[j]] = [result[j], result[i]]
+    }
+    attempts++
+  } while (result.some((item, i) => item.en === arr[i].en) && attempts < 100)
+
+  return result
+}
+
 export default function MatchStep({ data }) {
   const allPhrases = data?.phrases || []
   // Pick up to 5 random phrases for the match game
@@ -27,7 +53,7 @@ export default function MatchStep({ data }) {
       .sort(() => Math.random() - 0.5)
       .slice(0, Math.min(5, allPhrases.length))
     setPairs(selected)
-    setShuffledRight([...selected].sort(() => Math.random() - 0.5))
+    setShuffledRight(derange(selected))
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Timer
