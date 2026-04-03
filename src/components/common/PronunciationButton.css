@@ -1,0 +1,168 @@
+.pronun-wrap {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pronun-target {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 14px;
+  background: rgba(99,102,241,0.08);
+  border-radius: var(--radius-lg);
+  border-left: 3px solid #6366f1;
+}
+.pronun-target-label {
+  font-size: 10px;
+  color: #818cf8;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.pronun-target-text {
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+/* Mic button */
+.pronun-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1.5px solid #6366f1;
+  background: transparent;
+  color: #818cf8;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+}
+.pronun-btn:hover {
+  background: rgba(99,102,241,0.12);
+  color: #a5b4fc;
+  transform: translateY(-1px);
+}
+.pronun-btn--listening {
+  border-color: #EF4444;
+  color: #f87171;
+  background: rgba(239,68,68,0.08);
+}
+.pronun-btn--processing {
+  opacity: 0.7;
+  cursor: default;
+}
+.pronun-icon { font-size: 16px; }
+
+/* Pulsing recording dot */
+@keyframes pronun-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+}
+.pronun-pulse { animation: pronun-pulse 0.8s ease-in-out infinite; display: inline-block; }
+
+/* Error */
+.pronun-error {
+  font-size: var(--text-sm);
+  color: #f87171;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pronun-retry {
+  background: none;
+  border: 1px solid #f87171;
+  color: #f87171;
+  border-radius: var(--radius-full);
+  padding: 2px 10px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+/* Result card */
+.pronun-result {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeIn 0.3s ease;
+}
+
+.pronun-score-ring {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 4px solid var(--score-color, #10B981);
+  background: rgba(0,0,0,0.2);
+  align-self: center;
+  box-shadow: 0 0 16px rgba(0,0,0,0.2);
+}
+.pronun-score-num {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--score-color, #10B981);
+  line-height: 1;
+}
+.pronun-score-lbl {
+  font-size: 9px;
+  color: var(--color-text-muted);
+}
+
+.pronun-score-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pronun-feedback {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+.pronun-transcript {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.pronun-transcript-lbl {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.pronun-transcript-text {
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  font-style: italic;
+}
+
+.pronun-retry-btn {
+  background: rgba(99,102,241,0.1);
+  border: 1.5px solid rgba(99,102,241,0.3);
+  color: #818cf8;
+  border-radius: var(--radius-full);
+  padding: 8px 16px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+}
+.pronun-retry-btn:hover {
+  background: rgba(99,102,241,0.2);
+  transform: translateY(-1px);
+}

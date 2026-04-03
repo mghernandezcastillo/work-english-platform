@@ -1,6 +1,7 @@
 import AudioPlayer from '../AudioPlayer'
 import SpeakButton from '../SpeakButton'
 import ClickablePhrase from '../ClickablePhrase'
+import { PronunciationButton } from '../../common/PronunciationButton'
 import './Steps.css'
 
 export default function PhrasesStep({ data }) {
@@ -28,6 +29,8 @@ export default function PhrasesStep({ data }) {
               ) : (
                 <SpeakButton text={phrase.en} label="Escuchar pronunciación" />
               )}
+              {/* Mic practice after audio */}
+              <PronunciationButton targetText={phrase.en} />
               {phrase.tip && (
                 <div className="phrase-tip">
                   <span>💡</span>

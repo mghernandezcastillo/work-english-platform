@@ -1,6 +1,7 @@
 import AudioPlayer from '../AudioPlayer'
 import SpeakButton from '../SpeakButton'
 import ClickablePhrase from '../ClickablePhrase'
+import { PronunciationButton } from '../../common/PronunciationButton'
 import { useState } from 'react'
 import './Steps.css'
 
@@ -46,11 +47,13 @@ export default function GuidedPracticeStep({ data }) {
               ) : (
                 <SpeakButton text={scenario.phrase} label="Escucha primero" />
               )}
-              <button 
+              {/* Mic pronunciation practice */}
+              <PronunciationButton targetText={scenario.phrase} />
+              <button
                 className={`practice-done-btn ${practiced.has(i) ? 'done' : ''}`}
                 onClick={() => markPracticed(i)}
               >
-                {practiced.has(i) ? '✅ ¡Practicado!' : '🎤 Ya lo dije en voz alta'}
+                {practiced.has(i) ? '✅ ¡Practicado!' : '🎤 Marcar como practicado'}
               </button>
             </div>
             {scenario.tip && (

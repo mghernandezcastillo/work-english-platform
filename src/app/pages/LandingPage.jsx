@@ -164,21 +164,29 @@ export default function LandingPage() {
       <section className="landing-section landing-demo">
         <div className="landing-container text-center">
           <h2 className="landing-h2">Así se ve por dentro 👀</h2>
-          <p className="text-muted" style={{ marginBottom: 28 }}>
+          <p className="text-muted" style={{ marginBottom: 36 }}>
             Una plataforma diseñada para aprender haciendo, no memorizando.
           </p>
           <div className="demo-screenshots">
             <div className="demo-phone">
-              <img src="/images/demo-dashboard.png" alt="Dashboard de English for Work" loading="lazy" />
-              <span className="demo-label">Tu panel de progreso</span>
+              <img src="/images/demo-phrases.png" alt="Frases clave con audio" loading="lazy" />
+              <span className="demo-label">📚 Frases listas para usar</span>
+              <span className="demo-sublabel">Escucha pronunciación nativa en cada frase</span>
+            </div>
+            <div className="demo-phone demo-phone--highlight">
+              <img src="/images/demo-simulation.png" alt="Simulación de entrevista" loading="lazy" />
+              <span className="demo-label">🎤 Simulaciones reales</span>
+              <span className="demo-sublabel">Practica con reclutadores virtuales</span>
             </div>
             <div className="demo-phone">
-              <img src="/images/demo-lesson.png" alt="Lección de English for Work" loading="lazy" />
-              <span className="demo-label">Lecciones paso a paso</span>
+              <img src="/images/demo-completion.png" alt="Lección completada" loading="lazy" />
+              <span className="demo-label">🏆 Progreso visible</span>
+              <span className="demo-sublabel">Cada lección suma XP y logros</span>
             </div>
           </div>
         </div>
       </section>
+
 
       {/* ── HOW IT WORKS ── */}
       <section className="landing-section landing-how">
