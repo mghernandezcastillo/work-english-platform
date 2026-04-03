@@ -2,21 +2,71 @@ import { useState, useRef } from 'react'
 import './PronunciationButton.css'
 
 /**
- * PronunciationButton — Records user speech and shows a score + feedback.
- * Uses Web Speech API SpeechRecognition.
- *
- * Props:
- *   targetText: string  — the phrase the user should say
- *   language?: string   — BCP 47 code, default "en-US"
+ * Detecta si el browser soporta Web Speech API y devuelve info útil.
+ */
+function detectBrowserSupport() {
+  const isSupported = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window
+  if (isSupported) return { supported: true }
+
+  // Detectar browser específico para dar mensaje útil
+  const ua = navigator.userAgent
+  const isFirefox = ua.includes('Firefox')
+  const isOpera = ua.includes('OPR') || ua.includes('Opera')
+  const isBrave = navigator.brave != null
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(ua)
+  const isIOS = /iPhone|iPad|iPod/i.test(ua)
+
+  let message = ''
+  let browsers = []
+
+  if (isFirefox) {
+    message = 'Firefox no soporta el micrófono para pronunciación.'
+    browsers = isMobile
+      ? ['Chrome para Android', 'Samsung Browser']
+      : ['Google Chrome', 'Microsoft Edge', 'Safari']
+  } else if (isIOS) {
+    // En iOS debería funcionar con webkitSpeechRecognition — si llegamos aquí es iOS viejo
+    message = 'Tu versión de iOS no soporta esta función.'
+    browsers = ['Safari (iOS 15 o superior)', 'Chrome para iOS']
+  } else {
+    message = 'Tu navegador no soporta el reconocimiento de voz.'
+    browsers = ['Google Chrome', 'Microsoft Edge', 'Safari']
+  }
+
+  return { supported: false, message, browsers }
+}
+
+/**
+ * PronunciationButton — Graba al usuario y muestra score de pronunciación.
+ * Usa Web Speech API. Funciona en: Chrome, Edge, Safari, iOS Safari 15+.
+ * En browsers no soportados (Firefox) muestra guía clara.
  */
 export function PronunciationButton({ targetText, language = 'en-US' }) {
+  const browserInfo = detectBrowserSupport()
   const [state, setState] = useState('idle') // idle | listening | processing | result
-  const [result, setResult] = useState(null)  // { score, transcript, feedback }
+  const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
   const recognitionRef = useRef(null)
 
-  const isSupported = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window
+  // Browser no soportado → mostrar aviso con alternativas
+  if (!browserInfo.supported) {
+    return (
+      <div className="pronun-unsupported">
+        <div className="pronun-unsupported-icon">🎤</div>
+        <div className="pronun-unsupported-body">
+          <p className="pronun-unsupported-title">{browserInfo.message}</p>
+          <p className="pronun-unsupported-sub">Para practicar pronunciación usa:</p>
+          <div className="pronun-browser-options">
+            {browserInfo.browsers.map((b, i) => (
+              <span key={i} className="pronun-browser-tag">✓ {b}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
+  // ── Lógica de scoring ──
   function getScore(target, transcript) {
     if (!transcript) return 0
     const t = target.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(' ')
@@ -33,16 +83,11 @@ export function PronunciationButton({ targetText, language = 'en-US' }) {
   }
 
   function startListening() {
-    if (!isSupported) {
-      setError('Tu navegador no soporta reconocimiento de voz. Prueba Chrome.')
-      return
-    }
-
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     const recognition = new SpeechRecognition()
     recognition.lang = language
-    recognition.continuous = false
-    recognition.interimResults = false
+    recognition.continuous = false       // iOS requiere false
+    recognition.interimResults = false   // iOS no soporta interim
     recognition.maxAlternatives = 1
     recognitionRef.current = recognition
 
@@ -59,16 +104,19 @@ export function PronunciationButton({ targetText, language = 'en-US' }) {
 
     recognition.onerror = (event) => {
       if (event.error === 'no-speech') {
-        setError('No se detectó voz. Intenta de nuevo.')
+        setError('No se detectó voz. ¿Está tu micrófono activado?')
       } else if (event.error === 'not-allowed') {
-        setError('Necesitas permitir acceso al micrófono.')
+        setError('Permiso de micrófono denegado. Actívalo en la configuración de tu navegador.')
+      } else if (event.error === 'network') {
+        setError('Error de red. Verifica tu conexión a internet.')
       } else {
-        setError('Error al grabar. Intenta de nuevo.')
+        setError('No se pudo grabar. Intenta de nuevo.')
       }
       setState('idle')
     }
 
     recognition.onend = () => {
+      // En iOS a veces dispara onend antes del resultado — lo manejamos con state
       if (state === 'listening') setState('idle')
     }
 
@@ -88,17 +136,15 @@ export function PronunciationButton({ targetText, language = 'en-US' }) {
     setState('idle')
   }
 
-  if (!isSupported) return null
-
   return (
     <div className="pronun-wrap">
-      {/* Target phrase hint */}
+      {/* Indicador de frase objetivo */}
       <div className="pronun-target">
         <span className="pronun-target-label">Di en voz alta:</span>
         <span className="pronun-target-text">"{targetText}"</span>
       </div>
 
-      {/* Main button */}
+      {/* Botón principal */}
       {state !== 'result' && (
         <button
           className={`pronun-btn pronun-btn--${state}`}
@@ -107,21 +153,21 @@ export function PronunciationButton({ targetText, language = 'en-US' }) {
         >
           {state === 'idle' && <><span className="pronun-icon">🎤</span> Practicar pronunciación</>}
           {state === 'listening' && (
-            <><span className="pronun-icon pronun-pulse">🔴</span> Escuchando... (toca para parar)</>
+            <><span className="pronun-icon pronun-pulse">🔴</span> Escuchando… (toca para parar)</>
           )}
-          {state === 'processing' && <><span className="pronun-icon">⏳</span> Procesando...</>}
+          {state === 'processing' && <><span className="pronun-icon">⏳</span> Procesando…</>}
         </button>
       )}
 
-      {/* Error */}
+      {/* Error con mensaje descriptivo */}
       {error && (
         <div className="pronun-error">
-          ⚠️ {error}
+          <span>⚠️ {error}</span>
           <button className="pronun-retry" onClick={reset}>Reintentar</button>
         </div>
       )}
 
-      {/* Result */}
+      {/* Resultado con score */}
       {state === 'result' && result && (
         <div className="pronun-result">
           <div

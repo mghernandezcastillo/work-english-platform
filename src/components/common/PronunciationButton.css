@@ -5,6 +5,56 @@
   gap: 10px;
 }
 
+/* ── Browser no soportado ── */
+.pronun-unsupported {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: rgba(251,191,36,0.06);
+  border: 1px solid rgba(251,191,36,0.2);
+  border-radius: var(--radius-lg);
+}
+.pronun-unsupported-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+.pronun-unsupported-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.pronun-unsupported-title {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+  line-height: 1.4;
+}
+.pronun-unsupported-sub {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin: 0;
+  opacity: 0.75;
+}
+.pronun-browser-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.pronun-browser-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: #FBB924;
+  background: rgba(251,191,36,0.1);
+  border: 1px solid rgba(251,191,36,0.25);
+  border-radius: var(--radius-full);
+  padding: 2px 8px;
+}
+
+
 .pronun-target {
   display: flex;
   flex-direction: column;
