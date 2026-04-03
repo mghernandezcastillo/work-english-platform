@@ -116,17 +116,25 @@ Aprende el inglés que realmente se usa en entrevistas, call centers y trabajo b
 
 ---
 
-## PASO 8 — Cambiar el botón de acción de la página
+## PASO 8 — Agregar el botón de acción de la página
 
-El botón que aparece junto a "Anunciarte" y "Editar" — actualmente puede decir algo genérico.
+> ⚠️ En la nueva experiencia de páginas de Facebook, esto **NO está en Configuración**. Sigue estos pasos exactos:
 
-1. Haz clic en **"Editar"** junto al botón de acción (o en el botón directamente)
-2. Selecciona la categoría: **"Hacer una compra o donación"**
-3. Tipo de botón: **"Comprar"** o **"Registrarse"**
-4. URL: `https://pay.hotmart.com/V105122662R`
-5. Haz clic en **Guardar**
+1. Ve a tu página **English for Work** (la vista pública, no configuración)
+2. Debajo de tu foto de portada, busca el botón **"+ Agregar botón"** o **"Editar botón"**
+   - Si no lo ves ahí, haz clic en **"Editar"** (el lápiz junto a "Anunciarte")
+   - Baja hasta la sección **"Botón de acción"**
+3. Haz clic en **"+ Agregar botón"**
+4. Selecciona: **"Hacer una compra o donación"** → **"Comprar"**
+5. En el campo URL escribe: `https://pay.hotmart.com/V105122662R`
+6. Haz clic en **Guardar**
 
-> Esto pone un botón directo al checkout de Hotmart en tu página — cualquier visitante puede comprar con un clic.
+**Si no aparece el botón "+ Agregar botón":**
+- Ve a **Panel profesional** (botón azul en tu página)
+- En el panel busca la sección **"Tu página"** o **"Botón de acción"**
+- Haz clic en **"Añadir"** o **"Editar"**
+
+> ✅ Cuando esté listo, aparecerá un botón azul **"Comprar"** visible para todos los visitantes de tu página — directo al checkout de Hotmart.
 
 ---
 
