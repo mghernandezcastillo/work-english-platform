@@ -13,6 +13,7 @@ import ExplanationStep from '../../components/learning/steps/ExplanationStep'
 import ExerciseStep from '../../components/learning/steps/ExerciseStep'
 import GuidedPracticeStep from '../../components/learning/steps/GuidedPracticeStep'
 import ReinforcementStep from '../../components/learning/steps/ReinforcementStep'
+import MatchStep from '../../components/learning/steps/MatchStep'
 import './LessonView.css'
 import '../../components/common/BadgesPanel.css'
 
@@ -22,6 +23,7 @@ const STEPS = [
   { key: 'examples', label: 'Ejemplos', icon: '📝', component: MiniExampleStep },
   { key: 'explanation', label: 'Explicación', icon: '💡', component: ExplanationStep },
   { key: 'exercises', label: 'Ejercicios', icon: '✏️', component: ExerciseStep },
+  { key: 'match', label: 'Conecta', icon: '🔗', component: MatchStep, dataKey: 'phrases' },
   { key: 'practice', label: 'Práctica', icon: '🗣️', component: GuidedPracticeStep },
   { key: 'reinforcement', label: 'Repaso', icon: '🏆', component: ReinforcementStep },
 ]
@@ -237,7 +239,7 @@ export default function LessonView() {
   const content = lesson.content || {}
   const step = STEPS[currentStep]
   const StepComponent = step.component
-  const stepData = content[step.key] || {}
+  const stepData = content[step.dataKey || step.key] || {}
   const isLast = currentStep === STEPS.length - 1
   const progressPercent = Math.round(((currentStep + 1) / STEPS.length) * 100)
 
