@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { Button } from '../../common/Button'
 import './Steps.css'
 
 const CONFETTI_EMOJIS = ['🎉', '⭐', '🏆', '✨', '🇺🇸', '💪', '🎯', '🔥']
@@ -20,7 +19,6 @@ function ConfettiPiece({ emoji, delay, left }) {
 
 export default function ReinforcementStep({ data, onComplete }) {
   const [showConfetti, setShowConfetti] = useState(false)
-  const [saved, setSaved] = useState(false)
 
   useEffect(() => {
     // Trigger confetti after a short delay
@@ -28,10 +26,13 @@ export default function ReinforcementStep({ data, onComplete }) {
     return () => clearTimeout(timer)
   }, [])
 
-  function handleComplete() {
-    setSaved(true)
-    if (onComplete) onComplete()
-  }
+  // Auto-complete: trigger XP + streak immediately after showing completion
+  useEffect(() => {
+    if (onComplete) {
+      const timer = setTimeout(() => onComplete(), 800)
+      return () => clearTimeout(timer)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="step-container animate-fadeIn text-center reinforcement-container">
@@ -101,13 +102,8 @@ export default function ReinforcementStep({ data, onComplete }) {
         </div>
       )}
 
-      {/* Next action */}
-      <Button variant="primary" size="lg" full onClick={handleComplete}>
-        {saved ? 'Guardando...' : 'Siguiente lección →'}
-      </Button>
-
-      <p className="text-xs text-muted" style={{ marginTop: 'var(--space-3)' }}>
-        Tu progreso ha sido guardado ✅
+      <p className="text-xs text-muted" style={{ marginTop: 'var(--space-3)', opacity: 0.7 }}>
+        ⏳ Guardando progreso...
       </p>
     </div>
   )
