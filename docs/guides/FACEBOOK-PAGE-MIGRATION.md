@@ -71,12 +71,10 @@ La foto de perfil es el logo que aparece en tus anuncios y posts.
 2. Selecciona **"Actualizar foto de perfil"**
 3. Sube el logo de English for Work
 
-**Especificaciones:**
-- Formato: PNG con fondo transparente o blanco
-- Tamaño mínimo: 180 × 180 px
-- Se recorta en círculo — asegúrate que el logo se vea bien en ese formato
+**Archivo listo:** `public/images/facebook-profile.png`
 
-> 💡 Si no tienes el logo listo, dile a Antigravity: "hazme el logo de English for Work en 180×180 con fondo azul oscuro" y lo generamos en minutos.
+- Formato PNG · 180 × 180 px mínimo
+- Se recorta en círculo — el ícono queda centrado
 
 ---
 
@@ -88,15 +86,10 @@ La portada es la imagen rectangular grande (actualmente la de TM Profit / Binet)
 2. Selecciona **"Subir foto"**
 3. Usa una imagen del app en acción o un texto de impacto
 
-**Opciones recomendadas para la portada:**
-- Una de las imágenes de los anuncios (ya las tienes en `public/ads/`)
-- O una imagen tipo: "Aprende el inglés que usan en el trabajo — 36 lecciones · Audio nativo"
+**Archivo listo:** `public/images/facebook-cover.png`
 
-**Especificaciones:**
-- Tamaño ideal: **1640 × 924 px** (para que se vea bien en móvil y desktop)
-- Formato: JPG o PNG
-
-> 💡 Puedes usar la imagen `02_beneficio_confianza.png` o `01_dolor_pierdes_trabajos.png` como portada temporal mientras creamos una específica para esto.
+- Formato PNG · 1640 × 924 px
+- Muestra el mensaje de la app y el teléfono
 
 ---
 
