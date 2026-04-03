@@ -361,6 +361,55 @@
 }
 .ads-manager-btn:hover { background: #1565c0; }
 
+/* Guide banner */
+.guide-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  background: linear-gradient(135deg, #1e3a5f 0%, #1a2e4a 100%);
+  border: 1px solid #2d5a9e;
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-5);
+  flex-wrap: wrap;
+}
+.guide-banner-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.guide-banner-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+.guide-banner-left strong {
+  display: block;
+  color: #ffffff;
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  margin-bottom: 2px;
+}
+.guide-banner-left p {
+  color: #93c5fd;
+  font-size: var(--text-xs);
+  margin: 0;
+  line-height: 1.4;
+}
+.guide-banner-btn {
+  flex-shrink: 0;
+  padding: 10px 20px;
+  background: #1877F2;
+  color: white;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.guide-banner-btn:hover { background: #1565c0; }
+
 /* Footer */
 .ad-center-footer {
   margin-top: var(--space-6);

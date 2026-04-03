@@ -1,170 +1,262 @@
-# 📢 Guía Completa — Facebook Ads para English for Work
+# 📢 Guía de Facebook Ads — English for Work
+## Para alguien que nunca ha publicado un anuncio
 
-## ¿Dónde está todo lo que necesito?
-
-```
-docs/ads/
-├── FACEBOOK-ADS-GUIDE.md      ← Esta guía (léela primero)
-├── AD-BRIEF-TEMPLATE.md       ← Plantilla para pedir nuevos anuncios a IA
-├── ad-manifest.md             ← Copy completo de cada anuncio
-└── imagenes/
-    ├── 01_dolor_pierdes_trabajos.png
-    ├── 02_beneficio_confianza.png
-    ├── 03_contraste_gramatica_vs_real.png
-    ├── 04_precio_47k.png
-    ├── 05_callcenter_listo_trabajar.png
-    ├── 06_carousel_ruta1_conseguir_trabajo.png
-    ├── 07_carousel_ruta2_entrevistas.png
-    ├── 08_carousel_ruta3_callcenter.png
-    └── 09_carousel_cta_47k.png
-```
+> Esta guía asume que **no sabes nada** de Ads Manager. Cada paso es exacto. Sigue el orden.
 
 ---
 
-## ¿Cómo funciona publicar? ¿Desde la Página de Facebook o dónde?
+## 🧰 Lo que ya tienes listo (no tienes que crear nada de esto)
 
-Hay **dos formas**:
+- ✅ **Las imágenes** → están en `public/ads/` (9 imágenes)
+- ✅ **Los textos de cada anuncio** → están en el Ad Center del panel admin
+- ✅ **Las URLs con tracking** → ya vienen en el Ad Center, solo cópialas
 
-| Forma | Dónde | Cuándo usarla |
-|-------|-------|---------------|
-| **Ads Manager** (recomendada) | adsmanager.facebook.com | Cuando quieres control total: segmentación, presupuesto, A/B test |
-| **Boost Post** | facebook.com (tu Página) | Simple y rápido pero con menos control |
-
-→ **Usa Ads Manager.** Es más poderoso y es donde aplicarás el copy y las imágenes de este documento.
+**Tu trabajo en Ads Manager es solo: subir la imagen, pegar los textos, configurar la audiencia y activar.**
 
 ---
 
-## Paso a paso — Publicar tu primer anuncio
+## 📋 Antes de empezar — verifica estas 3 cosas
 
-### Antes de empezar, necesitas:
-- ✅ Página de Facebook de "English for Work" creada
-- ✅ Cuenta publicitaria activa (business.facebook.com)
-- ✅ Método de pago agregado (tarjeta de crédito/débito)
-- ✅ Las imágenes de `docs/ads/imagenes/`
-- ✅ El copy de `docs/ads/ad-manifest.md`
-
----
-
-### Paso 1 — Crear la campaña
-
-1. Ve a [adsmanager.facebook.com](https://adsmanager.facebook.com)
-2. Clic en **"+ Crear"**
-3. Elige el objetivo:
-   - **Tráfico** → para que la gente visite tu landing
-   - **Clientes potenciales** → si quieres que dejen su email
-   - _(Para empezar usa Tráfico)_
-4. Nombre de la campaña: `EFW — Dolor — Colombia`
-5. Presupuesto de campaña: **$15.000–$20.000 COP/día**
-6. Clic en **"Siguiente"**
-
-### Paso 2 — Configurar el Ad Set (audiencia)
-
-1. **Ubicación:** Colombia 🇨🇴
-2. **Edad:** 22–45 años
-3. **Sexo:** Todos
-4. **Idioma:** Español
-5. **Intereses** (busca y agrega):
-   - Duolingo
-   - Aprender inglés
-   - Call center
-   - Buscar empleo
-   - LinkedIn
-   - Trabajo remoto
-6. **Ubicaciones de los anuncios:** Selecciona "Advantage+ Placements" (automático)
-7. Clic en **"Siguiente"**
-
-### Paso 3 — Crear el anuncio
-
-1. **Identidad:** selecciona tu Página de Facebook "English for Work"
-2. **Formato:** Imagen única
-3. **Subir imagen:** escoge una de `docs/ads/imagenes/` (empieza con `01_dolor...`)
-4. **Texto principal:** copia el texto del `ad-manifest.md` para ese anuncio
-5. **Título:** copia el "Headline" del manifest
-6. **Descripción:** copia la "Description"
-7. **Sitio web:** `https://work-english-platform.vercel.app/ingles-para-trabajo?utm_source=facebook&utm_medium=cpc&utm_campaign=dolor_frio&utm_content=pain`
-8. **Botón CTA:** "Más información"
-9. Clic en **"Publicar"**
-
----
-
-## Cómo publicar el Carousel (las 3 rutas)
-
-1. En el Paso 3 → **Formato:** selecciona **"Anuncio por secuencia"** (Carousel)
-2. Sube las 4 tarjetas en orden:
-   - Card 1: `06_carousel_ruta1_conseguir_trabajo.png`
-   - Card 2: `07_carousel_ruta2_entrevistas.png`
-   - Card 3: `08_carousel_ruta3_callcenter.png`
-   - Card 4: `09_carousel_cta_47k.png`
-3. Cada card tiene su propio titular (ver manifest)
-4. URL de destino: landing con UTM de carousel
-
----
-
-## Cuánto invertir para empezar
-
-| Campaña | Presupuesto/día | Para qué |
-|---------|----------------|----------|
-| Dolor (Ad 01) | $15.000 COP | Probar el ángulo de dolor |
-| Call Center (Ad 05) | $15.000 COP | Audiencia BPO/empleo |
-| **Total** | **$30.000 COP/día** | ~$7.5 USD · buen punto de partida |
-
-> ⚠️ Deja correr **mínimo 3–5 días** sin pausar. Facebook necesita tiempo para aprender a quién mostrarle el anuncio (fase de aprendizaje).
-
----
-
-## ¿Qué revisar después de los primeros 5 días?
-
-| Métrica | Objetivo ideal |
-|---------|---------------|
-| **CTR** (click-through rate) | > 1% es bueno |
-| **CPC** (costo por clic) | < $500 COP es bueno |
-| **Alcance** | Que crezca con el presupuesto |
-| **Conversiones** | Ver en Events Manager cuántos `InitiateCheckout` |
-
-- Si el CTR es bajo → prueba otra imagen o headline
-- Si el CPC es alto → ajusta la audiencia o el anuncio
-- Pausa el anuncio que peor funcione y dobla el presupuesto del mejor
-
----
-
-## ¿Puedo pedir nuevas imágenes?
-
-**Sí, absolutamente.** Para pedir un nuevo anuncio:
-
-1. Abre `docs/ads/AD-BRIEF-TEMPLATE.md`
-2. Llena los campos del brief
-3. Compártelo y en minutos tendrás nuevas imágenes
-
-O simplemente dime directamente, por ejemplo:
-- _"Hazme un anuncio con una mujer hablando en videoconferencia, ángulo de empleo remoto, mismo precio"_
-- _"Quiero una variante del Ad 01 pero con fondo blanco"_
-- _"Hazme un anuncio para el Día sin IVA"_
-
-Las imágenes generadas quedan guardadas y se pueden usar directamente en Ads Manager.
-
----
-
-## ¿Necesito una Página de Facebook para publicar anuncios?
-
-**Sí.** Si aún no tienes la Página de "English for Work" en Facebook:
-
-1. Ve a [facebook.com/pages/create](https://facebook.com/pages/create)
+### ¿Tienes una Página de Facebook?
+Si no tienes Página de "English for Work" en Facebook:
+1. Ve a → [facebook.com/pages/create](https://www.facebook.com/pages/create)
 2. Tipo: **Empresa o marca**
 3. Nombre: `English for Work`
-4. Categoría: `Educación` o `Servicio educativo`
-5. Foto de perfil: el logo
-6. Foto de portada: uno de los creatives generados
-7. Conecta la Página a tu cuenta de Business Manager
+4. Categoría: `Educación`
+5. (Puedes agregarle foto después)
+
+### ¿Tienes cuenta publicitaria activa?
+1. Ve a → [business.facebook.com](https://business.facebook.com)
+2. Si no tienes cuenta, Facebook te guiará para crearla
+3. Agrega un método de pago: tarjeta de crédito o débito
+
+### ¿Tienes método de pago?
+- Ve a Ads Manager → parte superior derecha → ⚙️ → **Métodos de pago**
+- Agrega tu tarjeta
 
 ---
 
-## Resumen de URLs importantes
+## 🚀 Paso a paso — PUBLICAR TU PRIMER ANUNCIO
 
-| Herramienta | URL |
-|-------------|-----|
+> Empezamos con la **Campaña 1 — Ángulo Dolor** (Ad 01 y Ad 03).  
+> Es la campaña más fuerte para empezar a probar.
+
+---
+
+### PASO 1 — Abrir Ads Manager
+
+1. Ve a → **[adsmanager.facebook.com](https://adsmanager.facebook.com)**
+2. Asegúrate de estar en la cuenta de "English for Work" (arriba a la izquierda)
+3. Haz clic en el botón verde **"+ Crear"**
+
+---
+
+### PASO 2 — Elegir objetivo de la campaña
+
+Verás una pantalla con varios objetivos. Elige:
+
+> 🎯 **Tráfico** (Traffic)
+
+- Nombre de la campaña: `EFW | Dolor | Colombia | Frio`
+- **Presupuesto:** Deja el presupuesto en el nivel de Ad Set (siguiente paso)
+- Haz clic en **"Siguiente"** o **"Continue"**
+
+---
+
+### PASO 3 — Configurar el Ad Set (quién verá el anuncio)
+
+El "Ad Set" define a quién le aparece el anuncio.
+
+**Nombre del Ad Set:** `Colombia | 22-45 | Empleo-Ingles`
+
+#### Conversión (dónde quieres llevar a la gente):
+- Selecciona: **Sitio web**
+- URL: `https://work-english-platform.vercel.app/ingles-para-trabajo`
+
+#### Presupuesto y horario:
+- **Presupuesto diario:** `$15.000 COP` (aproximadamente $3.5 USD)
+- **Horario:** Sin fecha de finalización (lo pausas manualmente cuando quieras)
+
+#### Audiencia:
+- **Países:** 🇨🇴 Colombia
+- **Edad:** 22 − 45
+- **Género:** Todos
+- **Idiomas:** Español
+
+#### Intereses detallados (haz clic en "Editar" o "Browse"):
+Busca y agrega uno por uno:
+- `Duolingo`
+- `Aprendizaje del inglés`
+- `Búsqueda de empleo`
+- `Call center`
+- `LinkedIn`
+
+> 💡 Verás un número de "Alcance potencial" a la derecha. Debe estar entre **500.000 – 2.000.000** personas. Si es muy bajo, agrega más intereses.
+
+#### Ubicaciones del anuncio:
+- Selecciona: **"Advantage+ Placements"** (Facebook elige automáticamente dónde mostrar)
+- Esto incluye Facebook, Instagram, y Messenger automáticamente
+
+Haz clic en **"Siguiente"**
+
+---
+
+### PASO 4 — Crear el anuncio
+
+Aquí es donde pones la imagen y el texto.
+
+#### Identidad:
+- **Página de Facebook:** selecciona "English for Work"
+- **Cuenta de Instagram:** si tienes una, conéctala (opcional)
+
+#### Formato:
+- Selecciona: **"Imagen única"** (Single Image)
+
+#### Contenido del anuncio — Va al AD CENTER del panel admin:
+
+Abre el panel admin → **Anuncios** → **Campaña 1 — Ángulo Dolor** → **Ad 01**
+
+Copia y pega campo por campo:
+
+| Campo en Ads Manager | Qué pegar |
+|---------------------|-----------|
+| **Texto principal** | El texto largo del anuncio (botón "Copiar") |
+| **Titular** (Headline) | El texto corto del titular |
+| **Descripción** | La descripción corta |
+| **URL del sitio web** | La URL con UTM (botón "Copiar URL") |
+| **Botón de llamada** | "Más información" |
+
+#### Imagen:
+- Haz clic en **"Agregar medios"** → **"Añadir imagen"**
+- Sube: `01_dolor_pierdes_trabajos.png` (está en la carpeta `public/ads/` del proyecto)
+- O descárgala directamente desde el Ad Center del panel admin
+
+---
+
+### PASO 5 — Publicar
+
+1. Revisa el resumen a la derecha
+2. Todo se ve bien → clic en **"Publicar"** o **"Publish"**
+3. Facebook lo revisará (puede tardar entre 10 minutos y 24 horas)
+4. Cuando el estado diga **"Activo"**, está corriendo ✅
+
+---
+
+## ✌️ Segundo anuncio en la misma campaña (Ad 03)
+
+Dentro de la misma Campaña 1, en el mismo Ad Set, agrega un segundo anuncio:
+
+1. En la vista del Ad Set → clic en **"+ Agregar otro anuncio"**
+2. Repite el Paso 4 pero ahora:
+   - Imagen: `03_contraste_gramatica_vs_real.png`
+   - Textos: del **Ad 03** en el Ad Center
+
+---
+
+## 📊 Las 4 campañas — cuándo activar cada una
+
+| Campaña | Cuándo activar | Presupuesto/día |
+|---------|---------------|----------------|
+| **Campaña 1 — Ángulo Dolor** | Día 1 (ahora) | $15.000 COP |
+| **Campaña 3 — Call Center** | Día 1 (junto con la 1) | $15.000 COP |
+| **Campaña 2 — Beneficio** | Día 3–5 (si C1 funciona) | $15.000 COP |
+| **Campaña 4 — Retargeting** | Día 7–10 (cuando tengas tráfico) | $10.000 COP |
+
+> 💡 **Empieza solo con Campaña 1 y Campaña 3.** Total: $30.000 COP/día (~$7 USD). Deja correr 5 días antes de tomar decisiones.
+
+---
+
+## ⏳ Los primeros 5 días — qué esperar
+
+**No toques nada los primeros 3 días.** Facebook necesita "aprender" a quién mostrarle el anuncio. Si lo pausas o editas, reinicia el aprendizaje.
+
+| Día | Qué hacer |
+|-----|-----------|
+| Día 1 | Activar. Verificar que el estado sea "Activo" |
+| Día 2 | Ver que está corriendo. No tocar nada. |
+| Día 3 | Primera revisión rápida (ver más abajo) |
+| Día 5 | Primera revisión completa |
+
+---
+
+## 📈 Cómo revisar si va bien (Día 3 y 5)
+
+En Ads Manager verás estas métricas (están en columnas):
+
+| Métrica | Qué significa | Meta |
+|---------|--------------|------|
+| **CTR** | % de personas que hacen clic | > 1% = 👍 |
+| **CPC** | Costo por clic | < $500 COP = 👍 |
+| **Alcance** | Cuántas personas lo vieron | Que suba cada día |
+| **Clics en enlace** | Cuántos fueron a la landing | Más = mejor |
+
+**Si el CTR está muy bajo (< 0.5%):** prueba el otro anuncio (Ad 03)  
+**Si el CPC está muy alto (> $1.000 COP):** la audiencia puede ser muy pequeña, agrega más intereses  
+**Si nadie está comprando:** revisa que el link de Hotmart funcione en la landing
+
+---
+
+## 🛑 ¿Cuándo pausar un anuncio?
+
+Pausa si:
+- Llevas 7 días y el CPC está > $1.500 COP
+- 0 compras después de $150.000 COP (~$35 USD) invertidos
+- El anuncio fue rechazado por Facebook (te avisa por email)
+
+No pauses si:
+- Llevas solo 1–2 días
+- El CTR es > 1% aunque no haya compras aún (la gente está llegando a la landing)
+
+---
+
+## 🔄 El Carousel (Campaña 3 — Call Center)
+
+El Ad Carousel tiene 4 tarjetas (imágenes). Para crearlo:
+
+**En el Paso 4 → Formato → selecciona "Secuencia" (Carousel)**
+
+Agrega 4 tarjetas en orden:
+| Tarjeta | Imagen | Titular |
+|---------|--------|---------|
+| 1 | `06_carousel_ruta1_conseguir_trabajo.png` | Consigue el trabajo bilingüe que quieres |
+| 2 | `07_carousel_ruta2_entrevistas.png` | Domina tu próxima entrevista en inglés |
+| 3 | `08_carousel_ruta3_callcenter.png` | Destácate en cualquier call center |
+| 4 | `09_carousel_cta_47k.png` | Todo por $47.000 COP — empieza hoy |
+
+- El texto largo, titular y URL: están en **Ad Center → Campaña 3 → Ad Carousel**
+
+---
+
+## 🔗 URLs importantes
+
+| Qué | URL |
+|-----|-----|
 | Ads Manager | https://adsmanager.facebook.com |
-| Business Manager | https://business.facebook.com |
 | Events Manager (Pixel) | https://business.facebook.com/events_manager2 |
 | Tu Landing Principal | https://work-english-platform.vercel.app/ingles-para-trabajo |
 | Tu Landing Call Center | https://work-english-platform.vercel.app/ingles-call-center |
-| Hotmart Checkout | https://pay.hotmart.com/V105122662R |
+| Checkout Hotmart | https://pay.hotmart.com/V105122662R |
+
+---
+
+## ❓ Preguntas frecuentes
+
+**¿Facebook puede rechazar mi anuncio?**  
+Sí. Si pasa, te llegará un email. Las causas más comunes:
+- Texto con demasiadas promesas de ingresos → edita el texto para suavizarlo
+- Imagen con texto en más del 20% → usa la imagen sin modificar
+- Re-envía el anuncio para revisión desde Ads Manager
+
+**¿Cuándo veo los primeros resultados?**  
+Los primeros clics pueden llegar en las primeras horas. Las primeras compras pueden tardar 3–7 días dependiendo del tráfico.
+
+**¿Puedo cambiar el presupuesto después?**  
+Sí, en cualquier momento. Ve al Ad Set y edita el presupuesto diario.
+
+**¿Cómo sé si alguien compró?**  
+- Ve a Hotmart → Ventas
+- Ve a Supabase → tabla `profiles` → un nuevo usuario con `access_type = paid`
+- Recibirás un email de notificación de Hotmart
+
+**¿Necesito crear una campaña diferente para cada anuncio?**  
+No. Puedes tener varios anuncios dentro del mismo Ad Set. Lo que necesitas es una campaña por ángulo (Dolor, Beneficio, Call Center, Precio).

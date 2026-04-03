@@ -196,6 +196,25 @@ export default function AdCenter() {
         ))}
       </div>
 
+      {/* Beginner guide banner */}
+      <div className="guide-banner">
+        <div className="guide-banner-left">
+          <span className="guide-banner-icon">📖</span>
+          <div>
+            <strong>¿Primera vez publicando?</strong>
+            <p>Lee la guía paso a paso — explica exactamente qué hacer en Ads Manager desde cero.</p>
+          </div>
+        </div>
+        <a
+          href="https://github.com/mghernandezcastillo/work-english-platform/blob/main/docs/ads/FACEBOOK-ADS-GUIDE.md"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="guide-banner-btn"
+        >
+          Ver guía →
+        </a>
+      </div>
+
       {/* Campaigns */}
       <div className="campaigns-list">
         {campaigns.map(campaign => (
