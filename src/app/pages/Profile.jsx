@@ -46,13 +46,48 @@ export default function Profile() {
   async function handleResetProgress() {
     setResetting(true)
     try {
-      const { error } = await supabase
+      // 1. Delete all lesson/simulation progress
+      const { error: progressError } = await supabase
         .from('user_progress')
         .delete()
         .eq('user_id', user.id)
-      if (error) throw error
-      showToast('Progreso reiniciado desde cero 🔄', 'success')
+      if (progressError) throw progressError
+
+      // 2. Reset XP back to 0 in profile
+      const { error: xpError } = await supabase
+        .from('profiles')
+        .update({ xp: 0 })
+        .eq('id', user.id)
+      if (xpError) throw xpError
+
+      // 3. Delete earned badges
+      await supabase
+        .from('user_badges')
+        .delete()
+        .eq('user_id', user.id)
+
+      // 4. Clear localStorage — lesson steps and pronunciation scores
+      const keysToRemove = []
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (
+          key?.startsWith('lesson_step_') ||
+          key?.startsWith('lesson_pronun_scores_')
+        ) {
+          keysToRemove.push(key)
+        }
+      }
+      keysToRemove.forEach(k => localStorage.removeItem(k))
+
+      // 5. Refresh the auth profile so the UI updates immediately
+      await refreshProfile()
+
+      showToast('¡Progreso reiniciado! Empiezas desde cero 🔄', 'success')
       setShowResetConfirm(false)
+
+      // 6. Navigate to dashboard so it fully remounts and shows zero progress
+      setTimeout(() => navigate('/dashboard', { replace: true }), 800)
+
     } catch (err) {
       showToast('Error al reiniciar: ' + err.message, 'error')
     } finally {
