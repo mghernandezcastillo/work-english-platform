@@ -44,14 +44,16 @@ export default function Login() {
       <div className="container-sm w-full animate-fadeIn">
         {/* Logo */}
         <div className="text-center" style={{ marginBottom: 'var(--space-8)' }}>
-          <div style={{
-            width: 56, height: 56, background: 'var(--color-primary)',
-            borderRadius: 'var(--radius-lg)', display: 'flex', alignItems: 'center',
-            justifyContent: 'center', margin: '0 auto var(--space-4)',
-            fontSize: 28, boxShadow: 'var(--shadow-primary)',
-          }}>
-            🇺🇸
-          </div>
+          <img 
+            src="/images/facebook-profile.png" 
+            alt="English for Work" 
+            style={{
+              width: 72, height: 72, borderRadius: '50%',
+              margin: '0 auto var(--space-4)',
+              display: 'block',
+              boxShadow: '0 4px 20px rgba(16, 185, 129, 0.25)',
+            }}
+          />
           <h1 style={{ fontSize: 'var(--text-2xl)', marginBottom: 4 }}>{brand.name}</h1>
           <p className="text-muted text-sm">Inicia sesión en tu cuenta</p>
         </div>

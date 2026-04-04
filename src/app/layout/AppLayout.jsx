@@ -40,7 +40,7 @@ export default function AppLayout() {
       <header className="app-topbar">
         <div className="app-topbar-inner">
           <div className="app-topbar-left">
-            <span className="app-topbar-logo">🇺🇸</span>
+            <img src="/images/facebook-profile.png" alt="" className="app-topbar-logo" />
             <span className="app-topbar-title">{brand.name}</span>
           </div>
           <div className="app-topbar-right">
