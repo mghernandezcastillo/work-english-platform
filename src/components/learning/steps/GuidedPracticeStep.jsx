@@ -32,8 +32,17 @@ export default function GuidedPracticeStep({ data }) {
               <span className="practice-number">Situación {i + 1}</span>
               <span className="practice-context">{scenario.context}</span>
             </div>
+
+            {/* Interviewer prompt — what the other person says */}
+            {scenario.prompt && (
+              <div className="practice-prompt">
+                <span className="practice-prompt-label">🎙️ Te dicen:</span>
+                <p className="practice-prompt-text">"{scenario.prompt}"</p>
+              </div>
+            )}
+
             <div className="practice-instruction">
-              <p><strong>👤 Di:</strong></p>
+              <p><strong>👤 Tú respondes:</strong></p>
               <p className="phrase-en" style={{ fontSize: 'var(--text-lg)', marginTop: 4 }}>
                 "<ClickablePhrase text={scenario.phrase} />"
               </p>
