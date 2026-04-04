@@ -1,87 +1,175 @@
-# 📘 Facebook Pixel — Guía desde tu cuenta actual
+# 🎯 Guía paso a paso: Crear tu primera campaña en Facebook Ads Manager
 
-> **Tu situación:** Ya tienes Meta Business Suite con la página "Imperium Intro".
-> No tienes que cambiar esa página ni crear una nueva cuenta.
-> El Pixel se crea en el **Business Manager**, no en la página.
+> **Situación:** Ya tienes la página de Facebook "English for Work", el Pixel instalado, y los creativos listos en el AdCenter (`/admin/anuncios`). Esta guía te dice exactamente qué elegir en cada pantalla del Ads Manager.
 
 ---
 
-## Lo que vas a hacer ahora (10 minutos)
+## ANTES DE EMPEZAR
 
-1. Ir al **Administrador de Eventos** (Events Manager) de tu Business
-2. Crear un Pixel nuevo llamado "English for Work"
-3. Copiarme el ID que te da (15 números)
-4. Yo lo instalo en el código automáticamente
-
----
-
-## Paso 1 — Ir al Administrador de Eventos
-
-**En la pantalla que tienes abierta de Meta Business Suite:**
-
-Tienes dos opciones para llegar:
-
-**Opción A (más rápida):** Pega directamente esta URL en tu navegador:
-```
-https://business.facebook.com/events_manager2/list/pixel/
-```
-
-**Opción B (desde el menú):**
-1. En la barra lateral izquierda, busca **"Administrador de an..."** (Administrador de anuncios)
-2. Al abrirlo, busca en el menú el ícono de **"Administrador de eventos"** o **"Events Manager"**
-3. También puedes ir a: `https://www.facebook.com/business/tools/ads-manager`
-   y luego en el menú de hamburguesa (≡) buscar "Administrador de eventos"
+1. Abre el **AdCenter** de la app → `/admin/anuncios`
+2. Elige la campaña que vas a crear primero (recomendado: **Campaña 1 — Ángulo Dolor**)
+3. Ten esa pestaña abierta porque vas a copiar textos desde ahí
 
 ---
 
-## Paso 2 — Crear el Pixel
+## PASO 1 — Crear la campaña
 
-Una vez en el Administrador de Eventos:
+Ir a: [https://adsmanager.facebook.com](https://adsmanager.facebook.com)
 
-1. Haz clic en el botón verde **"+ Conectar fuentes de datos"** (o "+ Add")
-2. En la pantalla que aparece, selecciona **"Web"**
-3. Clic en **"Siguiente"** o **"Connect"**
-4. Selecciona **"Meta Pixel"** (probablemente ya viene seleccionado)
-5. Clic en **"Conectar"**
-6. En el campo de nombre escribe: `English for Work`
-7. Clic en **"Crear Pixel"** o **"Continue"**
-8. Te pregunta cómo instalar — elige **"Instalar código manualmente"** o simplemente cierra esa ventana
+Clic en **"+ Crear"** (botón verde arriba a la izquierda)
 
----
+### Pantalla: "Elige un objetivo de campaña"
 
-## Paso 3 — Copiar el Pixel ID
+| Campo | Qué elegir | Por qué |
+|-------|-----------|---------|
+| **Tipo de compra** | `Subasta` ← ya seleccionado | Es la única opción para presupuestos bajos |
+| **Objetivo** | ✅ **Tráfico** | Queremos enviar gente a la landing page. NO elijas "Ventas" porque el Pixel no tiene suficientes datos todavía |
 
-Después de crear el Pixel verás una pantalla con un número de **15-16 dígitos**, así:
+> ⚠️ **NO elijas "Conversiones" ni "Ventas"** para la primera campaña. Facebook necesita al menos 50 conversiones por semana para optimizar. Con $15.000/día no vas a llegar a eso al inicio. **Tráfico** es lo correcto para arrancar.
 
-```
-📊 English for Work
-Pixel ID: 1234567890123456
-```
-
-**Copia ese número y pégamelo aquí en el chat.**
-
-Eso es todo. Yo hago el resto.
+Clic en **"Continuar"**
 
 ---
 
-## ⚠️ Si ves "No tienes fuentes de datos" o pantalla vacía
+## PASO 2 — Configurar la campaña
 
-Es normal si nunca has creado un Pixel antes. El botón **"+ Conectar fuentes de datos"** aparece en la esquina superior derecha o como botón azul/verde en el centro de la pantalla vacía.
+### Pantalla: "Nombre de la campaña"
+
+| Campo | Qué escribir |
+|-------|-------------|
+| **Nombre de la campaña** | `EW - Dolor - Tráfico - Colombia` |
+| **Categorías especiales** | ❌ NO marques ninguna (no es empleo, vivienda, ni crédito) |
+| **Presupuesto de campaña Advantage** | ✅ **Activar** → $15.000 COP/día |
+
+> El presupuesto diario de $15.000 COP (~$3.5 USD) es ideal para probar. Facebook distribuye el gasto entre tus anuncios automáticamente.
+
+Clic en **"Siguiente"**
 
 ---
 
-## ⚠️ Si te pregunta cuál Business usar
+## PASO 3 — Configurar el conjunto de anuncios
 
-Si tienes más de un Business, selecciona el mismo Business donde está "Imperium Intro" (business_id que termina en `5698371`). El Pixel puede rastrear cualquier web independientemente de qué página de Facebook tengas.
+### Pantalla: "Conjunto de anuncios"
+
+| Campo | Qué elegir |
+|-------|-----------|
+| **Nombre del conjunto** | `Colombia 22-45 empleo inglés` |
+| **Objetivo de rendimiento** | `Maximizar el número de clics en el enlace` |
+| **Pixeles y eventos** | Selecciona tu Pixel "English for Work" (si aparece) |
+
+### Sección: Público (Audiencia)
+
+| Campo | Valor |
+|-------|-------|
+| **Ubicaciones** | `Colombia` (escríbelo y selecciónalo) |
+| **Edad** | `22` a `45` |
+| **Género** | Todos |
+| **Segmentación detallada** | Escribe y agrega estos intereses (los que encuentres): |
+
+Intereses a buscar (agrega todos los que te aparezcan):
+- `Duolingo`
+- `Aprender inglés`
+- `English language`
+- `Empleo` o `Búsqueda de empleo`
+- `LinkedIn`
+- `Call center`
+- `Trabajo remoto`
+
+> 💡 No todos van a aparecer exactamente igual. Escribe la palabra y elige la opción más cercana. Con 4-5 intereses es suficiente.
+
+### Sección: Ubicaciones (Placements)
+
+| Opción | Qué elegir |
+|--------|-----------|
+| **Ubicaciones** | ✅ **Ubicaciones Advantage+** (automáticas) |
+
+> Deja que Facebook decida dónde mostrar el anuncio (Feed, Stories, Reels, etc.). Es más eficiente que elegir manualmente.
+
+Clic en **"Siguiente"**
 
 ---
 
-## Próximo paso después de darme el ID
+## PASO 4 — Crear el anuncio
 
-Con ese número yo:
-1. Lo agrego al `.env` del proyecto
-2. Lo subo a Vercel como variable de entorno
-3. Hago redeploy automático
-4. El Pixel queda activo en todas las páginas del sitio
+### Pantalla: "Anuncio"
 
-**Tiempo total después de que me des el ID: 3 minutos.**
+Aquí es donde copias todo desde el **AdCenter**.
+
+| Campo | De dónde copiarlo |
+|-------|-------------------|
+| **Nombre del anuncio** | Del AdCenter: nombre del ad (ej: "Ad 01 — ¿Pierdes trabajos?") |
+| **Identidad** | Selecciona tu página: **English for Work** |
+| **Formato** | `Imagen o video único` (para imagen única) o `Carousel` (para el carousel) |
+
+### Sección: Creatividad del anuncio
+
+| Campo del Ads Manager | Campo del AdCenter | Acción |
+|----------------------|-------------------|--------|
+| **Elementos multimedia** | Imagen | Clic "Agregar elementos" → Subir imagen → Sube la imagen que descargaste del AdCenter |
+| **Texto principal** | 📝 Texto principal | Clic "Copiar" en AdCenter → Pegar aquí |
+| **Título** | 🏷 Título (Headline) | Clic "Copiar" en AdCenter → Pegar aquí |
+| **Descripción** | 📄 Descripción | Clic "Copiar" en AdCenter → Pegar aquí |
+| **Botón de llamada a la acción** | 🖱 Botón CTA | Selecciona del menú: `Más información` o `Registrarse` (según lo que diga el AdCenter) |
+| **URL del sitio web** | 🔗 URL con UTM | Clic "Copiar URL" en AdCenter → Pegar aquí |
+
+> ⚠️ **MUY IMPORTANTE:** La URL debe ser la completa con los parámetros UTM. No la acortes ni la modifiques. Ejemplo:
+> ```
+> https://work-english-platform.vercel.app/ingles-para-trabajo?utm_source=facebook&utm_medium=cpc&utm_campaign=dolor_frio&utm_content=pain
+> ```
+
+### Sección: Seguimiento
+
+| Campo | Qué elegir |
+|-------|-----------|
+| **Pixel** | Selecciona "English for Work" |
+| **Evento de conversión** | `ViewContent` (o déjalo como viene) |
+
+---
+
+## PASO 5 — Publicar
+
+1. Revisa la **vista previa** a la derecha — verifica que se vea bien el texto y la imagen
+2. Clic en **"Publicar"** (botón verde abajo a la derecha)
+3. Facebook revisa el anuncio (puede tardar 15 min - 24 horas)
+4. Te llega notificación cuando se apruebe
+
+---
+
+## 🔄 REPETIR para cada anuncio
+
+Para la Campaña 1, tienes **2 anuncios** (Ad 01 y Ad 03). Puedes:
+
+**Opción A (recomendada):** Dentro de la misma campaña, duplica el conjunto de anuncios y cambia solo el anuncio (textos + imagen).
+
+**Opción B:** En el mismo conjunto de anuncios, agrega un segundo anuncio con "Crear" → nuevo anuncio.
+
+---
+
+## 📋 Orden de activación recomendado
+
+| Semana | Campaña | Presupuesto |
+|--------|---------|-------------|
+| **Semana 1** | Campaña 1 — Dolor (2 ads) | $15.000/día |
+| **Semana 2** | Campaña 2 — Beneficio (1 ad) + Campaña 3 — Call Center (2 ads) | $15.000/día cada una |
+| **Semana 3+** | Campaña 4 — Retargeting (solo si ya tienes +500 visitantes en la landing) | $10.000/día |
+
+> La Campaña 4 (retargeting) requiere crear una **Audiencia personalizada** en el Ads Manager:
+> - Ir a Audiencias → Crear audiencia → Audiencia personalizada → Sitio web
+> - Personas que visitaron: `work-english-platform.vercel.app/ingles-para-trabajo`
+> - En los últimos: 30 días
+
+---
+
+## ❓ Problemas comunes
+
+### "Mi anuncio fue rechazado"
+- Revisa que la imagen no tenga más del 20% de texto
+- Revisa que el texto no haga promesas de ingresos ("gana dinero con inglés")
+- Apela si crees que fue un error — a veces el bot de revisión se equivoca
+
+### "No tengo opción de Pixel"
+- Ve a Configuración del Business → Fuentes de datos → Conecta tu Pixel al AdCenter
+- O simplemente ignora esa sección al inicio — el Pixel ya está instalado en el sitio
+
+### "¿Puedo empezar con menos presupuesto?"
+- Sí. Puedes empezar con $8.000-10.000 COP/día. Menos de eso y Facebook no tiene suficiente para optimizar.

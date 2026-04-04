@@ -206,7 +206,7 @@ export default function AdCenter() {
           </div>
         </div>
         <a
-          href="https://github.com/mghernandezcastillo/work-english-platform/blob/main/docs/ads/FACEBOOK-ADS-GUIDE.md"
+          href="https://github.com/mghernandezcastillo/work-english-platform/blob/main/docs/guides/FACEBOOK-ADS-STEP-BY-STEP.md"
           target="_blank"
           rel="noopener noreferrer"
           className="guide-banner-btn"
