@@ -9,101 +9,103 @@ import './ClickablePhrase.css'
  * First finds compound phrases (like "customer service"), then individual words.
  */
 function tokenize(text) {
-  // Split into raw tokens preserving whitespace
-  const rawTokens = text.split(/(\s+)/)
-  const wordTokens = [] // only the non-whitespace tokens (for compound scanning)
-  const allTokens = []  // full token list with whitespace
+  // First, extract bracket spans [content] as atomic tokens
+  const bracketParts = []
+  const bracketRegex = /\[([^\]]+)\]/g
+  let lastIndex = 0
+  let match
 
-  rawTokens.forEach((token, idx) => {
-    if (/^\s+$/.test(token)) {
-      allTokens.push({ type: 'space', text: token })
-    } else {
-      allTokens.push({ type: 'word', text: token, wordIndex: wordTokens.length })
-      wordTokens.push(token)
+  while ((match = bracketRegex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      bracketParts.push({ type: 'text', value: text.slice(lastIndex, match.index) })
     }
-  })
-
-  // Now scan wordTokens for compound matches
-  const compoundRanges = [] // [{ startWordIdx, endWordIdx, phrase, translation }]
-  let i = 0
-  while (i < wordTokens.length) {
-    const match = lookupCompound(wordTokens.map(w => w.replace(/[.,;:!?'"()\[\]{}—–-]/g, '').replace(/'/g, '')), i)
-    if (match) {
-      compoundRanges.push({
-        startWordIdx: i,
-        endWordIdx: i + match.wordCount - 1,
-        phrase: match.phrase,
-        translation: match.translation,
-      })
-      i += match.wordCount
-    } else {
-      i++
-    }
+    bracketParts.push({ type: 'bracket', value: match[1] }) // content without brackets
+    lastIndex = match.index + match[0].length
+  }
+  if (lastIndex < text.length) {
+    bracketParts.push({ type: 'text', value: text.slice(lastIndex) })
   }
 
-  // Build the final render tokens
-  const renderTokens = []
-  const usedWordIndices = new Set()
+  // Now process each text segment normally, and pass bracket parts through
+  const result = []
 
-  // Mark all indices used by compounds
-  compoundRanges.forEach(range => {
-    for (let j = range.startWordIdx; j <= range.endWordIdx; j++) {
-      usedWordIndices.add(j)
+  for (const part of bracketParts) {
+    if (part.type === 'bracket') {
+      result.push({ type: 'bracket', text: part.value })
+      continue
     }
-  })
 
-  let currentCompoundIdx = 0
+    // Process normal text segment through compound/word tokenizer
+    const rawTokens = part.value.split(/(\s+)/)
+    const wordTokens = []
+    const allTokens = []
 
-  allTokens.forEach(token => {
-    if (token.type === 'space') {
-      // Check if this space is between words in the same compound
-      // If so, include it in the compound group
-      const prevWord = renderTokens.length > 0 ? renderTokens[renderTokens.length - 1] : null
-      if (prevWord && prevWord._inCompound) {
-        // Append space to current compound
-        prevWord.text += token.text
-        prevWord._needsMoreWords = true
+    rawTokens.forEach((token) => {
+      if (/^\s+$/.test(token)) {
+        allTokens.push({ type: 'space', text: token })
+      } else {
+        allTokens.push({ type: 'word', text: token, wordIndex: wordTokens.length })
+        wordTokens.push(token)
+      }
+    })
+
+    const compoundRanges = []
+    let i = 0
+    while (i < wordTokens.length) {
+      const m = lookupCompound(wordTokens.map(w => w.replace(/[.,;:!?'"()\[\]{}—–-]/g, '').replace(/'/g, '')), i)
+      if (m) {
+        compoundRanges.push({ startWordIdx: i, endWordIdx: i + m.wordCount - 1, phrase: m.phrase, translation: m.translation })
+        i += m.wordCount
+      } else {
+        i++
+      }
+    }
+
+    const usedWordIndices = new Set()
+    compoundRanges.forEach(range => {
+      for (let j = range.startWordIdx; j <= range.endWordIdx; j++) usedWordIndices.add(j)
+    })
+
+    allTokens.forEach(token => {
+      if (token.type === 'space') {
+        const prevWord = result.length > 0 ? result[result.length - 1] : null
+        if (prevWord && prevWord._inCompound) {
+          prevWord.text += token.text
+          prevWord._needsMoreWords = true
+          return
+        }
+        result.push({ type: 'space', text: token.text })
         return
       }
-      renderTokens.push({ type: 'space', text: token.text })
-      return
-    }
 
-    const wordIdx = token.wordIndex
-    const compound = compoundRanges.find(r => wordIdx >= r.startWordIdx && wordIdx <= r.endWordIdx)
+      const wordIdx = token.wordIndex
+      const compound = compoundRanges.find(r => wordIdx >= r.startWordIdx && wordIdx <= r.endWordIdx)
 
-    if (compound) {
-      // Part of a compound
-      const existingCompound = renderTokens.find(t => t.type === 'compound' && t._compoundId === compound.startWordIdx)
-      if (existingCompound) {
-        existingCompound.text += token.text
-        existingCompound._needsMoreWords = wordIdx < compound.endWordIdx
+      if (compound) {
+        const existingCompound = result.find(t => t.type === 'compound' && t._compoundId === compound.startWordIdx)
+        if (existingCompound) {
+          existingCompound.text += token.text
+          existingCompound._needsMoreWords = wordIdx < compound.endWordIdx
+        } else {
+          result.push({
+            type: 'compound',
+            text: token.text,
+            phrase: compound.phrase,
+            translation: compound.translation,
+            _compoundId: compound.startWordIdx,
+            _inCompound: true,
+            _needsMoreWords: wordIdx < compound.endWordIdx,
+          })
+        }
       } else {
-        renderTokens.push({
-          type: 'compound',
-          text: token.text,
-          phrase: compound.phrase,
-          translation: compound.translation,
-          _compoundId: compound.startWordIdx,
-          _inCompound: true,
-          _needsMoreWords: wordIdx < compound.endWordIdx,
-        })
+        const cleanWord = token.text.replace(/[.,;:!?'"()\[\]{}—–-]/g, '').replace(/'/g, '')
+        const translation = lookup(cleanWord)
+        result.push({ type: 'word', text: token.text, cleanWord, translation, hasDef: translation !== null })
       }
-    } else {
-      // Individual word
-      const cleanWord = token.text.replace(/[.,;:!?'"()\[\]{}—–-]/g, '').replace(/'/g, '')
-      const translation = lookup(cleanWord)
-      renderTokens.push({
-        type: 'word',
-        text: token.text,
-        cleanWord,
-        translation,
-        hasDef: translation !== null,
-      })
-    }
-  })
+    })
+  }
 
-  return renderTokens
+  return result
 }
 
 /**
@@ -203,6 +205,16 @@ export default function ClickablePhrase({ text, className = '' }) {
           )
         }
 
+        if (token.type === 'bracket') {
+          return (
+            <span key={i} className="word-bracket" title="Reemplaza esto con tu información real">
+              <span className="word-bracket-marker">[</span>
+              {token.text}
+              <span className="word-bracket-marker">]</span>
+            </span>
+          )
+        }
+
         // Individual word — always clickable
         return (
           <span
@@ -263,3 +275,4 @@ export default function ClickablePhrase({ text, className = '' }) {
     </span>
   )
 }
+

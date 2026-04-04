@@ -96,7 +96,32 @@ export const COMPOUNDS = {
   'interested in': 'interesado en',
   'able to': 'capaz de',
   'based on': 'basado en',
+
+  // ── Bracket placeholder compounds (used in lesson exercises) ──
+  'job title': 'título del puesto',
+  'company name': 'nombre de la empresa',
+  'job board': 'bolsa de empleo',
+  'hiring manager': 'gerente de contratación',
+  'last name': 'apellido',
+  'first name': 'nombre de pila',
+  'account number': 'número de cuenta',
+  'case number': 'número de caso',
+  'reference number': 'número de referencia',
+  'best regards': 'atentamente',
+  'key achievement': 'logro clave',
+  'your name': 'tu nombre',
+  'your field': 'tu área/campo',
+  'time period': 'período de tiempo',
+  'interview date': 'fecha de la entrevista',
+  'date sent': 'fecha de envío',
+  'next step': 'siguiente paso',
+  'specific topic': 'tema específico',
+  'specific action': 'acción específica',
+  'type of situation': 'tipo de situación',
+  'supervisor name': 'nombre del supervisor',
+  'interviewer name': 'nombre del entrevistador',
 }
+
 
 // ─── SINGLE WORD DICTIONARY ───
 const DICTIONARY = {
