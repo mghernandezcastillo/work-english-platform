@@ -17,14 +17,30 @@ function ConfettiPiece({ emoji, delay, left }) {
   )
 }
 
-export default function ReinforcementStep({ data, onComplete }) {
+export default function ReinforcementStep({ data, lessonId, onComplete }) {
   const [showConfetti, setShowConfetti] = useState(false)
+  const [weakPhrases, setWeakPhrases] = useState([])
 
   useEffect(() => {
     // Trigger confetti after a short delay
     const timer = setTimeout(() => setShowConfetti(true), 300)
     return () => clearTimeout(timer)
   }, [])
+
+  // Load pronunciation scores from localStorage
+  useEffect(() => {
+    if (!lessonId) return
+    try {
+      const raw = localStorage.getItem(`lesson_pronun_scores_${lessonId}`)
+      if (!raw) return
+      const scores = JSON.parse(raw) // { phraseText: score, ... }
+      // Find phrases with score < 70
+      const weak = Object.entries(scores)
+        .filter(([, score]) => score < 70)
+        .map(([phrase]) => phrase)
+      setWeakPhrases(weak)
+    } catch { /* ignore */ }
+  }, [lessonId])
 
   // Auto-complete: trigger XP + streak immediately after showing completion
   useEffect(() => {
@@ -75,6 +91,22 @@ export default function ReinforcementStep({ data, onComplete }) {
           <span className="stat-label">Completado</span>
         </div>
       </div>
+
+      {/* Smart review — low-scoring phrases */}
+      {weakPhrases.length > 0 && (
+        <div className="smart-review-section">
+          <h4 className="smart-review-title">💪 Practica un poco más estas frases:</h4>
+          <div className="smart-review-list">
+            {weakPhrases.map((phrase, i) => (
+              <div key={i} className="smart-review-item">
+                <span className="smart-review-dot">🔸</span>
+                <span className="smart-review-phrase">"{phrase}"</span>
+              </div>
+            ))}
+          </div>
+          <p className="smart-review-hint">Repítelas en voz alta 3 veces más antes de cerrar</p>
+        </div>
+      )}
 
       {/* Key takeaways */}
       {data?.keyTakeaways && (

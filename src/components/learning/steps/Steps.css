@@ -79,13 +79,20 @@
 .phrase-card:nth-child(5) { animation-delay: 0.32s; }
 
 .phrase-number {
-  width: 28px; height: 28px;
+  width: 36px; min-width: 36px; height: 28px;
   border-radius: var(--radius-full);
   background: var(--color-primary-light);
   color: var(--color-primary);
   display: flex; align-items: center; justify-content: center;
-  font-size: var(--text-xs); font-weight: var(--font-bold);
+  font-size: 10px; font-weight: var(--font-bold);
   flex-shrink: 0;
+  white-space: nowrap;
+  padding: 0 6px;
+}
+.phrase-counter {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 .phrase-content { flex: 1; display: flex; flex-direction: column; gap: var(--space-2); }
 .phrase-en {
@@ -420,6 +427,46 @@
   line-height: 1.6;
 }
 
+/* Smart Review — low-scoring phrases from pronunciation practice */
+.smart-review-section {
+  background: linear-gradient(135deg, rgba(245,158,11,0.10), rgba(251,191,36,0.06));
+  border: 1px solid rgba(245,158,11,0.25);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-5);
+  text-align: left;
+  animation: slideUp 0.5s ease-out 0.5s both;
+}
+.smart-review-title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: #D97706;
+  margin-bottom: var(--space-3);
+}
+.smart-review-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+.smart-review-item {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+.smart-review-dot { flex-shrink: 0; font-size: 14px; }
+.smart-review-phrase {
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  font-style: italic;
+  font-weight: 500;
+}
+.smart-review-hint {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-top: var(--space-2);
+}
+
 /* Confetti */
 .confetti-container {
   position: absolute;
@@ -728,3 +775,21 @@
   }
 }
 
+/* ── Sparkle animation for match correct ── */
+@keyframes sparkle-pop {
+  0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
+  40%  { transform: scale(1.06); box-shadow: 0 0 0 8px rgba(16,185,129,0.2); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+}
+.match-card.sparkling {
+  animation: sparkle-pop 0.45s ease-out forwards;
+}
+
+/* ── Exercise slide-in between questions ── */
+@keyframes exercise-slide-in {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.exercise-question, .exercise-options, .exercise-fill {
+  animation: exercise-slide-in 0.15s ease-out both;
+}

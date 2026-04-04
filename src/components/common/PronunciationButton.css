@@ -54,7 +54,6 @@
   padding: 2px 8px;
 }
 
-
 .pronun-target {
   display: flex;
   flex-direction: column;
@@ -198,6 +197,47 @@
   font-size: var(--text-sm);
   color: var(--color-text);
   font-style: italic;
+}
+
+/* Missed words feedback */
+.pronun-missed {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px;
+  background: rgba(245,158,11,0.07);
+  border: 1px solid rgba(245,158,11,0.2);
+  border-radius: var(--radius-md);
+}
+.pronun-missed-lbl {
+  font-size: 10px;
+  color: #B45309;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.dark .pronun-missed-lbl {
+  color: #FCD34D;
+}
+.pronun-missed-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.pronun-missed-word {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: #92400E;
+  background: rgba(245,158,11,0.15);
+  border: 1px solid rgba(245,158,11,0.35);
+  border-radius: var(--radius-full);
+  padding: 2px 10px;
+  font-style: italic;
+}
+.dark .pronun-missed-word {
+  color: #FDE68A;
+  background: rgba(245,158,11,0.12);
+  border-color: rgba(245,158,11,0.25);
 }
 
 .pronun-retry-btn {

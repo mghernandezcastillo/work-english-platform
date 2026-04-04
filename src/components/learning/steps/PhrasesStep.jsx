@@ -10,15 +10,17 @@ export default function PhrasesStep({ data }) {
   return (
     <div className="step-container animate-fadeIn">
       <div className="step-badge">💬 Frases clave</div>
-      <p className="step-subtitle">Aprende estas frases esenciales. <strong>Escúchalas y repítelas en voz alta:</strong></p>
+      <p className="step-subtitle">Estas son las frases que los profesionales reales usan. <strong>Escúchalas y repítelas en voz alta</strong> — esa repetición es lo que las fija en tu memoria.</p>
       <p className="text-xs text-muted" style={{ marginBottom: 'var(--space-3)' }}>
-        💡 Toca cualquier palabra para escuchar su pronunciación y ver su significado
+        💡 Toca cualquier palabra subrayada para ver su significado
       </p>
 
       <div className="phrases-list">
         {phrases.map((phrase, i) => (
           <div key={i} className="phrase-card">
-            <div className="phrase-number">{i + 1}</div>
+            <div className="phrase-number">
+              <span className="phrase-counter">{i + 1}/{phrases.length}</span>
+            </div>
             <div className="phrase-content">
               <p className="phrase-en">
                 <ClickablePhrase text={phrase.en} />

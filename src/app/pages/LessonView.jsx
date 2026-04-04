@@ -205,8 +205,25 @@ export default function LessonView() {
     else navigate('/dashboard')
   }
 
+  const STEP_TOASTS = [
+    '✨ ¡Buen trabajo!',
+    '💪 ¡Avanzando!',
+    '🔥 ¡Vas muy bien!',
+    '⭐ ¡Excelente!',
+    '🚀 ¡Sigue así!',
+    '🎯 ¡Enfocado!',
+  ]
+  const [stepToast, setStepToast] = useState(null)
+
+  function showStepToast() {
+    const msg = STEP_TOASTS[Math.floor(Math.random() * STEP_TOASTS.length)]
+    setStepToast(msg)
+    setTimeout(() => setStepToast(null), 1000)
+  }
+
   function goToStep(index) {
     if (index >= 0 && index < STEPS.length) {
+      if (index > currentStep) showStepToast()
       setCurrentStep(index)
       // Persist step so interruptions (screen lock, reload) don't reset progress
       localStorage.setItem(`lesson_step_${lessonId}`, index)
@@ -258,6 +275,10 @@ export default function LessonView() {
   return (
     <div className="lesson-view animate-fadeIn">
       <XPNotification xp={25} show={showXP} />
+      {/* Step advance micro-celebration */}
+      {stepToast && (
+        <div className="lesson-step-toast animate-fadeIn">{stepToast}</div>
+      )}
       {/* Badge earned toast */}
       {activeBadgeToast && (
         <div className="badge-toast">
@@ -326,6 +347,7 @@ export default function LessonView() {
       <div className="lesson-content" style={{ fontSize: `calc(var(--text-base) * ${fontScale})` }}>
         <StepComponent
           data={stepData}
+          lessonId={lessonId}
           onComplete={isLast ? handleLessonComplete : undefined}
         />
       </div>

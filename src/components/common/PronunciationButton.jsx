@@ -41,7 +41,7 @@ function detectBrowserSupport() {
  * Usa Web Speech API. Funciona en: Chrome, Edge, Safari, iOS Safari 15+.
  * En browsers no soportados (Firefox) muestra guía clara.
  */
-export function PronunciationButton({ targetText, language = 'en-US' }) {
+export function PronunciationButton({ targetText, language = 'en-US', onScore }) {
   const browserInfo = detectBrowserSupport()
   const [state, setState] = useState('idle') // idle | listening | processing | result
   const [result, setResult] = useState(null)
@@ -69,17 +69,26 @@ export function PronunciationButton({ targetText, language = 'en-US' }) {
   // ── Lógica de scoring ──
   function getScore(target, transcript) {
     if (!transcript) return 0
-    const t = target.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(' ')
-    const s = transcript.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(' ')
+    const t = target.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(' ').filter(Boolean)
+    const s = transcript.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(' ').filter(Boolean)
     const matches = t.filter(word => s.includes(word)).length
     return Math.round((matches / t.length) * 100)
+  }
+
+  function getMissedWords(target, transcript) {
+    if (!transcript) return []
+    const t = target.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(' ').filter(Boolean)
+    const s = transcript.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(' ').filter(Boolean)
+    // Return original-casing words from target that weren't detected
+    const original = target.replace(/[^a-zA-Z0-9\s]/g, '').split(' ').filter(Boolean)
+    return original.filter((_, i) => t[i] && !s.includes(t[i]))
   }
 
   function getFeedback(score) {
     if (score >= 90) return { emoji: '🌟', text: '¡Pronunciación perfecta!', color: '#10B981' }
     if (score >= 70) return { emoji: '✅', text: '¡Muy bien! Casi perfecto', color: '#3B82F6' }
-    if (score >= 50) return { emoji: '💪', text: 'Bien, sigue practicando', color: '#F59E0B' }
-    return { emoji: '🔄', text: 'Intenta de nuevo más despacio', color: '#EF4444' }
+    if (score >= 50) return { emoji: '💪', text: '¡Muy bien! Sigue practicando', color: '#F59E0B' }
+    return { emoji: '🔄', text: '¡Buen intento! Más despacio', color: '#EF4444' }
   }
 
   function startListening() {
@@ -98,8 +107,10 @@ export function PronunciationButton({ targetText, language = 'en-US' }) {
       const transcript = event.results[0][0].transcript
       const score = getScore(targetText, transcript)
       const feedback = getFeedback(score)
-      setResult({ score, transcript, feedback })
+      const missed = getMissedWords(targetText, transcript)
+      setResult({ score, transcript, feedback, missed })
       setState('result')
+      if (onScore) onScore(score)
     }
 
     recognition.onerror = (event) => {
@@ -186,6 +197,16 @@ export function PronunciationButton({ targetText, language = 'en-US' }) {
               <span className="pronun-transcript-lbl">Escuché:</span>
               <span className="pronun-transcript-text">"{result.transcript}"</span>
             </div>
+            {result.missed?.length > 0 && (
+              <div className="pronun-missed">
+                <span className="pronun-missed-lbl">💡 Practica estas palabras:</span>
+                <div className="pronun-missed-words">
+                  {result.missed.map((w, i) => (
+                    <span key={i} className="pronun-missed-word">{w}</span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
           <button className="pronun-retry-btn" onClick={startListening}>
             🔄 Intentar de nuevo

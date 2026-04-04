@@ -32,8 +32,12 @@ export async function awardLessonXP(userId, lessonsCompleted, streakDays) {
 
 /**
  * Checks all badge conditions and awards any not yet earned.
+ * @param {string} userId
+ * @param {Object} params - Can include: lessonsCompleted, streakDays, totalXP, match_fast, perfect_exercises, perfect_match
  */
-export async function checkAndAwardBadges(userId, { lessonsCompleted, streakDays, totalXP }) {
+export async function checkAndAwardBadges(userId, params = {}) {
+  const { lessonsCompleted = 0, streakDays = 0, totalXP = 0 } = params
+  const stats = params // pass everything for custom conditions
   // Get all definitions
   const { data: definitions } = await supabase
     .from('badge_definitions')
@@ -57,6 +61,9 @@ export async function checkAndAwardBadges(userId, { lessonsCompleted, streakDays
     if (def.condition_type === 'lessons_completed' && lessonsCompleted >= def.condition_value) qualifies = true
     if (def.condition_type === 'streak_days' && streakDays >= def.condition_value) qualifies = true
     if (def.condition_type === 'xp_total' && totalXP >= def.condition_value) qualifies = true
+    if (def.condition_type === 'match_fast' && (stats?.match_fast ?? 0) >= def.condition_value) qualifies = true
+    if (def.condition_type === 'perfect_exercises' && (stats?.perfect_exercises ?? 0) >= def.condition_value) qualifies = true
+    if (def.condition_type === 'perfect_match' && (stats?.perfect_match ?? 0) >= def.condition_value) qualifies = true
     // route_completed is handled separately via RouteView
 
     if (qualifies) toAward.push(def)

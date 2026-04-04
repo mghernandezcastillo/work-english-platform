@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useAuth } from '../../../context/AuthContext'
+import { checkAndAwardBadges } from '../../../lib/xp'
 import './Steps.css'
 
 /**
@@ -33,6 +35,7 @@ function derange(arr) {
 }
 
 export default function MatchStep({ data }) {
+  const { profile } = useAuth()
   const allPhrases = data?.phrases || []
   // Pick up to 5 random phrases for the match game
   const [pairs, setPairs] = useState([])
@@ -45,6 +48,7 @@ export default function MatchStep({ data }) {
   const [attempts, setAttempts] = useState(0)
   const [startTime] = useState(Date.now())
   const [elapsed, setElapsed] = useState(0)
+  const [sparkling, setSparkling] = useState(new Set())
 
   // Initialize game
   useEffect(() => {
@@ -77,9 +81,33 @@ export default function MatchStep({ data }) {
       setMatched(newMatched)
       setSelectedLeft(null)
       setSelectedRight(null)
+      // Sparkle effect: mark as sparkling briefly
+      setWrongPair(null)
+      // Use a temporary sparkle set
+      setSparkling(prev => {
+        const next = new Set(prev)
+        next.add(leftIdx)
+        return next
+      })
+      setTimeout(() => {
+        setSparkling(prev => {
+          const next = new Set(prev)
+          next.delete(leftIdx)
+          return next
+        })
+      }, 500)
 
       if (newMatched.size === pairs.length) {
         setCompleted(true)
+        // Check for Velocista badge (<30s) or Sin Errores (100% accuracy)
+        if (profile?.id) {
+          const finalAccuracy = Math.round((newMatched.size / (attempts + 1)) * 100)
+          checkAndAwardBadges(profile.id, {
+            match_fast: elapsed < 30 ? 1 : 0,
+            perfect_match: finalAccuracy === 100 ? 1 : 0,
+            lessonsCompleted: 0, streakDays: 0, totalXP: profile.xp ?? 0,
+          }).catch(() => {})
+        }
       }
     } else {
       // Wrong match — flash red briefly
@@ -183,6 +211,7 @@ export default function MatchStep({ data }) {
               key={i}
               className={`match-card match-card-en
                 ${matched.has(i) ? ' matched' : ''}
+                ${sparkling.has(i) ? ' sparkling' : ''}
                 ${selectedLeft === i ? ' selected' : ''}
                 ${wrongPair?.left === i ? ' wrong' : ''}
               `}

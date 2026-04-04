@@ -5,7 +5,7 @@ import { PronunciationButton } from '../../common/PronunciationButton'
 import { useState } from 'react'
 import './Steps.css'
 
-export default function GuidedPracticeStep({ data }) {
+export default function GuidedPracticeStep({ data, lessonId }) {
   const scenarios = data?.scenarios || []
   const [practiced, setPracticed] = useState(new Set())
 
@@ -17,12 +17,23 @@ export default function GuidedPracticeStep({ data }) {
     })
   }
 
+  function savePronunScore(phrase, score) {
+    if (!lessonId) return
+    try {
+      const key = `lesson_pronun_scores_${lessonId}`
+      const existing = JSON.parse(localStorage.getItem(key) || '{}')
+      // Keep the BEST score per phrase
+      existing[phrase] = Math.max(existing[phrase] ?? 0, score)
+      localStorage.setItem(key, JSON.stringify(existing))
+    } catch { /* ignore */ }
+  }
+
   return (
     <div className="step-container animate-fadeIn">
       <div className="step-badge">🗣️ Práctica guiada</div>
-      <p className="step-subtitle">Escucha, repite en voz alta, y marca cuando lo hagas:</p>
+      <p className="step-subtitle"><strong>Esta es la parte más importante.</strong> Hablar en voz alta activa la memoria muscular que necesitas para el trabajo real.</p>
       <p className="text-xs text-muted" style={{ marginBottom: 'var(--space-3)' }}>
-        💡 Toca cualquier palabra subrayada para ver su significado
+        💡 Escucha primero, luego repite en voz alta — toca las palabras subrayadas para ver su significado
       </p>
 
       <div className="practice-scenarios">
@@ -57,12 +68,15 @@ export default function GuidedPracticeStep({ data }) {
                 <SpeakButton text={scenario.phrase} label="Escucha primero" />
               )}
               {/* Mic pronunciation practice */}
-              <PronunciationButton targetText={scenario.phrase} />
+              <PronunciationButton
+                targetText={scenario.phrase}
+                onScore={(score) => savePronunScore(scenario.phrase, score)}
+              />
               <button
                 className={`practice-done-btn ${practiced.has(i) ? 'done' : ''}`}
                 onClick={() => markPracticed(i)}
               >
-                {practiced.has(i) ? '✅ ¡Practicado!' : '🎤 Marcar como practicado'}
+                {practiced.has(i) ? '✅ ¡Lo hice! Excelente' : '🎤 Lo dije en voz alta'}
               </button>
             </div>
             {scenario.tip && (

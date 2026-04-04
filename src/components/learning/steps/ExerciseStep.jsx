@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import { Button } from '../../common/Button'
+import { useAuth } from '../../context/AuthContext'
+import { checkAndAwardBadges } from '../../lib/xp'
 import './Steps.css'
 
 export default function ExerciseStep({ data, onComplete }) {
+  const { profile } = useAuth()
   const exercises = data?.exercises || []
   const [currentIndex, setCurrentIndex] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState(null)
@@ -43,6 +46,13 @@ export default function ExerciseStep({ data, onComplete }) {
           : selectedAnswer === current.correct) ? 1 : 0
       )
       if (onComplete) onComplete(finalScore)
+      // Check for Sin Errores badge (100% on exercises)
+      if (profile?.id && finalScore === exercises.length && exercises.length > 0) {
+        checkAndAwardBadges(profile.id, {
+          perfect_exercises: 1,
+          lessonsCompleted: 0, streakDays: 0, totalXP: profile.xp ?? 0,
+        }).catch(() => {})
+      }
     } else {
       setCurrentIndex(i => i + 1)
       setSelectedAnswer(null)

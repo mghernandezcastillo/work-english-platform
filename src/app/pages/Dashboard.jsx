@@ -122,6 +122,7 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const [routes, setRoutes] = useState([])
   const [progress, setProgress] = useState({})
+  const [rawProgress, setRawProgress] = useState([])
   const [streak, setStreak] = useState(0)
   const [loading, setLoading] = useState(true)
 
@@ -150,6 +151,7 @@ export default function Dashboard() {
 
       setRoutes(routeData || [])
       setProgress(progressMap)
+      setRawProgress(progressData || [])
       setStreak(calculateStreak(progressData))
     } catch (err) {
       console.error('Error loading dashboard:', err)
@@ -163,6 +165,12 @@ export default function Dashboard() {
   const completedLessons = Object.values(progress).reduce((sum, p) => sum + p.completed, 0)
   const pct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
   const firstName = profile?.full_name?.split(' ')[0] || 'Estudiante'
+
+  // Daily goal — count lessons completed today
+  const todayStr = new Date().toDateString()
+  const todayLessons = rawProgress.filter(
+    p => p.completed && p.completed_at && new Date(p.completed_at).toDateString() === todayStr
+  ).length
 
   return (
     <div className="dashboard mc-dashboard animate-fadeIn">
@@ -195,6 +203,20 @@ export default function Dashboard() {
           />
         </div>
         <span className="mc-xp-next">Siguiente nivel: {100 - ((profile?.xp ?? 0) % 100)} XP</span>
+      </div>
+
+      {/* ── Meta diaria ── */}
+      <div className="mc-daily-goal">
+        <span className="mc-daily-icon">🎯</span>
+        <span className="mc-daily-label">Meta hoy:</span>
+        <div className="mc-daily-track">
+          <div
+            className="mc-daily-fill"
+            style={{ width: todayLessons >= 1 ? '100%' : '0%' }}
+          />
+        </div>
+        <span className="mc-daily-count">{Math.min(todayLessons, 1)}/1 lección</span>
+        {todayLessons >= 1 && <span className="mc-daily-done">✅</span>}
       </div>
 
       {/* ── Progress Ring Hero ── */}
@@ -261,6 +283,19 @@ export default function Dashboard() {
 
       {/* ── Frase del día ── */}
       <DailyPhrase />
+
+      {/* ── Flashcards shortcut ── */}
+      <button
+        className="mc-flashcards-btn"
+        onClick={() => navigate('/flashcards')}
+      >
+        <span className="mc-flashcards-icon">🧠</span>
+        <div className="mc-flashcards-body">
+          <span className="mc-flashcards-title">Tarjetas de memoria</span>
+          <span className="mc-flashcards-sub">Repasa el vocabulario guardado</span>
+        </div>
+        <span className="mc-route-arrow">›</span>
+      </button>
 
       {/* ── Logros / Badges ── */}
       <BadgesPanel />
