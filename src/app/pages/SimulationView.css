@@ -43,10 +43,11 @@
 }
 .sim-option {
   padding: var(--space-3) var(--space-4);
-  background: var(--color-background);
+  background: var(--color-surface);
   border: 2px solid var(--color-border);
   border-radius: var(--radius-md);
   font-size: var(--text-sm);
+  color: var(--color-text);
   text-align: left;
   cursor: pointer;
   transition: all var(--transition-fast);
