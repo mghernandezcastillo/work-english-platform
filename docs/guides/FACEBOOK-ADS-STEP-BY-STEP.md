@@ -18,14 +18,45 @@ Ir a: [https://adsmanager.facebook.com](https://adsmanager.facebook.com)
 
 Clic en **"+ Crear"** (botón verde arriba a la izquierda)
 
+### ⚠️ Si aparece: "Se necesita información de la cuenta"
+
+Es normal la primera vez. Facebook necesita datos de facturación antes de permitirte publicar.
+
+1. Clic en **"Ir a Resumen de la cuenta"**
+2. Completa lo que te pida:
+   - **País:** Colombia
+   - **Moneda:** COP (Peso colombiano)
+   - **Zona horaria:** (GMT-5) Bogotá
+   - **Método de pago:** Agrega tu tarjeta de débito o crédito (Visa/Mastercard)
+3. Guarda y vuelve a hacer clic en **"+ Crear"**
+
+> 💡 Si no quieres completar esto ahora, puedes saltarlo haciendo clic fuera del aviso — pero **no podrás publicar el anuncio** hasta que lo completes. Es mejor hacerlo de una vez.
+
+### Pantalla: "Elige un tipo de compra"
+
+Te aparece un menú desplegable con dos opciones:
+
+| Opción | Qué es | ¿Cuál elegir? |
+|--------|--------|--------------|
+| **Subasta** | Compra en tiempo real con pujas rentables. Facebook compite por mostrarte al público más barato. | ✅ **ESTA — déjala seleccionada** |
+| **Reserva** | Compra con antelación para resultados predecibles. Es para presupuestos de millones. | ❌ No tocar — es para grandes empresas |
+
+**Deja `Subasta` seleccionada** (ya viene por defecto).
+
 ### Pantalla: "Elige un objetivo de campaña"
 
-| Campo | Qué elegir | Por qué |
-|-------|-----------|---------|
-| **Tipo de compra** | `Subasta` ← ya seleccionado | Es la única opción para presupuestos bajos |
-| **Objetivo** | ✅ **Tráfico** | Queremos enviar gente a la landing page. NO elijas "Ventas" porque el Pixel no tiene suficientes datos todavía |
+Debajo del tipo de compra verás una lista de objetivos. Elige:
 
-> ⚠️ **NO elijas "Conversiones" ni "Ventas"** para la primera campaña. Facebook necesita al menos 50 conversiones por semana para optimizar. Con $15.000/día no vas a llegar a eso al inicio. **Tráfico** es lo correcto para arrancar.
+| Objetivo | ¿Elegir? | Por qué |
+|----------|----------|---------|
+| Reconocimiento | ❌ No | Solo muestra tu anuncio, no genera clics |
+| **Tráfico** | ✅ **SÍ — Elige este** | Envía personas a tu landing page donde pueden comprar |
+| Interacción | ❌ No | Solo genera likes y comentarios, no ventas |
+| Clientes potenciales | ❌ No | Recolecta emails dentro de Facebook, no necesitamos eso |
+| Promoción de la app | ❌ No | Es para apps en App Store/Play Store |
+| Ventas | ❌ No (por ahora) | El Pixel necesita +50 conversiones/semana para funcionar bien. Al inicio no tendremos eso |
+
+> ⚠️ **"Ventas" suena tentador pero NO la elijas todavía.** Facebook necesita al menos 50 compras por semana para optimizar anuncios de ventas. Con $15.000/día no vas a llegar a eso al inicio. Empieza con **"Tráfico"** — envía gente a la landing donde tu copy y precio hacen el trabajo.
 
 Clic en **"Continuar"**
 
