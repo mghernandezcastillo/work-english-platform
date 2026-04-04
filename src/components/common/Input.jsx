@@ -1,4 +1,4 @@
-import { forwardRef } from 'react'
+import { forwardRef, useState } from 'react'
 
 export const Input = forwardRef(function Input({
   label,
@@ -13,6 +13,10 @@ export const Input = forwardRef(function Input({
   className = '',
   ...props
 }, ref) {
+  const [showPassword, setShowPassword] = useState(false)
+  const isPassword = type === 'password'
+  const inputType = isPassword ? (showPassword ? 'text' : 'password') : type
+
   return (
     <div className="input-group">
       {label && (
@@ -20,17 +24,57 @@ export const Input = forwardRef(function Input({
           {label}{required && <span style={{ color: 'var(--color-error)', marginLeft: 2 }}>*</span>}
         </label>
       )}
-      <input
-        ref={ref}
-        type={type}
-        className={['input', error ? 'input-error' : '', className].filter(Boolean).join(' ')}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        required={required}
-        {...props}
-      />
+      <div className={isPassword ? 'input-password-wrapper' : undefined} style={isPassword ? { position: 'relative' } : undefined}>
+        <input
+          ref={ref}
+          type={inputType}
+          className={['input', error ? 'input-error' : '', isPassword ? 'input-has-toggle' : '', className].filter(Boolean).join(' ')}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          disabled={disabled}
+          required={required}
+          {...props}
+        />
+        {isPassword && (
+          <button
+            type="button"
+            className="input-eye-toggle"
+            onClick={() => setShowPassword(s => !s)}
+            tabIndex={-1}
+            aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+            style={{
+              position: 'absolute',
+              right: 12,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 4,
+              color: 'var(--color-text-muted)',
+              fontSize: 18,
+              lineHeight: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {showPassword ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            )}
+          </button>
+        )}
+      </div>
       {hint && !error && <span className="input-hint">{hint}</span>}
       {error && <span className="input-error-msg">{error}</span>}
     </div>

@@ -64,6 +64,9 @@
   border-radius: var(--radius-md);
   font-size: var(--text-sm);
   font-weight: var(--font-medium);
+  cursor: default;
+  pointer-events: none;
+  user-select: none;
 }
 .onboarding-feature-icon {
   font-size: 22px;

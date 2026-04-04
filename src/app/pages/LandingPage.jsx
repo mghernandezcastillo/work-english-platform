@@ -69,7 +69,7 @@ export default function LandingPage() {
       .then(({ data }) => setTestimonials(data || []))
   }, [])
 
-  const stars = (n) => '⭐'.repeat(n)
+  const stars = (n) => '★'.repeat(n)
 
   return (
     <div className="landing">
@@ -212,6 +212,7 @@ export default function LandingPage() {
             <div className="price-original">{copy.price.original}</div>
             <div className="price-current">{copy.price.current}</div>
             <p className="text-sm text-muted">{copy.price.note}</p>
+            <p className="price-subject-change">Precio sujeto a cambios</p>
             <a
               href={ctaUrl}
               target="_blank"

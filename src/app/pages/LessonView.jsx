@@ -36,6 +36,18 @@ export default function LessonView() {
   const [currentStep, setCurrentStep] = useState(0)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [fontScale, setFontScale] = useState(() => {
+    const saved = parseFloat(localStorage.getItem('lesson_font_scale'))
+    return Number.isFinite(saved) ? saved : 1.05
+  })
+
+  function adjustFont(delta) {
+    setFontScale(prev => {
+      const next = Math.min(1.25, Math.max(0.9, +(prev + delta).toFixed(2)))
+      localStorage.setItem('lesson_font_scale', next)
+      return next
+    })
+  }
 
   useEffect(() => {
     loadLesson()
@@ -294,8 +306,24 @@ export default function LessonView() {
         ))}
       </div>
 
+      {/* Font size control */}
+      <div className="lesson-font-control">
+        <button
+          className="lesson-font-btn"
+          onClick={() => adjustFont(-0.05)}
+          disabled={fontScale <= 0.9}
+          aria-label="Reducir tamaño de letra"
+        >A<span className="font-btn-minus">−</span></button>
+        <button
+          className="lesson-font-btn"
+          onClick={() => adjustFont(0.05)}
+          disabled={fontScale >= 1.25}
+          aria-label="Aumentar tamaño de letra"
+        >A<span className="font-btn-plus">+</span></button>
+      </div>
+
       {/* Step content */}
-      <div className="lesson-content">
+      <div className="lesson-content" style={{ fontSize: `calc(var(--text-base) * ${fontScale})` }}>
         <StepComponent
           data={stepData}
           onComplete={isLast ? handleLessonComplete : undefined}

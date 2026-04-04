@@ -283,6 +283,9 @@ p  { line-height: 1.7; color: var(--color-text-secondary); }
 .input-error { border-color: var(--color-error); }
 .input-hint { font-size: var(--text-xs); color: var(--color-text-muted); }
 .input-error-msg { font-size: var(--text-xs); color: var(--color-error); }
+.input-has-toggle { padding-right: 44px; }
+.input-eye-toggle:hover { color: var(--color-text) !important; }
+.input-password-wrapper { width: 100%; }
 
 /* --- Badges --- */
 .badge {
