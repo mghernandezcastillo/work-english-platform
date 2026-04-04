@@ -59,11 +59,11 @@
     "ads": [
       {
         "id": "ad-05",
-        "nombre": "Ad 05 — ¿Listo para trabajar en un Call Center?",
+        "nombre": "Ad 05 — ¿Listo para trabajar en un Call Center bilingüe?",
         "imagen": "/ads/05_callcenter_listo_trabajar.png",
         "formato": "Imagen única",
         "primaryText": "Los call centers en Colombia buscan personas que hablen inglés.\n\nEl problema: la mayoría saben un poco, pero no lo suficiente para pasar la prueba.\n\nEnglish for Work tiene una ruta completa de Call Center en inglés:\n\n📞 Frases exactas para abrir y cerrar llamadas\n😤 Cómo manejar clientes difíciles en inglés\n✅ Vocabulario BPO que los jefes esperan que sepas\n\nEs diferente a aprender inglés en el colegio. Son las frases reales que usan en el trabajo.\n\n$47.000 COP — Pago único.\nEmpieza hoy y practica 15 minutos al día.",
-        "headline": "¿Listo para trabajar en un Call Center en inglés?",
+        "headline": "¿Listo para trabajar en un Call Center bilingüe?",
         "descripcion": "Frases reales de BPO · Audio nativo · 12 simulaciones",
         "ctaBoton": "Más información",
         "url": "https://work-english-platform.vercel.app/ingles-call-center?utm_source=facebook&utm_medium=cpc&utm_campaign=callcenter_empleo&utm_content=job_ready"
