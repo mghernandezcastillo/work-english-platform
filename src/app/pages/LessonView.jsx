@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
@@ -117,6 +117,16 @@ export default function LessonView() {
   const [newBadges, setNewBadges] = useState([])
   const [activeBadgeToast, setActiveBadgeToast] = useState(null)
   const [stepCompleted, setStepCompleted] = useState(false)
+  const navRef = useRef(null)
+
+  // Auto-scroll to nav when exercises/match complete
+  useEffect(() => {
+    if (stepCompleted && navRef.current) {
+      setTimeout(() => {
+        navRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 300)
+    }
+  }, [stepCompleted])
 
   const STREAK_MESSAGES = [
     { min: 1, msg: '¡Gran comienzo! Cada día cuenta 💪', sub: 'Sigue aprendiendo para construir tu racha' },
@@ -359,7 +369,7 @@ export default function LessonView() {
         const hasInternalNav = step.key === 'exercises' || step.key === 'match'
         const showNav = !isLast && (!hasInternalNav || stepCompleted)
         return showNav ? (
-          <div className="lesson-nav">
+          <div className="lesson-nav" ref={navRef}>
             {currentStep > 0 && (
               <Button variant="ghost" onClick={() => goToStep(currentStep - 1)}>
                 ← Anterior
