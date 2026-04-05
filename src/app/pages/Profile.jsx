@@ -53,7 +53,7 @@ export default function Profile() {
         .eq('user_id', user.id)
       if (progressError) throw progressError
 
-      // 2. Reset XP back to 0 in profile
+      // 2. Reset XP and streak back to 0 in profile
       const { error: xpError } = await supabase
         .from('profiles')
         .update({ xp: 0 })
@@ -66,31 +66,32 @@ export default function Profile() {
         .delete()
         .eq('user_id', user.id)
 
-      // 4. Clear localStorage — lesson steps and pronunciation scores
+      // 4. Delete saved vocabulary words
+      await supabase
+        .from('saved_words')
+        .delete()
+        .eq('user_id', user.id)
+
+      // 5. Clear ALL lesson-related localStorage keys
       const keysToRemove = []
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i)
         if (
           key?.startsWith('lesson_step_') ||
-          key?.startsWith('lesson_pronun_scores_')
+          key?.startsWith('lesson_pronun_scores_') ||
+          key?.startsWith('lesson_font_scale')
         ) {
           keysToRemove.push(key)
         }
       }
       keysToRemove.forEach(k => localStorage.removeItem(k))
 
-      // 5. Refresh the auth profile so the UI updates immediately
-      await refreshProfile()
-
-      showToast('¡Progreso reiniciado! Empiezas desde cero 🔄', 'success')
-      setShowResetConfirm(false)
-
-      // 6. Navigate to dashboard so it fully remounts and shows zero progress
-      setTimeout(() => navigate('/dashboard', { replace: true }), 800)
+      // 6. Full page reload to /dashboard — wipes all React state
+      //    This makes the app behave exactly like a fresh first login
+      window.location.href = '/dashboard'
 
     } catch (err) {
       showToast('Error al reiniciar: ' + err.message, 'error')
-    } finally {
       setResetting(false)
     }
   }
