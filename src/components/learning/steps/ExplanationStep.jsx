@@ -3,6 +3,9 @@ import './Steps.css'
 export default function ExplanationStep({ data }) {
   const points = data?.points || []
 
+  // Don't show tip if it duplicates a point
+  const tipIsDuplicate = points.some(p => p.text === data?.tip)
+
   return (
     <div className="step-container animate-fadeIn">
       <div className="step-badge">💡 Explicación</div>
@@ -25,7 +28,7 @@ export default function ExplanationStep({ data }) {
         ))}
       </div>
 
-      {data?.tip && (
+      {data?.tip && !tipIsDuplicate && (
         <div className="step-tip">
           <span>💡</span>
           <p>{data.tip}</p>
