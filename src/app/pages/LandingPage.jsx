@@ -21,8 +21,11 @@ function StickyCtaBar() {
   return (
     <div className={`sticky-cta-bar ${visible ? 'visible' : ''}`}>
       <div className="sticky-cta-text">
-        <span className="font-semibold">English for Work</span>
-        <span className="sticky-price">{copy.price.current} USD</span>
+        <span className="sticky-cta-label">🔥 Oferta de lanzamiento</span>
+        <div className="sticky-price-row">
+          <span className="sticky-price-original">{copy.price.original}</span>
+          <span className="sticky-price">{copy.price.current}</span>
+        </div>
       </div>
       <a
         href={ctaUrl}

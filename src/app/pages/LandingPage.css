@@ -85,10 +85,26 @@
   flex-direction: column;
   gap: 2px;
 }
+.sticky-cta-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #F59E0B;
+  letter-spacing: 0.03em;
+}
+.sticky-price-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sticky-price-original {
+  font-size: var(--text-sm);
+  color: #64748B;
+  text-decoration: line-through;
+}
 .sticky-price {
   font-size: var(--text-lg);
   font-weight: var(--font-extrabold);
-  color: var(--color-primary);
+  color: #34D399;
 }
 .sticky-cta-bar .btn-cta {
   padding: 12px 20px;
