@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Button } from '../../common/Button'
-import { useAuth } from '../../context/AuthContext'
-import { checkAndAwardBadges } from '../../lib/xp'
+import { useAuth } from '../../../context/AuthContext'
+import { checkAndAwardBadges } from '../../../lib/xp'
 import './Steps.css'
 
 export default function ExerciseStep({ data, onComplete }) {
