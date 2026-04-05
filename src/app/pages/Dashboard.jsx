@@ -146,10 +146,15 @@ export default function Dashboard() {
         .select('*, modules(id, title, sort_order, lessons(id, title, sort_order))')
         .order('sort_order')
 
-      const { data: progressData } = await supabase
-        .from('user_progress')
-        .select('*')
-        .eq('user_id', profile?.id)
+      // Only query progress if we have a valid user ID
+      let progressData = null
+      if (profile?.id) {
+        const resp = await supabase
+          .from('user_progress')
+          .select('*')
+          .eq('user_id', profile.id)
+        progressData = resp.data
+      }
 
       const progressMap = {}
       const completedSet = new Set()

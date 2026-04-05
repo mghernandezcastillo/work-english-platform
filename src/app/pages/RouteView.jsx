@@ -21,6 +21,9 @@ export default function RouteView() {
   const [showCertificate, setShowCertificate] = useState(false)
   const [highlightFirst, setHighlightFirst] = useState(false)
 
+  // ── ALL HOOKS MUST BE ABOVE ANY CONDITIONAL RETURNS ──
+  const nextLessonRef = useRef(null)
+
   // Detect first-lesson highlight from FirstMissionBanner
   useEffect(() => {
     if (sessionStorage.getItem('highlight_first_lesson') === '1') {
@@ -32,7 +35,7 @@ export default function RouteView() {
 
   useEffect(() => {
     loadRoute()
-  }, [routeId, profile])
+  }, [routeId, profile?.id])
 
   async function loadRoute() {
     try {
@@ -55,14 +58,17 @@ export default function RouteView() {
         })
       }
 
-      const { data: progressData } = await supabase
-        .from('user_progress')
-        .select('lesson_id')
-        .eq('user_id', profile?.id)
-        .eq('route_id', routeId)
-        .eq('completed', true)
-
-      const completed = new Set((progressData || []).map(p => p.lesson_id))
+      // Only query progress if we have a valid user ID
+      let completed = new Set()
+      if (profile?.id) {
+        const { data: progressData } = await supabase
+          .from('user_progress')
+          .select('lesson_id')
+          .eq('user_id', profile.id)
+          .eq('route_id', routeId)
+          .eq('completed', true)
+        completed = new Set((progressData || []).map(p => p.lesson_id))
+      }
 
       setRoute(routeData)
       setModules(moduleData || [])
@@ -74,21 +80,10 @@ export default function RouteView() {
     }
   }
 
-  function handleLockedClick(lessonId) {
-    setShakingLesson(lessonId)
-    setLockedToast(true)
-    setTimeout(() => setShakingLesson(null), 600)
-    setTimeout(() => setLockedToast(false), 2500)
-  }
-
-  if (loading) return <LoadingSpinner fullPage />
-  if (!route) return <div className="text-center" style={{ padding: 40 }}><h3>Ruta no encontrada</h3></div>
-
+  // Compute next lesson ID (used by the auto-scroll useEffect below)
   const totalLessons = modules.reduce((s, m) => s + (m.lessons?.length || 0), 0)
   const isComplete = totalLessons > 0 && completedLessons.size === totalLessons
-  const nextLessonRef = useRef(null)
 
-  // Find the ID of the next uncompleted lesson
   let nextLessonId = null
   if (completedLessons.size > 0 && !isComplete) {
     for (const mod of modules) {
@@ -110,6 +105,17 @@ export default function RouteView() {
       }, 400)
     }
   }, [nextLessonId])
+
+  function handleLockedClick(lessonId) {
+    setShakingLesson(lessonId)
+    setLockedToast(true)
+    setTimeout(() => setShakingLesson(null), 600)
+    setTimeout(() => setLockedToast(false), 2500)
+  }
+
+  // ── Conditional returns AFTER all hooks ──
+  if (loading) return <LoadingSpinner fullPage />
+  if (!route) return <div className="text-center" style={{ padding: 40 }}><h3>Ruta no encontrada</h3></div>
 
   return (
     <div className="route-view animate-fadeIn">
