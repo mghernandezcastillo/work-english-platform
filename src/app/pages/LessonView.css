@@ -135,48 +135,71 @@
   padding-top: var(--space-3);
 }
 
-/* ── Skeleton loader ── */
-.lesson-skeleton {
-  max-width: 680px;
-  margin: 0 auto;
-  padding: var(--space-6) var(--space-4);
+/* ── Branded loading screen ── */
+.lesson-loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: var(--space-5);
+  animation: loadingFadeIn 0.3s ease;
 }
-.lesson-skeleton-msg {
+@keyframes loadingFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.lesson-loading-spinner {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lesson-loading-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid rgba(52, 211, 153, 0.12);
+  border-top-color: #34D399;
+  animation: loadingSpin 0.9s linear infinite;
+}
+@keyframes loadingSpin {
+  to { transform: rotate(360deg); }
+}
+.lesson-loading-icon {
+  font-size: 36px;
+  animation: loadingPulse 1.8s ease-in-out infinite;
+}
+@keyframes loadingPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.7; }
+}
+.lesson-loading-msg {
   text-align: center;
   font-size: var(--text-sm);
   color: var(--color-text-muted);
-  margin-bottom: var(--space-6);
   font-weight: var(--font-medium);
+  letter-spacing: 0.2px;
 }
-.lesson-skeleton-tabs {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: var(--space-6);
+.lesson-loading-bar {
+  width: 180px;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(52, 211, 153, 0.1);
+  overflow: hidden;
 }
-.lesson-skeleton-content {
-  background: var(--color-surface);
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--color-border);
-  padding: var(--space-6);
+.lesson-loading-bar-fill {
+  height: 100%;
+  width: 40%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #10B981, #34D399);
+  animation: loadingBarSlide 1.2s ease-in-out infinite;
 }
-
-/* Generic skeleton block — shimmer animation */
-.skeleton-block {
-  background: linear-gradient(
-    90deg,
-    var(--color-surface-alt) 25%,
-    var(--color-border) 50%,
-    var(--color-surface-alt) 75%
-  );
-  background-size: 200% 100%;
-  border-radius: 6px;
-  animation: skeleton-shimmer 1.6s ease-in-out infinite;
-}
-
-@keyframes skeleton-shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+@keyframes loadingBarSlide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
 }
 
 @keyframes pulse {

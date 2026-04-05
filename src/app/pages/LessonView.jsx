@@ -54,6 +54,19 @@ export default function LessonView() {
   }, [lessonId])
 
   async function loadLesson() {
+    // Try cached data first — instant reload when returning from screen lock
+    const cached = sessionStorage.getItem(`lesson_cache_${lessonId}`)
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached)
+        setLesson(parsed)
+        const saved = parseInt(localStorage.getItem(`lesson_step_${lessonId}`))
+        setCurrentStep(Number.isFinite(saved) && saved > 0 ? saved : 0)
+        setLoading(false)
+        return
+      } catch { /* cache corrupted, fetch fresh */ }
+    }
+
     setLoading(true)
     try {
       const { data } = await supabase
@@ -62,6 +75,8 @@ export default function LessonView() {
         .eq('id', lessonId)
         .single()
       setLesson(data)
+      // Cache for instant resume
+      if (data) sessionStorage.setItem(`lesson_cache_${lessonId}`, JSON.stringify(data))
       // Restore last step if user was interrupted (screen lock, reload, etc.)
       const saved = parseInt(localStorage.getItem(`lesson_step_${lessonId}`))
       setCurrentStep(Number.isFinite(saved) && saved > 0 ? saved : 0)
@@ -252,26 +267,16 @@ export default function LessonView() {
   ]
 
   if (loading) return (
-    <div className="lesson-skeleton animate-pulse" role="status" aria-label="Cargando lección">
-      {/* Motivational message */}
-      <p className="lesson-skeleton-msg">
+    <div className="lesson-loading-screen" role="status" aria-label="Cargando lección">
+      <div className="lesson-loading-spinner">
+        <div className="lesson-loading-ring" />
+        <span className="lesson-loading-icon">📖</span>
+      </div>
+      <p className="lesson-loading-msg">
         {MOTIVATIONAL[Math.floor(Date.now() / 1000) % MOTIVATIONAL.length]}
       </p>
-      {/* Step tabs skeleton */}
-      <div className="lesson-skeleton-tabs">
-        {[1,2,3,4,5,6,7].map(i => (
-          <div key={i} className="skeleton-block" style={{ width: 52, height: 36, borderRadius: 8 }} />
-        ))}
-      </div>
-      {/* Content skeleton */}
-      <div className="lesson-skeleton-content">
-        <div className="skeleton-block" style={{ width: '40%', height: 20, marginBottom: 20 }} />
-        <div className="skeleton-block" style={{ width: '100%', height: 28, marginBottom: 12 }} />
-        <div className="skeleton-block" style={{ width: '85%', height: 20, marginBottom: 8 }} />
-        <div className="skeleton-block" style={{ width: '92%', height: 20, marginBottom: 24 }} />
-        <div className="skeleton-block" style={{ width: '100%', height: 80, borderRadius: 12, marginBottom: 12 }} />
-        <div className="skeleton-block" style={{ width: '100%', height: 80, borderRadius: 12, marginBottom: 12 }} />
-        <div className="skeleton-block" style={{ width: '100%', height: 80, borderRadius: 12 }} />
+      <div className="lesson-loading-bar">
+        <div className="lesson-loading-bar-fill" />
       </div>
     </div>
   )
