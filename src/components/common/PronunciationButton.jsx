@@ -67,21 +67,42 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore })
   }
 
   // ── Lógica de scoring ──
+  function normalize(text) {
+    // Keep hyphens (for compound words like results-oriented), remove other punctuation
+    return text.toLowerCase().replace(/[^a-z0-9\s-]/g, '').split(/\s+/).filter(Boolean)
+  }
+
   function getScore(target, transcript) {
     if (!transcript) return 0
-    const t = target.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(' ').filter(Boolean)
-    const s = transcript.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(' ').filter(Boolean)
-    const matches = t.filter(word => s.includes(word)).length
-    return Math.round((matches / t.length) * 100)
+    const t = normalize(target)
+    const s = normalize(transcript)
+
+    // For each target word, check if it exists in the transcript
+    // Give partial credit for small common words that speech APIs often garble
+    const smallWords = new Set(['i', 'a', 'an', 'am', 'is', 'the', 'to', 'of', 'in', 'it', 'on', 'or', 'my', 'me', 'we', 'do', 'so', 'at', 'by', 'up', 'no'])
+    let totalWeight = 0
+    let matchedWeight = 0
+
+    for (const word of t) {
+      const weight = smallWords.has(word) ? 0.5 : 1  // Small words penalize less
+      totalWeight += weight
+      if (s.includes(word)) {
+        matchedWeight += weight
+      }
+    }
+
+    return totalWeight > 0 ? Math.round((matchedWeight / totalWeight) * 100) : 0
   }
 
   function getMissedWords(target, transcript) {
     if (!transcript) return []
-    const t = target.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(' ').filter(Boolean)
-    const s = transcript.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(' ').filter(Boolean)
-    // Return original-casing words from target that weren't detected
-    const original = target.replace(/[^a-zA-Z0-9\s]/g, '').split(' ').filter(Boolean)
-    return original.filter((_, i) => t[i] && !s.includes(t[i]))
+    const t = normalize(target)
+    const s = normalize(transcript)
+    // Small words missed by speech recognition shouldn't clutter the practice list
+    const smallWords = new Set(['i', 'a', 'an', 'am', 'is', 'the', 'to', 'of', 'in', 'it', 'on', 'or', 'my', 'me', 'we', 'do', 'so', 'at', 'by', 'up', 'no'])
+    // Return original-casing words from target that weren't detected (skip small ones)
+    const original = target.replace(/[^a-zA-Z0-9\s-]/g, '').split(/\s+/).filter(Boolean)
+    return original.filter((_, i) => t[i] && !s.includes(t[i]) && !smallWords.has(t[i]))
   }
 
   function getFeedback(score) {
