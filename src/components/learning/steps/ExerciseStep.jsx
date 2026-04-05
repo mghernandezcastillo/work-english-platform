@@ -245,7 +245,7 @@ export default function ExerciseStep({ data, onComplete }) {
       {/* Next button */}
       {showResult && (
         <Button variant="primary" full onClick={nextExercise} style={{ marginTop: 'var(--space-4)' }}>
-          {currentIndex + 1 >= exercises.length ? 'Ver resultado' : 'Siguiente →'}
+          {currentIndex + 1 >= exercises.length ? 'Ver resultado' : 'Siguiente ejercicio →'}
         </Button>
       )}
     </div>

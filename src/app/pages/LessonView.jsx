@@ -116,6 +116,7 @@ export default function LessonView() {
   const [streakCount, setStreakCount] = useState(0)
   const [newBadges, setNewBadges] = useState([])
   const [activeBadgeToast, setActiveBadgeToast] = useState(null)
+  const [stepCompleted, setStepCompleted] = useState(false)
 
   const STREAK_MESSAGES = [
     { min: 1, msg: '¡Gran comienzo! Cada día cuenta 💪', sub: 'Sigue aprendiendo para construir tu racha' },
@@ -225,6 +226,7 @@ export default function LessonView() {
     if (index >= 0 && index < STEPS.length) {
       if (index > currentStep) showStepToast()
       setCurrentStep(index)
+      setStepCompleted(false)
       // Persist step so interruptions (screen lock, reload) don't reset progress
       localStorage.setItem(`lesson_step_${lessonId}`, index)
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -348,24 +350,37 @@ export default function LessonView() {
         <StepComponent
           data={stepData}
           lessonId={lessonId}
-          onComplete={isLast ? handleLessonComplete : undefined}
+          onComplete={isLast ? handleLessonComplete : () => setStepCompleted(true)}
         />
       </div>
 
-      {/* Navigation */}
-      {!isLast && (
-        <div className="lesson-nav">
-          {currentStep > 0 && (
-            <Button variant="ghost" onClick={() => goToStep(currentStep - 1)}>
-              ← Anterior
+      {/* Navigation — hidden for exercises/match until they complete internally */}
+      {(() => {
+        const hasInternalNav = step.key === 'exercises' || step.key === 'match'
+        const showNav = !isLast && (!hasInternalNav || stepCompleted)
+        return showNav ? (
+          <div className="lesson-nav">
+            {currentStep > 0 && (
+              <Button variant="ghost" onClick={() => goToStep(currentStep - 1)}>
+                ← Anterior
+              </Button>
+            )}
+            <div style={{ flex: 1 }} />
+            <Button variant="primary" onClick={() => goToStep(currentStep + 1)}>
+              Siguiente →
             </Button>
-          )}
-          <div style={{ flex: 1 }} />
-          <Button variant="primary" onClick={() => goToStep(currentStep + 1)}>
-            Siguiente →
-          </Button>
-        </div>
-      )}
+          </div>
+        ) : !isLast && hasInternalNav && !stepCompleted ? (
+          <div className="lesson-nav">
+            {currentStep > 0 && (
+              <Button variant="ghost" onClick={() => goToStep(currentStep - 1)}>
+                ← Anterior
+              </Button>
+            )}
+            <div style={{ flex: 1 }} />
+          </div>
+        ) : null
+      })()}
 
       {/* ── Streak Celebration Modal ── */}
       {showStreakModal && (() => {
