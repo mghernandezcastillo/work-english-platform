@@ -125,6 +125,16 @@ export default function Dashboard() {
   const [rawProgress, setRawProgress] = useState([])
   const [streak, setStreak] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [showResetOverlay, setShowResetOverlay] = useState(false)
+
+  // Detect "just reset" flag from Profile
+  useEffect(() => {
+    if (sessionStorage.getItem('just_reset') === '1') {
+      sessionStorage.removeItem('just_reset')
+      setShowResetOverlay(true)
+      setTimeout(() => setShowResetOverlay(false), 2200)
+    }
+  }, [])
 
   useEffect(() => { loadData() }, [profile])
 
@@ -174,6 +184,34 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard mc-dashboard animate-fadeIn">
+
+      {/* ── Reset animation overlay ── */}
+      {showResetOverlay && (
+        <div className="reset-overlay">
+          <div className="reset-modal">
+            <div className="reset-icon">🔄</div>
+            <div className="reset-counters">
+              <div className="reset-counter-row">
+                <span>📚 Lecciones</span>
+                <span className="reset-zero">→ 0</span>
+              </div>
+              <div className="reset-counter-row">
+                <span>⭐ XP</span>
+                <span className="reset-zero">→ 0</span>
+              </div>
+              <div className="reset-counter-row">
+                <span>🔥 Racha</span>
+                <span className="reset-zero">→ 0</span>
+              </div>
+              <div className="reset-counter-row">
+                <span>🏆 Badges</span>
+                <span className="reset-zero">→ 0</span>
+              </div>
+            </div>
+            <p className="reset-msg">¡Todo listo! Empiezas desde cero</p>
+          </div>
+        </div>
+      )}
 
       {/* ── Header ── */}
       <div className="mc-header">

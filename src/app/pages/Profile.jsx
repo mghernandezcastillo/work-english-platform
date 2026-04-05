@@ -86,8 +86,8 @@ export default function Profile() {
       }
       keysToRemove.forEach(k => localStorage.removeItem(k))
 
-      // 6. Full page reload to /dashboard — wipes all React state
-      //    This makes the app behave exactly like a fresh first login
+      // 6. Signal Dashboard to show reset animation, then full page reload
+      sessionStorage.setItem('just_reset', '1')
       window.location.href = '/dashboard'
 
     } catch (err) {
