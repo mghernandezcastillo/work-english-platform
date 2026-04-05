@@ -181,6 +181,21 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore })
     setState('idle')
   }
 
+  // Speak a single word so the user can hear correct pronunciation
+  function speakWord(word) {
+    if (!window.speechSynthesis) return
+    window.speechSynthesis.cancel()
+    const utterance = new SpeechSynthesisUtterance(word)
+    utterance.lang = language
+    utterance.rate = 0.8  // Slightly slower for clarity
+    const voices = window.speechSynthesis.getVoices()
+    const voice = voices.find(v =>
+      v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel'))
+    ) || voices.find(v => v.lang.startsWith('en-US'))
+    if (voice) utterance.voice = voice
+    window.speechSynthesis.speak(utterance)
+  }
+
   return (
     <div className="pronun-wrap">
       {/* Indicador de frase objetivo */}
@@ -236,7 +251,14 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore })
                 <span className="pronun-missed-lbl">💡 Practica estas palabras:</span>
                 <div className="pronun-missed-words">
                   {result.missed.map((w, i) => (
-                    <span key={i} className="pronun-missed-word">{w}</span>
+                    <button
+                      key={i}
+                      className="pronun-missed-word"
+                      onClick={() => speakWord(w)}
+                      title={`Escuchar "${w}"`}
+                    >
+                      <span className="pronun-missed-speaker">🔊</span> {w}
+                    </button>
                   ))}
                 </div>
               </div>
