@@ -125,6 +125,27 @@ export const COMPOUNDS = {
 
 // ─── SINGLE WORD DICTIONARY ───
 const DICTIONARY = {
+  // ── Hyphenated words (treated as single tokens) ──
+  'fast-paced': 'de ritmo acelerado',
+  'cross-functional': 'interfuncional/multidisciplinario',
+  'customer-centric': 'centrado en el cliente',
+  'customer-first': 'prioridad al cliente',
+  'detail-focused': 'enfocado en los detalles',
+  'detail-oriented': 'orientado al detalle',
+  'first-call': 'primera llamada',
+  'follow-up': 'seguimiento',
+  'full-time': 'tiempo completo',
+  'part-time': 'medio tiempo',
+  'high-volume': 'alto volumen',
+  'long-term': 'a largo plazo',
+  'on-site': 'presencial/en sitio',
+  'post-call': 'después de la llamada',
+  'problem-solving': 'resolución de problemas',
+  'results-oriented': 'orientado a resultados',
+  'thank-you': 'agradecimiento/de gracias',
+  'time-management': 'gestión del tiempo',
+  'counter-offer': 'contraoferta',
+
   // ── Articles, prepositions, conjunctions (very common) ──
   a: 'un/una',
   an: 'un/una',
@@ -1396,7 +1417,7 @@ const DICTIONARY = {
  */
 export function lookup(word) {
   if (!word) return null
-  const clean = word.toLowerCase().replace(/[.,;:!?'"()\[\]{}—–-]/g, '').replace(/'/g, '').trim()
+  const clean = word.toLowerCase().replace(/[.,;:!?'"()\[\]{}—–]/g, '').replace(/'/g, '').trim()
   if (!clean) return null
   return DICTIONARY[clean] || null
 }

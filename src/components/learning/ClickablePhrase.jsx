@@ -52,7 +52,7 @@ function tokenize(text) {
     const compoundRanges = []
     let i = 0
     while (i < wordTokens.length) {
-      const m = lookupCompound(wordTokens.map(w => w.replace(/[.,;:!?'"()\[\]{}—–-]/g, '').replace(/'/g, '')), i)
+      const m = lookupCompound(wordTokens.map(w => w.replace(/[.,;:!?'"()\[\]{}—–]/g, '').replace(/'/g, '')), i)
       if (m) {
         compoundRanges.push({ startWordIdx: i, endWordIdx: i + m.wordCount - 1, phrase: m.phrase, translation: m.translation })
         i += m.wordCount
@@ -98,7 +98,7 @@ function tokenize(text) {
           })
         }
       } else {
-        const cleanWord = token.text.replace(/[.,;:!?'"()\[\]{}—–-]/g, '').replace(/'/g, '')
+        const cleanWord = token.text.replace(/[.,;:!?'"()\[\]{}—–]/g, '').replace(/'/g, '')
         const translation = lookup(cleanWord)
         result.push({ type: 'word', text: token.text, cleanWord, translation, hasDef: translation !== null })
       }
