@@ -72,6 +72,19 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore })
     return text.toLowerCase().replace(/[^a-z0-9\s-]/g, '').split(/\s+/).filter(Boolean)
   }
 
+  // Check if a target word matches something in the transcript.
+  // Handles hyphenated words: "results-oriented" matches "results" + "oriented" separately.
+  function wordMatchesTranscript(word, transcriptWords) {
+    // Direct match
+    if (transcriptWords.includes(word)) return true
+    // Hyphenated word: check if ALL parts exist in transcript
+    if (word.includes('-')) {
+      const parts = word.split('-').filter(Boolean)
+      return parts.every(part => transcriptWords.includes(part))
+    }
+    return false
+  }
+
   function getScore(target, transcript) {
     if (!transcript) return 0
     const t = normalize(target)
@@ -86,7 +99,7 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore })
     for (const word of t) {
       const weight = smallWords.has(word) ? 0.5 : 1  // Small words penalize less
       totalWeight += weight
-      if (s.includes(word)) {
+      if (wordMatchesTranscript(word, s)) {
         matchedWeight += weight
       }
     }
@@ -102,7 +115,7 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore })
     const smallWords = new Set(['i', 'a', 'an', 'am', 'is', 'the', 'to', 'of', 'in', 'it', 'on', 'or', 'my', 'me', 'we', 'do', 'so', 'at', 'by', 'up', 'no'])
     // Return original-casing words from target that weren't detected (skip small ones)
     const original = target.replace(/[^a-zA-Z0-9\s-]/g, '').split(/\s+/).filter(Boolean)
-    return original.filter((_, i) => t[i] && !s.includes(t[i]) && !smallWords.has(t[i]))
+    return original.filter((_, i) => t[i] && !wordMatchesTranscript(t[i], s) && !smallWords.has(t[i]))
   }
 
   function getFeedback(score) {
