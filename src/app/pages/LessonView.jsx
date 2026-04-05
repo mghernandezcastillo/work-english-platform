@@ -132,6 +132,7 @@ export default function LessonView() {
   const [newBadges, setNewBadges] = useState([])
   const [activeBadgeToast, setActiveBadgeToast] = useState(null)
   const [stepCompleted, setStepCompleted] = useState(false)
+  const [hasCompleted, setHasCompleted] = useState(false) // prevent double-fire
   const navRef = useRef(null)
 
   // Auto-scroll to nav when exercises/match complete
@@ -161,67 +162,94 @@ export default function LessonView() {
   }
 
   async function calculateCurrentStreak() {
-    if (!profile?.id) return 0
-    const { data } = await supabase
-      .from('user_progress')
-      .select('completed_at')
-      .eq('user_id', profile.id)
-      .eq('completed', true)
-      .order('completed_at', { ascending: false })
-    if (!data?.length) return 1 // First lesson = day 1
+    try {
+      if (!profile?.id) return 1
+      const { data } = await supabase
+        .from('user_progress')
+        .select('completed_at')
+        .eq('user_id', profile.id)
+        .eq('completed', true)
+        .order('completed_at', { ascending: false })
+      if (!data?.length) return 1 // First lesson = day 1
 
-    const dates = [...new Set(data.map(r => new Date(r.completed_at).toDateString()))]
-    let streak = 0
-    const today = new Date()
-    for (let i = 0; i < 365; i++) {
-      const check = new Date(today)
-      check.setDate(check.getDate() - i)
-      if (dates.includes(check.toDateString())) {
-        streak++
-      } else if (i > 0) break // Allow today to not be counted yet
+      const dates = [...new Set(data.map(r => new Date(r.completed_at).toDateString()))]
+      let streak = 0
+      const today = new Date()
+      for (let i = 0; i < 365; i++) {
+        const check = new Date(today)
+        check.setDate(check.getDate() - i)
+        if (dates.includes(check.toDateString())) {
+          streak++
+        } else if (i > 0) break
+      }
+      return Math.max(streak, 1)
+    } catch (err) {
+      console.warn('calculateCurrentStreak error:', err)
+      return 1
     }
-    return Math.max(streak, 1)
   }
 
   async function handleLessonComplete() {
-    const saved = await markComplete()
-    if (!saved) console.warn('Progress may not have been saved')
+    // Prevent double-fire (ReinforcementStep auto-completes + user could trigger again)
+    if (hasCompleted) return
+    setHasCompleted(true)
 
-    // Clear saved step — lesson is done
-    localStorage.removeItem(`lesson_step_${lessonId}`)
+    try {
+      const saved = await markComplete()
+      if (!saved) console.warn('Progress may not have been saved')
 
-    // Show XP animation first
-    setShowXP(true)
+      // Clear saved step — lesson is done
+      localStorage.removeItem(`lesson_step_${lessonId}`)
+      // Also clear session cache to prevent stale lesson restore
+      sessionStorage.removeItem(`lesson_cache_${lessonId}`)
 
-    // Award XP + check badges in DB
-    if (profile?.id) {
-      const days = await calculateCurrentStreak()
-      const { data: progressData } = await supabase
-        .from('user_progress')
-        .select('id')
-        .eq('user_id', profile.id)
-        .eq('completed', true)
-      const lessonsCount = progressData?.length ?? 1
-      const { newBadges: badges } = await awardLessonXP(profile.id, lessonsCount, days)
-      // Update profile in context so XP shows immediately on dashboard
-      await refreshProfile()
-      if (badges?.length) {
-        setNewBadges(badges)
-        // Show badge toasts sequentially
-        for (let i = 0; i < badges.length; i++) {
-          await new Promise(r => setTimeout(r, i === 0 ? 900 : 4200))
-          setActiveBadgeToast(badges[i])
-          setTimeout(() => setActiveBadgeToast(null), 4000)
+      // Show XP animation first
+      setShowXP(true)
+
+      // Award XP + check badges in DB
+      if (profile?.id) {
+        const days = await calculateCurrentStreak()
+        let lessonsCount = 1
+        try {
+          const { data: progressData } = await supabase
+            .from('user_progress')
+            .select('id')
+            .eq('user_id', profile.id)
+            .eq('completed', true)
+          lessonsCount = progressData?.length ?? 1
+        } catch { /* use fallback */ }
+
+        try {
+          const { newBadges: badges } = await awardLessonXP(profile.id, lessonsCount, days)
+          // Update profile in context so XP shows immediately on dashboard
+          await refreshProfile().catch(() => {})
+          if (badges?.length) {
+            setNewBadges(badges)
+            // Show badge toasts sequentially
+            for (let i = 0; i < badges.length; i++) {
+              await new Promise(r => setTimeout(r, i === 0 ? 900 : 4200))
+              setActiveBadgeToast(badges[i])
+              setTimeout(() => setActiveBadgeToast(null), 4000)
+            }
+          }
+        } catch (xpErr) {
+          console.warn('XP/badge award failed (non-fatal):', xpErr)
         }
-      }
-      setStreakCount(days)
-    } else {
-      await new Promise(r => setTimeout(r, 900))
-      const days = await calculateCurrentStreak()
-      setStreakCount(days)
-    }
 
-    setShowStreakModal(true)
+        setStreakCount(days)
+      } else {
+        await new Promise(r => setTimeout(r, 900))
+        const days = await calculateCurrentStreak()
+        setStreakCount(days)
+      }
+
+      setShowStreakModal(true)
+    } catch (err) {
+      console.error('handleLessonComplete error:', err)
+      // Even on error, show streak modal so user isn't stuck
+      setShowStreakModal(true)
+      setStreakCount(1)
+    }
   }
 
   function handleStreakContinue() {
