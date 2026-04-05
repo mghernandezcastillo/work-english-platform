@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
@@ -86,6 +86,30 @@ export default function RouteView() {
 
   const totalLessons = modules.reduce((s, m) => s + (m.lessons?.length || 0), 0)
   const isComplete = totalLessons > 0 && completedLessons.size === totalLessons
+  const nextLessonRef = useRef(null)
+
+  // Find the ID of the next uncompleted lesson
+  let nextLessonId = null
+  if (completedLessons.size > 0 && !isComplete) {
+    for (const mod of modules) {
+      for (const lesson of (mod.lessons || [])) {
+        if (!completedLessons.has(lesson.id)) {
+          nextLessonId = lesson.id
+          break
+        }
+      }
+      if (nextLessonId) break
+    }
+  }
+
+  // Auto-scroll to next lesson on load
+  useEffect(() => {
+    if (nextLessonRef.current) {
+      setTimeout(() => {
+        nextLessonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 400)
+    }
+  }, [nextLessonId])
 
   return (
     <div className="route-view animate-fadeIn">
@@ -155,12 +179,15 @@ export default function RouteView() {
                   const prevCompleted = lessonIndex === 0 || completedLessons.has(modLessons[lessonIndex - 1]?.id)
                   const isLocked = !prevCompleted && !isCompleted && lessonIndex > 0
 
+                  const isNext = lesson.id === nextLessonId
+
                   return (
                     <Card
                       key={lesson.id}
                       hover={!isLocked}
+                      ref={isNext ? nextLessonRef : undefined}
                       onClick={() => isLocked ? handleLockedClick(lesson.id) : navigate(`/leccion/${lesson.id}`)}
-                      className={`route-lesson-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''} ${shakingLesson === lesson.id ? 'shaking' : ''} ${highlightFirst && modIndex === 0 && lessonIndex === 0 ? 'highlight-pulse' : ''}`}
+                      className={`route-lesson-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''} ${isNext ? 'next-lesson' : ''} ${shakingLesson === lesson.id ? 'shaking' : ''} ${highlightFirst && modIndex === 0 && lessonIndex === 0 ? 'highlight-pulse' : ''}`}
                     >
                       <CardBody>
                         <div className="flex items-center gap-3">
@@ -173,6 +200,7 @@ export default function RouteView() {
                             </span>
                           </div>
                           {!isLocked && <span className="route-lesson-arrow">→</span>}
+                          {isNext && <span className="route-next-badge">▶ Siguiente</span>}
                         </div>
                       </CardBody>
                     </Card>

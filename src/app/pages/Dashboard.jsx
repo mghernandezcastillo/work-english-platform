@@ -126,6 +126,7 @@ export default function Dashboard() {
   const [streak, setStreak] = useState(0)
   const [loading, setLoading] = useState(true)
   const [showResetOverlay, setShowResetOverlay] = useState(false)
+  const [nextLesson, setNextLesson] = useState(null)
 
   // Detect "just reset" flag from Profile
   useEffect(() => {
@@ -142,7 +143,7 @@ export default function Dashboard() {
     try {
       const { data: routeData } = await supabase
         .from('routes')
-        .select('*, modules(id, title, sort_order, lessons(id))')
+        .select('*, modules(id, title, sort_order, lessons(id, title, sort_order))')
         .order('sort_order')
 
       const { data: progressData } = await supabase
@@ -151,13 +152,35 @@ export default function Dashboard() {
         .eq('user_id', profile?.id)
 
       const progressMap = {}
+      const completedSet = new Set()
       if (progressData) {
         progressData.forEach(p => {
           if (!progressMap[p.route_id]) progressMap[p.route_id] = { completed: 0, total: 0 }
           progressMap[p.route_id].total++
-          if (p.completed) progressMap[p.route_id].completed++
+          if (p.completed) {
+            progressMap[p.route_id].completed++
+            completedSet.add(p.lesson_id)
+          }
         })
       }
+
+      // Find the next uncompleted lesson across all routes
+      let found = null
+      for (const route of (routeData || []).sort((a, b) => a.sort_order - b.sort_order)) {
+        const sortedModules = (route.modules || []).sort((a, b) => a.sort_order - b.sort_order)
+        for (const mod of sortedModules) {
+          const sortedLessons = (mod.lessons || []).sort((a, b) => a.sort_order - b.sort_order)
+          for (const lesson of sortedLessons) {
+            if (!completedSet.has(lesson.id)) {
+              found = { lessonId: lesson.id, lessonTitle: lesson.title, routeId: route.id, routeTitle: route.title }
+              break
+            }
+          }
+          if (found) break
+        }
+        if (found) break
+      }
+      setNextLesson(found)
 
       setRoutes(routeData || [])
       setProgress(progressMap)
@@ -278,6 +301,22 @@ export default function Dashboard() {
           </p>
         </div>
       </div>
+
+      {/* ── Continue learning card — shows next lesson for returning users ── */}
+      {!loading && nextLesson && completedLessons > 0 && pct < 100 && (
+        <button
+          className="mc-continue-card"
+          onClick={() => navigate(`/leccion/${nextLesson.lessonId}`)}
+        >
+          <div className="mc-continue-icon">▶</div>
+          <div className="mc-continue-body">
+            <span className="mc-continue-label">Continuar aprendiendo</span>
+            <span className="mc-continue-title">{nextLesson.lessonTitle}</span>
+            <span className="mc-continue-route">{nextLesson.routeTitle}</span>
+          </div>
+          <span className="mc-route-arrow">›</span>
+        </button>
+      )}
 
       {/* ── Routes ── */}
       <h3 className="mc-section-title">Elige tu ruta</h3>
