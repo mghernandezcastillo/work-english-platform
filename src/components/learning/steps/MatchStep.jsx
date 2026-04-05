@@ -34,7 +34,7 @@ function derange(arr) {
   return result
 }
 
-export default function MatchStep({ data }) {
+export default function MatchStep({ data, onComplete }) {
   const { profile } = useAuth()
   const allPhrases = data?.phrases || []
   // Pick up to 5 random phrases for the match game
@@ -99,6 +99,8 @@ export default function MatchStep({ data }) {
 
       if (newMatched.size === pairs.length) {
         setCompleted(true)
+        // Notify parent so outer nav appears
+        if (onComplete) onComplete()
         // Check for Velocista badge (<30s) or Sin Errores (100% accuracy)
         if (profile?.id) {
           const finalAccuracy = Math.round((newMatched.size / (attempts + 1)) * 100)
