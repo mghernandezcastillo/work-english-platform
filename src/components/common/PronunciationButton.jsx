@@ -91,13 +91,14 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore })
     const s = normalize(transcript)
 
     // For each target word, check if it exists in the transcript
-    // Give partial credit for small common words that speech APIs often garble
-    const smallWords = new Set(['i', 'a', 'an', 'am', 'is', 'the', 'to', 'of', 'in', 'it', 'on', 'or', 'my', 'me', 'we', 'do', 'so', 'at', 'by', 'up', 'no'])
+    // Only truly insignificant filler words (articles, prepositions) get reduced weight
+    // Pronouns (I, my, me, we) and verbs (am, is, do) are CRITICAL and get full weight
+    const fillerWords = new Set(['a', 'an', 'the', 'of', 'in', 'on', 'at', 'by', 'to', 'or', 'up', 'so', 'no', 'it'])
     let totalWeight = 0
     let matchedWeight = 0
 
     for (const word of t) {
-      const weight = smallWords.has(word) ? 0.5 : 1  // Small words penalize less
+      const weight = fillerWords.has(word) ? 0.5 : 1  // Only filler words penalize less
       totalWeight += weight
       if (wordMatchesTranscript(word, s)) {
         matchedWeight += weight
@@ -111,11 +112,12 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore })
     if (!transcript) return []
     const t = normalize(target)
     const s = normalize(transcript)
-    // Small words missed by speech recognition shouldn't clutter the practice list
-    const smallWords = new Set(['i', 'a', 'an', 'am', 'is', 'the', 'to', 'of', 'in', 'it', 'on', 'or', 'my', 'me', 'we', 'do', 'so', 'at', 'by', 'up', 'no'])
-    // Return original-casing words from target that weren't detected (skip small ones)
+    // Only hide truly insignificant filler words from the practice list
+    // Pronouns (I), verbs (am, is, do), etc. SHOULD appear if missed
+    const hideFromList = new Set(['a', 'an', 'the', 'of', 'in', 'on', 'at', 'by', 'to', 'or', 'up', 'so', 'no', 'it'])
+    // Return original-casing words from target that weren't detected (skip only fillers)
     const original = target.replace(/[^a-zA-Z0-9\s-]/g, '').split(/\s+/).filter(Boolean)
-    return original.filter((_, i) => t[i] && !wordMatchesTranscript(t[i], s) && !smallWords.has(t[i]))
+    return original.filter((_, i) => t[i] && !wordMatchesTranscript(t[i], s) && !hideFromList.has(t[i]))
   }
 
   function getFeedback(score) {
