@@ -19,6 +19,16 @@ export default function RouteView() {
   const [shakingLesson, setShakingLesson] = useState(null)
   const [lockedToast, setLockedToast] = useState(false)
   const [showCertificate, setShowCertificate] = useState(false)
+  const [highlightFirst, setHighlightFirst] = useState(false)
+
+  // Detect first-lesson highlight from FirstMissionBanner
+  useEffect(() => {
+    if (sessionStorage.getItem('highlight_first_lesson') === '1') {
+      sessionStorage.removeItem('highlight_first_lesson')
+      setHighlightFirst(true)
+      setTimeout(() => setHighlightFirst(false), 4000)
+    }
+  }, [])
 
   useEffect(() => {
     loadRoute()
@@ -150,7 +160,7 @@ export default function RouteView() {
                       key={lesson.id}
                       hover={!isLocked}
                       onClick={() => isLocked ? handleLockedClick(lesson.id) : navigate(`/leccion/${lesson.id}`)}
-                      className={`route-lesson-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''} ${shakingLesson === lesson.id ? 'shaking' : ''}`}
+                      className={`route-lesson-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''} ${shakingLesson === lesson.id ? 'shaking' : ''} ${highlightFirst && modIndex === 0 && lessonIndex === 0 ? 'highlight-pulse' : ''}`}
                     >
                       <CardBody>
                         <div className="flex items-center gap-3">

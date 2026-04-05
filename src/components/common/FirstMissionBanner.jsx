@@ -25,6 +25,7 @@ export function FirstMissionBanner({ firstRoute, onStart }) {
   }, [])
 
   function handleStart() {
+    sessionStorage.setItem('highlight_first_lesson', '1')
     if (onStart) onStart()
     else if (firstRoute) navigate(`/ruta/${firstRoute.id}`)
   }
