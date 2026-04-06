@@ -200,7 +200,7 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore })
 
   return (
     <div className="pronun-wrap">
-      {/* Target text - hidden when inside glass-card, shown standalone */}
+      {/* Indicador de frase objetivo */}
       <div className="pronun-target">
         <span className="pronun-target-label">Di en voz alta:</span>
         <span className="pronun-target-text">"{targetText}"</span>
