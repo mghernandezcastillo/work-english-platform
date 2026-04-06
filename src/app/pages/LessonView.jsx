@@ -16,7 +16,6 @@ import ReinforcementStep from '../../components/learning/steps/ReinforcementStep
 import MatchStep from '../../components/learning/steps/MatchStep'
 import './LessonView.css'
 import '../../components/common/BadgesPanel.css'
-import { WorkBot } from '../../components/common/WorkBot'
 
 const STEPS = [
   { key: 'objective', label: 'Objetivo', icon: '🎯', component: ObjectiveStep },
@@ -391,11 +390,6 @@ export default function LessonView() {
 
       {/* Step content */}
       <div className="lesson-content" style={{ fontSize: `calc(var(--text-base) * ${fontScale})` }}>
-        <WorkBot
-          stepKey={step.key}
-          stepIndex={currentStep}
-          userName={profile?.full_name?.split(' ')[0]}
-        />
         <StepComponent
           data={stepData}
           lessonId={lessonId}
