@@ -18,14 +18,16 @@ import '../../components/common/BadgesPanel.css'
    Steps config — 7 steps (Frases absorbs Examples, no MiniExample)
    Steps with internal pagination expose onCanAdvance ← boolean
    ───────────────────────────────────────────────────────────────── */
+// startsLocked: true  → Next button starts DISABLED until the step calls onCanAdvance(true)
+// startsLocked: false → Next button starts ENABLED immediately (user controls pace)
 const STEPS = [
-  { key: 'objective',     label: '¿Qué aprenderás?', icon: '🎯', component: ObjectiveStep,       selfAdvances: false },
-  { key: 'phrases',       label: 'Escucha y repite',  icon: '💬', component: PhrasesStep,         selfAdvances: true  },
-  { key: 'explanation',   label: '¿Por qué así?',     icon: '💡', component: ExplanationStep,     selfAdvances: true  },
-  { key: 'exercises',     label: 'Pon a prueba',       icon: '✏️', component: ExerciseStep,        selfAdvances: true  },
-  { key: 'match',         label: 'Conecta frases',     icon: '🔗', component: MatchStep,           selfAdvances: true, dataKey: 'phrases' },
-  { key: 'practice',      label: 'Ahora habla tú',    icon: '🗣️', component: GuidedPracticeStep,  selfAdvances: true  },
-  { key: 'reinforcement', label: '¡Lección lista!',   icon: '🏆', component: ReinforcementStep,   selfAdvances: false },
+  { key: 'objective',     label: '¿Qué aprenderás?', icon: '🎯', component: ObjectiveStep,       startsLocked: false },
+  { key: 'phrases',       label: 'Escucha y repite',  icon: '💬', component: PhrasesStep,         startsLocked: false },
+  { key: 'explanation',   label: '¿Por qué así?',     icon: '💡', component: ExplanationStep,     startsLocked: false },
+  { key: 'exercises',     label: 'Pon a prueba',       icon: '✏️', component: ExerciseStep,        startsLocked: true  },
+  { key: 'match',         label: 'Conecta frases',     icon: '🔗', component: MatchStep,           startsLocked: true, dataKey: 'phrases' },
+  { key: 'practice',      label: 'Ahora habla tú',    icon: '🗣️', component: GuidedPracticeStep,  startsLocked: false },
+  { key: 'reinforcement', label: '¡Lección lista!',   icon: '🏆', component: ReinforcementStep,   startsLocked: false },
 ]
 
 export default function LessonView() {
@@ -182,7 +184,8 @@ export default function LessonView() {
     if (index >= 0 && index < STEPS.length) {
       if (index > currentStep) showStepToast()
       setCurrentStep(index)
-      setCanAdvance(!STEPS[index].selfAdvances) // static steps allow advance immediately
+      // Only lock Next button for steps that explicitly require completion (Exercise, Match)
+      setCanAdvance(!STEPS[index].startsLocked)
       localStorage.setItem(`lesson_step_${lessonId}`, index)
     }
   }
