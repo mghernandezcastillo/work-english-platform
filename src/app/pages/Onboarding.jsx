@@ -5,6 +5,7 @@ import { brand } from '../../lib/brand'
 import { Button } from '../../components/common/Button'
 import { useState } from 'react'
 import './Onboarding.css'
+import { WorkBot } from '../../components/common/WorkBot'
 
 const steps = [
   {
@@ -68,7 +69,11 @@ export default function Onboarding() {
 
       {/* Content */}
       <div className="onboarding-content" key={step}>
-        <div className="onboarding-emoji">{current.emoji}</div>
+        {step === 0 ? (
+          <WorkBot stepKey="objective" stepIndex={step} userName={user?.user_metadata?.full_name?.split(' ')[0]} />
+        ) : (
+          <div className="onboarding-emoji">{current.emoji}</div>
+        )}
         <h1 className="onboarding-title">{current.title}</h1>
         <p className="onboarding-subtitle">{current.subtitle}</p>
         <p className="onboarding-description">{current.description}</p>

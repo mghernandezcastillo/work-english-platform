@@ -6,6 +6,7 @@ import { RoutesLoader } from '../../components/common/RoutesLoader'
 import { DailyPhrase } from '../../components/common/DailyPhrase'
 import { FirstMissionBanner } from '../../components/common/FirstMissionBanner'
 import { BadgesPanel } from '../../components/common/BadgesPanel'
+import { WorkBotDashboard } from '../../components/common/WorkBot'
 import './Dashboard.css'
 
 const routeMeta = {
@@ -257,6 +258,17 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+      {/* ── WorkBot greeting ── */}
+      {!loading && (
+        <WorkBotDashboard
+          userName={firstName}
+          completedLessons={completedLessons}
+          totalLessons={totalLessons}
+          streak={streak}
+          todayDone={todayLessons >= 1}
+        />
+      )}
 
       {/* ── XP Bar ── */}
       <div className="mc-xp-bar">
