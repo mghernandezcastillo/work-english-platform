@@ -41,7 +41,7 @@ export default function ExplanationStep({ data, onCanAdvance }) {
       <div className="step-inline-nav">
         <button className="step-inline-btn" onClick={() => current > 0 && setCurrent(c => c - 1)} disabled={current === 0}>‹</button>
         <span className="step-inline-label">{current + 1} de {points.length}</span>
-        <button className="step-inline-btn" onClick={() => current < points.length - 1 && setCurrent(c => c + 1)} disabled={current === points.length - 1}>›</button>
+        <button className="step-inline-btn pulse" onClick={() => current < points.length - 1 && setCurrent(c => c + 1)} disabled={current === points.length - 1}>›</button>
       </div>
     </div>
   )
