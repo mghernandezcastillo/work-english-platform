@@ -29,15 +29,6 @@ export default function GuidedPracticeStep({ data, lessonId }) {
     <div className="step-container animate-fadeIn">
       <div className="step-badge">🗣️ Práctica guiada</div>
 
-      {current === 0 && (
-        <>
-          <p className="step-subtitle"><strong>Esta es la parte más importante.</strong> Hablar en voz alta activa la memoria muscular que necesitas para el trabajo real.</p>
-          <p className="text-xs text-muted" style={{ marginBottom: 'var(--space-3)' }}>
-            💡 Escucha primero, luego repite en voz alta — toca las palabras subrayadas para ver su significado
-          </p>
-        </>
-      )}
-
       {/* Single scenario card */}
       <div className={`practice-card step-card-single ${practiced.has(current) ? 'practiced' : ''}`} key={current}>
         <div className="practice-header">

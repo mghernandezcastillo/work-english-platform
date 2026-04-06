@@ -18,14 +18,6 @@ export default function PhrasesStep({ data }) {
     <div className="step-container animate-fadeIn">
       <div className="step-badge">💬 Frases clave</div>
 
-      {current === 0 && (
-        <p className="step-subtitle">Estas son las frases que los profesionales reales usan. <strong>Escúchalas y repítelas en voz alta</strong> — esa repetición es lo que las fija en tu memoria.</p>
-      )}
-
-      <p className="text-xs text-muted" style={{ marginBottom: 'var(--space-3)' }}>
-        💡 Toca cualquier palabra subrayada para ver su significado
-      </p>
-
       {/* Single phrase card */}
       <div className="phrase-card step-card-single" key={current}>
         <div className="phrase-number">
