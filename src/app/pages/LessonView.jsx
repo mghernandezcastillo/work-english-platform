@@ -35,6 +35,12 @@ export default function LessonView() {
   const { profile, refreshProfile } = useAuth()
   const navigate = useNavigate()
 
+  // Hide AppLayout topbar + bottom-nav while in a lesson
+  useEffect(() => {
+    document.body.classList.add('lesson-mode')
+    return () => document.body.classList.remove('lesson-mode')
+  }, [])
+
   const [lesson, setLesson] = useState(null)
   const [currentStep, setCurrentStep] = useState(0)
   const [loading, setLoading] = useState(true)

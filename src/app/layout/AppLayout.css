@@ -244,3 +244,15 @@
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   }
 }
+
+/* ── Lesson mode — hide all app chrome so lesson shell fills 100dvh ── */
+body.lesson-mode .app-topbar,
+body.lesson-mode .app-bottom-nav,
+body.lesson-mode .whatsapp-fab,
+body.lesson-mode .app-support-footer {
+  display: none !important;
+}
+body.lesson-mode .app-main {
+  padding: 0 !important;
+  max-width: 100% !important;
+}
