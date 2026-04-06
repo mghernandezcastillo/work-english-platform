@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import './WorkBot.css'
 
 /**
@@ -7,56 +7,56 @@ import './WorkBot.css'
  */
 const STEP_MESSAGES = {
   objective: [
-    '¡Hola {name}! Veamos qué aprenderás hoy',
-    '¡Hey {name}! Esta lección va a estar buena',
-    '{name}, mira lo que vamos a dominar hoy',
+    '¡Hola {name}! Veamos qué aprenderás hoy 🎯',
+    '¡Hey {name}! Esta lección va a estar buena 💪',
+    '{name}, mira lo que vamos a dominar hoy 🚀',
   ],
   phrases: [
-    'Escucha cada frase y repítela en voz alta',
-    'Pon atención a la pronunciación. ¡Repítelas!',
-    'Estas frases las usan los profesionales todos los días',
+    '🎧 Escucha cada frase y repítela en voz alta',
+    '👂 Pon atención a la pronunciación — ¡repítelas!',
+    '🗣️ Estas frases las usan los profesionales',
   ],
   examples: [
-    'Mira cómo se usan en situaciones reales',
-    'Así suenan estas frases en el trabajo real',
-    'Fíjate bien en el contexto de cada ejemplo',
+    '🤓 Mira cómo se usan en situaciones reales',
+    '📝 Así suenan estas frases en el trabajo real',
+    '👀 Fíjate bien en el contexto de cada ejemplo',
   ],
   explanation: [
-    'Este es el truco para dominarlo',
-    'Entender el por qué te ayuda a recordar',
-    'Esta explicación te va a aclarar todo',
+    '💡 Este es el truco para dominarlo',
+    '🧠 Entender el "por qué" te ayuda a recordar',
+    '💡 Esta explicación te va a aclarar todo',
   ],
   exercises: [
-    '¡Tu turno, {name}! Demuestra lo que aprendiste',
-    '¡A practicar! Tú puedes con esto',
-    'Hora de poner a prueba lo aprendido',
+    '💪 ¡Tu turno, {name}! Demuestra lo que aprendiste',
+    '✏️ ¡A practicar! Tú puedes con esto',
+    '🎯 Hora de poner a prueba lo aprendido',
   ],
   match: [
-    'Conecta cada frase con su significado',
-    '¡Rápido! Encuentra las parejas correctas',
-    'Hazlo lo más rápido que puedas',
+    '🧩 Conecta cada frase con su significado',
+    '🔗 ¡Rápido! Encuentra las parejas correctas',
+    '⚡ Hazlo lo más rápido que puedas',
   ],
   practice: [
-    '¡Ahora habla tú! Esta es la parte más importante',
-    'Di cada frase en voz alta. ¡Sin miedo!',
-    'Tu pronunciación mejora cada vez que practicas',
+    '🎤 ¡Ahora habla tú! Es la parte más importante',
+    '🗣️ Di cada frase en voz alta — ¡sin miedo!',
+    '🎙️ Tu pronunciación mejora cada vez que practicas',
   ],
   reinforcement: [
-    '¡Increíble {name}! Completaste la lección',
-    '¡Lo lograste! Eres imparable, {name}',
-    '¡Misión cumplida! Sigue así, {name}',
+    '🎉 ¡Increíble {name}! Completaste la lección',
+    '🏆 ¡Lo lograste! Eres imparable, {name}',
+    '⭐ ¡Misión cumplida! Sigue así, {name}',
   ],
 }
 
-const MOUTH_STYLES = {
+const EXPRESSIONS = {
   objective: 'happy',
   phrases: 'happy',
-  examples: 'thinking',
-  explanation: 'thinking',
+  examples: 'curious',
+  explanation: 'curious',
   exercises: 'excited',
   match: 'excited',
   practice: 'excited',
-  reinforcement: 'happy',
+  reinforcement: 'celebrate',
 }
 
 function getMessage(stepKey, userName) {
@@ -66,105 +66,139 @@ function getMessage(stepKey, userName) {
 }
 
 /**
- * Speak a message using Web Speech API in Spanish.
- * Returns the utterance so we can track when it ends.
+ * Premium SVG face — inspired by ELSA's character.
+ * Inline SVG allows full animation control via CSS.
  */
-function speakMessage(text, onEnd) {
-  if (!window.speechSynthesis) return null
-  // Don't speak if user has muted the bot
-  if (localStorage.getItem('workbot_muted') === '1') {
-    if (onEnd) onEnd()
-    return null
-  }
-  window.speechSynthesis.cancel()
-
-  // Strip emojis for cleaner speech
-  const cleanText = text.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F900}-\u{1F9FF}\u{200D}\u{20E3}\u{E0020}-\u{E007F}]/gu, '').trim()
-  if (!cleanText) {
-    if (onEnd) onEnd()
-    return null
+function BotFace({ expression = 'happy', size = 80 }) {
+  // Mouth paths per expression
+  const mouths = {
+    happy: <path d="M33 48 Q40 55 47 48" stroke="#2D2255" strokeWidth="2.2" fill="none" strokeLinecap="round" />,
+    curious: <path d="M35 49 Q40 53 45 49" stroke="#2D2255" strokeWidth="2" fill="none" strokeLinecap="round" />,
+    excited: <ellipse cx="40" cy="49" rx="5" ry="4" fill="#2D2255" />,
+    celebrate: <path d="M31 47 Q40 58 49 47" stroke="#2D2255" strokeWidth="2.2" fill="none" strokeLinecap="round" />,
   }
 
-  const utterance = new SpeechSynthesisUtterance(cleanText)
-  utterance.lang = 'es-MX'
-  utterance.rate = 1.05
-  utterance.pitch = 1.1
-  utterance.volume = 0.85
+  return (
+    <svg viewBox="0 0 80 80" width={size} height={size} className="workbot-svg" aria-hidden="true">
+      <defs>
+        {/* Main gradient */}
+        <radialGradient id="botGrad" cx="40%" cy="35%" r="60%">
+          <stop offset="0%" stopColor="#7DD3FC" />
+          <stop offset="40%" stopColor="#6366F1" />
+          <stop offset="100%" stopColor="#4338CA" />
+        </radialGradient>
 
-  // Try to pick a good Spanish voice
-  const voices = window.speechSynthesis.getVoices()
-  const spanishVoice = voices.find(v =>
-    v.lang.startsWith('es') && (v.name.includes('Google') || v.name.includes('Paulina') || v.name.includes('Monica'))
-  ) || voices.find(v => v.lang.startsWith('es'))
-  if (spanishVoice) utterance.voice = spanishVoice
+        {/* Glow filter */}
+        <filter id="botGlow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="3" result="glow" />
+          <feMerge>
+            <feMergeNode in="glow" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
 
-  utterance.onend = () => { if (onEnd) onEnd() }
-  utterance.onerror = () => { if (onEnd) onEnd() }
+        {/* Eye gradient */}
+        <radialGradient id="eyeGrad" cx="45%" cy="40%">
+          <stop offset="0%" stopColor="#7C3AED" />
+          <stop offset="100%" stopColor="#1E1B4B" />
+        </radialGradient>
 
-  window.speechSynthesis.speak(utterance)
-  return utterance
+        {/* Shine gradient */}
+        <linearGradient id="shineGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="rgba(255,255,255,0.35)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+        </linearGradient>
+      </defs>
+
+      {/* Outer glow ring */}
+      <circle cx="40" cy="40" r="38" fill="none" stroke="rgba(99,102,241,0.25)" strokeWidth="1.5" filter="url(#botGlow)" />
+
+      {/* Main face sphere */}
+      <circle cx="40" cy="40" r="35" fill="url(#botGrad)" />
+
+      {/* Inner shadow for depth */}
+      <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(0,0,0,0.12)" strokeWidth="2" />
+
+      {/* Top shine / reflection */}
+      <ellipse cx="32" cy="24" rx="14" ry="8" fill="url(#shineGrad)" transform="rotate(-15 32 24)" />
+
+      {/* Circuit decoration — left */}
+      <g opacity="0.35" stroke="#A5F3FC" strokeWidth="1.2" fill="none" strokeLinecap="round">
+        <line x1="12" y1="32" x2="20" y2="32" />
+        <circle cx="10" cy="32" r="2" fill="#A5F3FC" />
+        <line x1="15" y1="42" x2="22" y2="38" />
+        <circle cx="14" cy="43" r="1.5" fill="#A5F3FC" />
+      </g>
+
+      {/* Circuit decoration — right */}
+      <g opacity="0.35" stroke="#A5F3FC" strokeWidth="1.2" fill="none" strokeLinecap="round">
+        <line x1="58" y1="28" x2="65" y2="24" />
+        <circle cx="67" cy="23" r="2" fill="#A5F3FC" />
+        <line x1="60" y1="38" x2="68" y2="40" />
+        <circle cx="70" cy="40" r="1.5" fill="#A5F3FC" />
+        <line x1="55" y1="52" x2="62" y2="55" />
+        <circle cx="64" cy="56" r="1.5" fill="#A5F3FC" />
+      </g>
+
+      {/* Headphone accent — left side */}
+      <path d="M10 34 Q6 30 10 26" stroke="#38BDF8" strokeWidth="2.5" fill="none" strokeLinecap="round" opacity="0.6" />
+
+      {/* Eyes */}
+      <g className="workbot-eyes-svg">
+        {/* Left eye */}
+        <ellipse cx="31" cy="36" rx="5.5" ry="6" fill="url(#eyeGrad)" />
+        <circle cx="32.5" cy="34.5" r="2" fill="rgba(255,255,255,0.8)" />
+        <circle cx="29" cy="37" r="1" fill="rgba(255,255,255,0.4)" />
+
+        {/* Right eye */}
+        <ellipse cx="49" cy="36" rx="5.5" ry="6" fill="url(#eyeGrad)" />
+        <circle cx="50.5" cy="34.5" r="2" fill="rgba(255,255,255,0.8)" />
+        <circle cx="47" cy="37" r="1" fill="rgba(255,255,255,0.4)" />
+      </g>
+
+      {/* Mouth — changes per expression */}
+      {mouths[expression] || mouths.happy}
+
+      {/* Subtle bottom shadow */}
+      <ellipse cx="40" cy="76" rx="20" ry="3" fill="rgba(0,0,0,0.15)" />
+    </svg>
+  )
 }
 
 /**
- * WorkBot — Animated tutor character for lessons.
+ * WorkBot — Premium animated tutor character for lessons.
+ * No voice — visual-only guide with contextual chat bubbles.
  */
 export function WorkBot({ stepKey = 'objective', stepIndex = 0, userName, compact = false }) {
   const [message, setMessage] = useState('')
   const [showMessage, setShowMessage] = useState(false)
   const [isTyping, setIsTyping] = useState(true)
-  const [isSpeaking, setIsSpeaking] = useState(false)
-  const [muted, setMuted] = useState(() => localStorage.getItem('workbot_muted') === '1')
   const [animKey, setAnimKey] = useState(0)
 
-  const mouth = isSpeaking ? 'speaking' : (MOUTH_STYLES[stepKey] || 'happy')
+  const expression = EXPRESSIONS[stepKey] || 'happy'
 
   useEffect(() => {
-    // Reset and re-trigger on step change
     setShowMessage(false)
     setIsTyping(true)
-    setIsSpeaking(false)
     setAnimKey(prev => prev + 1)
-    window.speechSynthesis?.cancel()
 
     const newMsg = getMessage(stepKey, userName)
     setMessage(newMsg)
 
-    // Typing delay, then reveal message + speak
     const typingTimer = setTimeout(() => {
       setIsTyping(false)
       setShowMessage(true)
-      setIsSpeaking(true)
-      speakMessage(newMsg, () => setIsSpeaking(false))
     }, 800)
 
-    return () => {
-      clearTimeout(typingTimer)
-      window.speechSynthesis?.cancel()
-    }
+    return () => clearTimeout(typingTimer)
   }, [stepKey, stepIndex])
-
-  function toggleMute() {
-    const next = !muted
-    setMuted(next)
-    localStorage.setItem('workbot_muted', next ? '1' : '0')
-    if (next) {
-      window.speechSynthesis?.cancel()
-      setIsSpeaking(false)
-    }
-  }
 
   return (
     <div className={`workbot-wrap workbot-enter ${compact ? 'workbot-compact' : ''}`} key={animKey}>
-      {/* Face */}
-      <div className="workbot-face">
-        <div className="workbot-eyes">
-          <div className="workbot-eye" />
-          <div className="workbot-eye" />
-        </div>
-        <div className={`workbot-mouth workbot-mouth--${mouth}`} />
+      <div className="workbot-avatar">
+        <BotFace expression={expression} size={compact ? 56 : 80} />
       </div>
 
-      {/* Chat bubble */}
       <div className="workbot-bubble">
         {isTyping ? (
           <div className="workbot-typing">
@@ -176,56 +210,42 @@ export function WorkBot({ stepKey = 'objective', stepIndex = 0, userName, compac
           <span>{message}</span>
         )}
       </div>
-
-      {/* Mute toggle */}
-      <button
-        className={`workbot-mute ${muted ? 'workbot-muted' : ''}`}
-        onClick={toggleMute}
-        title={muted ? 'Activar voz del tutor' : 'Silenciar tutor'}
-      >
-        {muted ? '🔇' : '🔊'}
-      </button>
     </div>
   )
 }
 
 /**
  * WorkBotDashboard — Compact variant for the Dashboard.
- * Shows contextual messages based on user progress.
  */
 const DASHBOARD_MESSAGES = {
   new: [
-    '¡Bienvenido {name}! Empecemos tu primera lección',
-    '¡Hola {name}! Tu camino al inglés empieza hoy',
+    '¡Bienvenido {name}! 🎉 Empecemos tu primera lección',
+    '¡Hola {name}! 🚀 Tu camino al inglés empieza hoy',
   ],
   returning: [
-    '¡Hola de nuevo, {name}! ¿Listo para continuar?',
-    '¡{name}! Me alegra verte. Sigamos aprendiendo',
-    '¡Qué bueno verte, {name}! Tu próxima lección te espera',
+    '¡Hola de nuevo, {name}! 💪 ¿Listo para continuar?',
+    '¡{name}! Me alegra verte 😊 Sigamos aprendiendo',
+    '¡Qué bueno verte, {name}! 📚 Tu próxima lección te espera',
   ],
   streaking: [
-    '¡{name}, llevas {streak} días seguidos! ¡No pares!',
-    '¡{streak} días de racha! Eres imparable, {name}',
-    '¡Racha de {streak} días! La constancia paga, {name}',
+    '🔥 ¡{name}, llevas {streak} días seguidos! ¡No pares!',
+    '🔥 ¡{streak} días de racha! Eres imparable, {name}',
+    '💪 ¡Racha de {streak} días! La constancia paga, {name}',
   ],
   todayDone: [
-    '¡Misión del día completa, {name}! Descansa o sigue',
-    '¡Ya hiciste tu lección de hoy! Eres disciplinado, {name}',
-    '¡Lección del día hecha! Puedes repasar o descansar, {name}',
+    '✅ ¡Misión del día completa, {name}! Descansa o sigue 😎',
+    '🎯 ¡Ya hiciste tu lección de hoy! Eres disciplinado, {name}',
+    '⭐ ¡Lección del día hecha!',
   ],
   allDone: [
-    '¡{name}, completaste todo el curso! Eres un crack',
-    '¡100% completado! Orgulloso de ti, {name}',
+    '🏆 ¡{name}, completaste TODO el curso! Eres un crack',
+    '👑 ¡100% completado! Orgulloso de ti, {name}',
   ],
 }
 
 export function WorkBotDashboard({ userName, completedLessons = 0, totalLessons = 0, streak = 0, todayDone = false }) {
   const [message, setMessage] = useState('')
   const [isTyping, setIsTyping] = useState(true)
-  const [isSpeaking, setIsSpeaking] = useState(false)
-  const [muted, setMuted] = useState(() => localStorage.getItem('workbot_muted') === '1')
-
-  const hasSpoken = useRef(false)
 
   useEffect(() => {
     let pool
@@ -246,40 +266,16 @@ export function WorkBotDashboard({ userName, completedLessons = 0, totalLessons 
       .replace(/{streak}/g, streak)
     setMessage(msg)
 
-    const timer = setTimeout(() => {
-      setIsTyping(false)
-      // Only speak once on dashboard load, not on re-renders
-      if (!hasSpoken.current) {
-        hasSpoken.current = true
-        setIsSpeaking(true)
-        speakMessage(msg, () => setIsSpeaking(false))
-      }
-    }, 700)
-
-    return () => {
-      clearTimeout(timer)
-      window.speechSynthesis?.cancel()
-    }
+    const timer = setTimeout(() => setIsTyping(false), 700)
+    return () => clearTimeout(timer)
   }, [userName, completedLessons, streak, todayDone])
 
-  function toggleMute() {
-    const next = !muted
-    setMuted(next)
-    localStorage.setItem('workbot_muted', next ? '1' : '0')
-    if (next) {
-      window.speechSynthesis?.cancel()
-      setIsSpeaking(false)
-    }
-  }
+  const expression = todayDone ? 'celebrate' : (completedLessons > 0 ? 'happy' : 'excited')
 
   return (
     <div className="workbot-wrap workbot-compact workbot-enter">
-      <div className="workbot-face">
-        <div className="workbot-eyes">
-          <div className="workbot-eye" />
-          <div className="workbot-eye" />
-        </div>
-        <div className={`workbot-mouth workbot-mouth--${isSpeaking ? 'speaking' : (todayDone ? 'happy' : 'excited')}`} />
+      <div className="workbot-avatar">
+        <BotFace expression={expression} size={56} />
       </div>
       <div className="workbot-bubble">
         {isTyping ? (
@@ -292,13 +288,6 @@ export function WorkBotDashboard({ userName, completedLessons = 0, totalLessons 
           <span>{message}</span>
         )}
       </div>
-      <button
-        className={`workbot-mute ${muted ? 'workbot-muted' : ''}`}
-        onClick={toggleMute}
-        title={muted ? 'Activar voz del tutor' : 'Silenciar tutor'}
-      >
-        {muted ? '🔇' : '🔊'}
-      </button>
     </div>
   )
 }
