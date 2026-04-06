@@ -97,6 +97,33 @@
   transform: translateX(3px);
 }
 
+/* Speaking mouth — opens and closes like talking */
+.workbot-mouth--speaking {
+  width: 10px;
+  height: 8px;
+  border-radius: 50%;
+  background: #312E81;
+  animation: workbot-speak 0.35s ease-in-out infinite alternate;
+}
+
+@keyframes workbot-speak {
+  0% {
+    height: 4px;
+    width: 12px;
+    border-radius: 0 0 8px 8px;
+  }
+  50% {
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+  }
+  100% {
+    height: 6px;
+    width: 14px;
+    border-radius: 0 0 10px 10px;
+  }
+}
+
 /* ── Chat Bubble ── */
 .workbot-bubble {
   position: relative;
@@ -129,6 +156,34 @@
 
 .workbot-bubble strong {
   color: var(--color-primary, #10B981);
+}
+
+/* ── Mute toggle ── */
+.workbot-mute {
+  position: absolute;
+  top: 12px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  color: var(--color-text, #E2E8F0);
+  padding: 0;
+}
+
+.workbot-mute:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.workbot-mute.workbot-muted {
+  opacity: 0.5;
 }
 
 /* ── Typing indicator ── */
@@ -219,3 +274,4 @@
   font-size: 12px;
   padding: 8px 12px;
 }
+
