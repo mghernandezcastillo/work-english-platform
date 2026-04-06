@@ -188,9 +188,17 @@ export default function LessonView() {
 
   function goToStep(index) {
     if (index >= 0 && index < STEPS.length) {
+      // Allow going back to any step we've already seen
+      if (index < currentStep) {
+        setCurrentStep(index)
+        setCanAdvance(!STEPS[index].startsLocked)
+        localStorage.setItem(`lesson_step_${lessonId}`, index)
+        return
+      }
+      // Forward only to the very next step
+      if (index > currentStep + 1) return
       if (index > currentStep) showStepToast()
       setCurrentStep(index)
-      // Only lock Next button for steps that explicitly require completion (Exercise, Match)
       setCanAdvance(!STEPS[index].startsLocked)
       localStorage.setItem(`lesson_step_${lessonId}`, index)
     }
@@ -301,7 +309,8 @@ export default function LessonView() {
                 key={s.key}
                 className={`lesson-dot-new ${i === currentStep ? 'active' : i < currentStep ? 'done' : ''}`}
                 onClick={() => i < currentStep && goToStep(i)}
-                title={s.label}
+                title={`${s.icon} ${s.label}${i < currentStep ? ' — toca para volver' : ''}`}
+                style={{ width: i === currentStep ? 24 : 10 }}
               />
             ))}
           </div>

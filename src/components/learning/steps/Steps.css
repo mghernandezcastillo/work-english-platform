@@ -68,14 +68,14 @@
 
 /* ── Phrase / Practice card ── */
 .phrase-main-text {
-  font-size: clamp(18px, 5vw, 24px);
+  font-size: clamp(20px, 5.5vw, 26px);
   font-weight: 700;
   color: var(--el-text);
   line-height: 1.3;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .phrase-translation {
-  font-size: 13px;
+  font-size: clamp(14px, 3.5vw, 16px);
   color: var(--el-text-muted);
   font-style: italic;
 }
@@ -122,9 +122,9 @@
   margin-bottom: 8px;
 }
 .expl-text {
-  font-size: 14px;
+  font-size: clamp(15px, 3.8vw, 17px);
   color: var(--el-text);
-  line-height: 1.55;
+  line-height: 1.6;
   margin-bottom: 12px;
 }
 .expl-example {
@@ -141,7 +141,7 @@
   margin-bottom: 4px;
 }
 .expl-example-text {
-  font-size: 14px;
+  font-size: clamp(14px, 3.5vw, 16px);
   font-weight: 600;
   color: var(--el-text);
 }
@@ -172,11 +172,11 @@
   transition: width 0.4s ease;
 }
 .exercise-question-text {
-  font-size: 15px;
+  font-size: clamp(15px, 4vw, 17px);
   font-weight: 600;
   color: var(--el-text);
   margin-bottom: 4px;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 .exercise-context {
   font-size: 12px;
@@ -220,7 +220,7 @@
   flex-shrink: 0;
 }
 .exercise-option-text {
-  font-size: 13px;
+  font-size: clamp(13px, 3.5vw, 15px);
   color: var(--el-text);
   line-height: 1.35;
 }
@@ -274,7 +274,7 @@
   border: none;
   border-radius: 8px;
   padding: 9px 10px;
-  font-size: 11.5px;
+  font-size: clamp(11px, 3vw, 13px);
   color: var(--el-text);
   cursor: pointer;
   text-align: center;
@@ -357,9 +357,9 @@
   margin-bottom: 6px;
 }
 .objective-desc {
-  font-size: 13px;
+  font-size: clamp(13px, 3.5vw, 15px);
   color: var(--el-text-muted);
-  line-height: 1.5;
+  line-height: 1.55;
   margin-bottom: 16px;
 }
 .objective-list { display: flex; flex-direction: column; gap: 9px; }
@@ -386,7 +386,7 @@
   margin-top: 1px;
 }
 .objective-item-text {
-  font-size: 13px;
+  font-size: clamp(14px, 3.5vw, 16px);
   color: var(--el-text);
   line-height: 1.4;
 }
@@ -515,4 +515,47 @@
   height: 100%;
   text-align: center;
   gap: 10px;
+}
+
+/* ── Inline pagination nav (‹ counter ›) ── */
+/* Used in Frases, Explicación, Práctica — chevron style so it */
+/* doesn't visually duplicate the main footer "Siguiente" button */
+.step-inline-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 8px 0 2px;
+  flex-shrink: 0;
+}
+.step-inline-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--el-surface);
+  border: none;
+  color: var(--el-primary);
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.18s, opacity 0.18s;
+  line-height: 1;
+  padding: 0;
+}
+.step-inline-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+.step-inline-btn:not(:disabled):active {
+  background: var(--el-surface-high);
+}
+.step-inline-label {
+  font-size: 12px;
+  color: var(--el-text-muted);
+  font-weight: 500;
+  min-width: 70px;
+  text-align: center;
 }

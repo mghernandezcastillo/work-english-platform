@@ -8,9 +8,7 @@ export default function ExplanationStep({ data, onCanAdvance }) {
   useEffect(() => { onCanAdvance?.(true) }, [])
 
   if (!points.length) return (
-    <div className="step-wrapper">
-      <p style={{ color: 'var(--el-text-muted)', fontSize: 14 }}>Sin puntos de explicación.</p>
-    </div>
+    <div className="step-wrapper"><p style={{ color: 'var(--el-text-muted)', fontSize: 15 }}>Sin puntos de explicación.</p></div>
   )
 
   const point = points[current]
@@ -20,7 +18,7 @@ export default function ExplanationStep({ data, onCanAdvance }) {
       {/* Counter */}
       <div className="step-counter">Punto {current + 1} / {points.length}</div>
 
-      {/* Explanation card */}
+      {/* Explanation card — takes all available space */}
       <div className="step-card-glass" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <div className="expl-pin">📌 Punto clave</div>
         <p className="expl-text">{point.text}</p>
@@ -35,24 +33,15 @@ export default function ExplanationStep({ data, onCanAdvance }) {
       {/* Pagination dots */}
       <div className="step-page-dots">
         {points.map((_, i) => (
-          <button
-            key={i}
-            className={`step-page-dot ${i === current ? 'active' : i < current ? 'done' : ''}`}
-            onClick={() => setCurrent(i)}
-          />
+          <button key={i} className={`step-page-dot ${i === current ? 'active' : i < current ? 'done' : ''}`} onClick={() => setCurrent(i)} />
         ))}
       </div>
 
-      {/* Prev / Next */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0 0', flexShrink: 0 }}>
-        <button
-          style={{ background: 'none', border: 'none', color: 'var(--el-text-muted)', fontSize: 13, cursor: current > 0 ? 'pointer' : 'default', opacity: current > 0 ? 1 : 0.3 }}
-          onClick={() => current > 0 && setCurrent(c => c - 1)}
-        >← Anterior</button>
-        <button
-          style={{ background: 'none', border: 'none', color: 'var(--el-primary)', fontSize: 13, fontWeight: 600, cursor: current < points.length - 1 ? 'pointer' : 'default', opacity: current < points.length - 1 ? 1 : 0.3 }}
-          onClick={() => current < points.length - 1 && setCurrent(c => c + 1)}
-        >Siguiente →</button>
+      {/* Inline prev/next — chevron symbols only */}
+      <div className="step-inline-nav">
+        <button className="step-inline-btn" onClick={() => current > 0 && setCurrent(c => c - 1)} disabled={current === 0}>‹</button>
+        <span className="step-inline-label">{current + 1} de {points.length}</span>
+        <button className="step-inline-btn" onClick={() => current < points.length - 1 && setCurrent(c => c + 1)} disabled={current === points.length - 1}>›</button>
       </div>
     </div>
   )

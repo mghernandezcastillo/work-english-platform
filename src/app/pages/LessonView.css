@@ -79,29 +79,35 @@
 .lesson-dots-row {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   padding-bottom: 8px;
 }
 
 .lesson-dot-new {
-  width: 7px;
-  height: 7px;
+  height: 10px;
   border-radius: var(--el-radius-full);
   background: var(--el-surface-highest);
   transition: all 0.3s ease;
-  cursor: pointer;
+  cursor: default;
   border: none;
   padding: 0;
   flex-shrink: 0;
+  min-width: 10px;
 }
 .lesson-dot-new.active {
-  width: 20px;
+  width: 24px;
   background: var(--el-primary);
   box-shadow: 0 0 6px var(--el-primary-glow);
+  cursor: default;
 }
 .lesson-dot-new.done {
+  background: rgba(78,222,163,0.45);
+  cursor: pointer;
+  width: 10px;
+}
+.lesson-dot-new.done:hover {
   background: var(--el-primary-light);
-  opacity: 0.6;
+  transform: scaleY(1.3);
 }
 
 /* Progress bar (thin, under dots) */
