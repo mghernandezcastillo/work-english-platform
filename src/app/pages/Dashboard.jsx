@@ -260,15 +260,22 @@ export default function Dashboard() {
       </div>
 
       {/* ── WorkBot greeting ── */}
-      {!loading && (
-        <WorkBotDashboard
-          userName={firstName}
-          completedLessons={completedLessons}
-          totalLessons={totalLessons}
-          streak={streak}
-          todayDone={todayLessons >= 1}
-        />
-      )}
+      {!loading && (() => {
+        const totalL = routes.reduce((s, r) =>
+          s + (r.modules || []).reduce((ms, m) => ms + (m.lessons?.length || 0), 0), 0)
+        const completedL = rawProgress.filter(p => p.completed).length
+        const today = new Date().toISOString().slice(0, 10)
+        const todayDone = rawProgress.some(p => p.completed && p.completed_at?.startsWith(today))
+        return (
+          <WorkBotDashboard
+            userName={firstName}
+            completedLessons={completedL}
+            totalLessons={totalL}
+            streak={streak}
+            todayDone={todayDone}
+          />
+        )
+      })()}
 
       {/* ── XP Bar ── */}
       <div className="mc-xp-bar">
