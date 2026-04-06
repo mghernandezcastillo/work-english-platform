@@ -196,7 +196,7 @@ export function WorkBot({ stepKey = 'objective', stepIndex = 0, userName, compac
   return (
     <div className={`workbot-wrap workbot-enter ${compact ? 'workbot-compact' : ''}`} key={animKey}>
       <div className="workbot-avatar">
-        <BotFace expression={expression} size={compact ? 56 : 44} />
+        <BotFace expression={expression} size={compact ? 56 : 80} />
       </div>
 
       <div className="workbot-bubble">

@@ -1,12 +1,9 @@
-/* ══════════════════════════════════════
-   WorkBot — Lesson variant (horizontal)
-   ══════════════════════════════════════ */
 .workbot-wrap {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   gap: 10px;
-  padding: 6px 0;
+  padding: 12px 0 6px;
   position: relative;
 }
 
@@ -14,8 +11,7 @@
 .workbot-avatar {
   position: relative;
   animation: workbot-float 3s ease-in-out infinite;
-  filter: drop-shadow(0 2px 10px rgba(99, 102, 241, 0.3));
-  flex-shrink: 0;
+  filter: drop-shadow(0 4px 16px rgba(99, 102, 241, 0.3));
 }
 
 /* SVG face — eye blink via CSS */
@@ -31,45 +27,48 @@
 /* ── Chat Bubble — glassy premium ── */
 .workbot-bubble {
   position: relative;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.10) 0%, rgba(6, 182, 212, 0.06) 100%);
-  border: 1px solid rgba(99, 102, 241, 0.15);
-  border-radius: 4px 14px 14px 14px;
-  padding: 8px 12px;
-  flex: 1;
-  min-width: 0;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  border-radius: 18px 18px 18px 6px;
+  padding: 10px 16px;
+  max-width: 300px;
+  width: fit-content;
   color: var(--color-text, #E2E8F0);
-  font-size: 12.5px;
-  line-height: 1.45;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  animation: workbot-bubble-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  text-align: left;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-size: 13px;
+  line-height: 1.55;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: workbot-bubble-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-align: center;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-/* Arrow pointing left to avatar */
 .workbot-bubble::before {
   content: '';
   position: absolute;
-  left: -6px;
-  top: 12px;
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 0;
   height: 0;
-  border-top: 6px solid transparent;
-  border-bottom: 6px solid transparent;
-  border-right: 6px solid rgba(99, 102, 241, 0.15);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid rgba(99, 102, 241, 0.18);
 }
 
 /* ── Typing indicator ── */
 .workbot-typing {
   display: flex;
-  gap: 4px;
-  padding: 2px 6px;
+  gap: 5px;
+  padding: 4px 10px;
+  justify-content: center;
 }
 
 .workbot-typing-dot {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   background: rgba(99, 102, 241, 0.5);
   border-radius: 50%;
   animation: workbot-typing-bounce 1.2s ease-in-out infinite;
@@ -81,7 +80,7 @@
 /* ── Animations ── */
 @keyframes workbot-float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
+  50% { transform: translateY(-5px); }
 }
 
 @keyframes workbot-blink {
@@ -92,28 +91,7 @@
 @keyframes workbot-bubble-in {
   from {
     opacity: 0;
-    transform: translateX(-8px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-}
-
-@keyframes workbot-typing-bounce {
-  0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
-  30% { transform: translateY(-3px); opacity: 1; }
-}
-
-/* ── Entry animation on step change ── */
-.workbot-wrap.workbot-enter {
-  animation: workbot-enter 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes workbot-enter {
-  from {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.9);
+    transform: translateY(6px) scale(0.92);
   }
   to {
     opacity: 1;
@@ -121,31 +99,35 @@
   }
 }
 
-/* ══════════════════════════════════════
-   WorkBot — Dashboard variant (compact, centered)
-   ══════════════════════════════════════ */
+@keyframes workbot-typing-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+/* ── Entry animation on step change ── */
+.workbot-wrap.workbot-enter {
+  animation: workbot-enter 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes workbot-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Compact variant for Dashboard ── */
 .workbot-wrap.workbot-compact {
-  flex-direction: column;
   gap: 8px;
-  padding: 8px 0 4px;
-  align-items: center;
+  padding: 10px 0 4px;
 }
 
 .workbot-wrap.workbot-compact .workbot-bubble {
   font-size: 12px;
   padding: 8px 14px;
-  max-width: 280px;
-  text-align: center;
-  border-radius: 14px 14px 14px 6px;
-}
-
-.workbot-wrap.workbot-compact .workbot-bubble::before {
-  /* Arrow pointing up for vertical layout */
-  left: 50%;
-  top: -6px;
-  transform: translateX(-50%);
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-bottom: 6px solid rgba(99, 102, 241, 0.15);
-  border-top: none;
+  max-width: 260px;
 }

@@ -17,6 +17,14 @@ export default function MiniExampleStep({ data }) {
     <div className="step-container animate-fadeIn">
       <div className="step-badge">📝 Mini-ejemplos</div>
 
+      {current === 0 && (
+        <p className="step-subtitle">Mira cómo se usan estas frases en contexto real:</p>
+      )}
+
+      <p className="text-xs text-muted" style={{ marginBottom: 'var(--space-3)' }}>
+        💡 Toca cualquier palabra subrayada para ver su significado
+      </p>
+
       {/* Single example card */}
       <div className="example-card step-card-single" key={current}>
         <div className="example-context">{ex.context}</div>
