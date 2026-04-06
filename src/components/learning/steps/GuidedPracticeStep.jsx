@@ -1,99 +1,109 @@
-import AudioPlayer from '../AudioPlayer'
-import SpeakButton from '../SpeakButton'
-import ClickablePhrase from '../ClickablePhrase'
+import { useState, useEffect, useRef } from 'react'
 import { PronunciationButton } from '../../common/PronunciationButton'
-import { useState } from 'react'
 import './Steps.css'
 
-export default function GuidedPracticeStep({ data, lessonId }) {
+export default function GuidedPracticeStep({ data, lessonId, onCanAdvance }) {
   const scenarios = data?.scenarios || []
-  const [practiced, setPracticed] = useState(new Set())
+  const [current, setCurrent] = useState(0)
+  const audioRef = useRef(null)
 
-  function markPracticed(index) {
-    setPracticed(prev => {
-      const next = new Set(prev)
-      next.add(index)
-      return next
-    })
-  }
+  // Always advanceable — user controls their own pace
+  useEffect(() => { onCanAdvance?.(true) }, [])
+
+  // Auto-play audio on scenario change
+  useEffect(() => {
+    if (!scenarios.length) return
+    const t = setTimeout(() => {
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0
+        audioRef.current.play().catch(() => {})
+      }
+    }, 350)
+    return () => clearTimeout(t)
+  }, [current])
 
   function savePronunScore(phrase, score) {
     if (!lessonId) return
     try {
       const key = `lesson_pronun_scores_${lessonId}`
       const existing = JSON.parse(localStorage.getItem(key) || '{}')
-      // Keep the BEST score per phrase
       existing[phrase] = Math.max(existing[phrase] ?? 0, score)
       localStorage.setItem(key, JSON.stringify(existing))
-    } catch { /* ignore */ }
+    } catch { }
   }
 
+  if (!scenarios.length) return (
+    <div className="step-wrapper">
+      <p style={{ color: 'var(--el-text-muted)', fontSize: 14 }}>Sin escenarios disponibles.</p>
+    </div>
+  )
+
+  const scenario = scenarios[current]
+
   return (
-    <div className="step-container animate-fadeIn">
-      <div className="step-badge">🗣️ Práctica guiada</div>
-      <p className="step-subtitle"><strong>Esta es la parte más importante.</strong> Hablar en voz alta activa la memoria muscular que necesitas para el trabajo real.</p>
-      <p className="text-xs text-muted" style={{ marginBottom: 'var(--space-3)' }}>
-        💡 Escucha primero, luego repite en voz alta — toca las palabras subrayadas para ver su significado
-      </p>
+    <div className="step-wrapper animate-fadeIn">
+      {/* Counter */}
+      <div className="step-counter">Situación {current + 1} / {scenarios.length}</div>
 
-      <div className="practice-scenarios">
-        {scenarios.map((scenario, i) => (
-          <div key={i} className={`practice-card ${practiced.has(i) ? 'practiced' : ''}`}>
-            <div className="practice-header">
-              <span className="practice-number">Situación {i + 1}</span>
-              <span className="practice-context">{scenario.context}</span>
-            </div>
+      {/* Prompt card */}
+      <div className="practice-prompt-card" style={{ marginBottom: 8 }}>
+        <div className="practice-prompt-label">Te preguntan:</div>
+        <p className="practice-prompt-text">"{scenario.prompt || scenario.context}"</p>
+      </div>
 
-            {/* Interviewer prompt — what the other person says */}
-            {scenario.prompt && (
-              <div className="practice-prompt">
-                <span className="practice-prompt-label">🎙️ Te dicen:</span>
-                <p className="practice-prompt-text">"{scenario.prompt}"</p>
-              </div>
-            )}
+      {/* Response card */}
+      <div className="practice-response-card" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div className="practice-response-label">Tú respondes:</div>
+        <p className="practice-response-text">{scenario.phrase}</p>
+        <p className="practice-response-es">{scenario.translation}</p>
+      </div>
 
-            <div className="practice-instruction">
-              <p><strong>👤 Tú respondes:</strong></p>
-              <p className="phrase-en" style={{ fontSize: 'var(--text-lg)', marginTop: 4 }}>
-                "<ClickablePhrase text={scenario.phrase} />"
-              </p>
-              <p className="phrase-es" style={{ marginTop: 4 }}>
-                {scenario.translation}
-              </p>
-            </div>
-            <div className="practice-actions">
-              {scenario.audioUrl ? (
-                <AudioPlayer src={scenario.audioUrl} label="Escucha primero, luego repite" />
-              ) : (
-                <SpeakButton text={scenario.phrase} label="Escucha primero" />
-              )}
-              {/* Mic pronunciation practice */}
-              <PronunciationButton
-                targetText={scenario.phrase}
-                onScore={(score) => savePronunScore(scenario.phrase, score)}
-              />
-              <button
-                className={`practice-done-btn ${practiced.has(i) ? 'done' : ''}`}
-                onClick={() => markPracticed(i)}
-              >
-                {practiced.has(i) ? '✅ ¡Lo hice! Excelente' : '🎤 Lo dije en voz alta'}
-              </button>
-            </div>
-            {scenario.tip && (
-              <div className="step-tip" style={{ marginTop: 'var(--space-3)' }}>
-                <span>💡</span>
-                <p className="text-sm">{scenario.tip}</p>
-              </div>
-            )}
-          </div>
+      {/* Hidden audio */}
+      {scenario.audioUrl && (
+        <audio ref={audioRef} src={scenario.audioUrl} preload="auto" style={{ display: 'none' }} />
+      )}
+
+      {/* Action buttons */}
+      <div className="step-btn-row">
+        <button
+          className="step-circle-btn"
+          onClick={() => {
+            if (audioRef.current) {
+              audioRef.current.currentTime = 0
+              audioRef.current.play().catch(() => {})
+            }
+          }}
+          aria-label="Escuchar"
+          title="Escuchar"
+        >🔊</button>
+        <PronunciationButton
+          targetText={scenario.phrase}
+          onScore={(score) => savePronunScore(scenario.phrase, score)}
+        />
+      </div>
+
+      {/* Pagination dots */}
+      <div className="step-page-dots">
+        {scenarios.map((_, i) => (
+          <button
+            key={i}
+            className={`step-page-dot ${i === current ? 'active' : i < current ? 'done' : ''}`}
+            onClick={() => setCurrent(i)}
+          />
         ))}
       </div>
 
-      {practiced.size === scenarios.length && scenarios.length > 0 && (
-        <div className="practice-complete-msg animate-fadeIn">
-          <span>🎉</span> ¡Excelente! Practicaste todas las situaciones.
-        </div>
-      )}
+      {/* Prev / Next inline */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0 0', flexShrink: 0 }}>
+        <button
+          style={{ background: 'none', border: 'none', color: 'var(--el-text-muted)', fontSize: 13, cursor: current > 0 ? 'pointer' : 'default', opacity: current > 0 ? 1 : 0.3 }}
+          onClick={() => current > 0 && setCurrent(c => c - 1)}
+        >← Anterior</button>
+        <button
+          style={{ background: 'none', border: 'none', color: 'var(--el-primary)', fontSize: 13, fontWeight: 600, cursor: current < scenarios.length - 1 ? 'pointer' : 'default', opacity: current < scenarios.length - 1 ? 1 : 0.3 }}
+          onClick={() => current < scenarios.length - 1 && setCurrent(c => c + 1)}
+        >Siguiente →</button>
+      </div>
     </div>
   )
 }

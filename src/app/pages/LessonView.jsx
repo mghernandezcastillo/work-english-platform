@@ -1,14 +1,11 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
-import { LoadingSpinner } from '../../components/common/LoadingSpinner'
 import { XPNotification } from '../../components/common/XPNotification'
 import { awardLessonXP } from '../../lib/xp'
-import { Button } from '../../components/common/Button'
 import ObjectiveStep from '../../components/learning/steps/ObjectiveStep'
 import PhrasesStep from '../../components/learning/steps/PhrasesStep'
-import MiniExampleStep from '../../components/learning/steps/MiniExampleStep'
 import ExplanationStep from '../../components/learning/steps/ExplanationStep'
 import ExerciseStep from '../../components/learning/steps/ExerciseStep'
 import GuidedPracticeStep from '../../components/learning/steps/GuidedPracticeStep'
@@ -17,44 +14,41 @@ import MatchStep from '../../components/learning/steps/MatchStep'
 import './LessonView.css'
 import '../../components/common/BadgesPanel.css'
 
+/* ─────────────────────────────────────────────────────────────────
+   Steps config — 7 steps (Frases absorbs Examples, no MiniExample)
+   Steps with internal pagination expose onCanAdvance ← boolean
+   ───────────────────────────────────────────────────────────────── */
 const STEPS = [
-  { key: 'objective', label: 'Objetivo', icon: '🎯', component: ObjectiveStep },
-  { key: 'phrases', label: 'Frases', icon: '💬', component: PhrasesStep },
-  { key: 'examples', label: 'Ejemplos', icon: '📝', component: MiniExampleStep },
-  { key: 'explanation', label: 'Explicación', icon: '💡', component: ExplanationStep },
-  { key: 'exercises', label: 'Ejercicios', icon: '✏️', component: ExerciseStep },
-  { key: 'match', label: 'Conecta', icon: '🔗', component: MatchStep, dataKey: 'phrases' },
-  { key: 'practice', label: 'Práctica', icon: '🗣️', component: GuidedPracticeStep },
-  { key: 'reinforcement', label: 'Repaso', icon: '🏆', component: ReinforcementStep },
+  { key: 'objective',     label: '¿Qué aprenderás?', icon: '🎯', component: ObjectiveStep,       selfAdvances: false },
+  { key: 'phrases',       label: 'Escucha y repite',  icon: '💬', component: PhrasesStep,         selfAdvances: true  },
+  { key: 'explanation',   label: '¿Por qué así?',     icon: '💡', component: ExplanationStep,     selfAdvances: true  },
+  { key: 'exercises',     label: 'Pon a prueba',       icon: '✏️', component: ExerciseStep,        selfAdvances: true  },
+  { key: 'match',         label: 'Conecta frases',     icon: '🔗', component: MatchStep,           selfAdvances: true, dataKey: 'phrases' },
+  { key: 'practice',      label: 'Ahora habla tú',    icon: '🗣️', component: GuidedPracticeStep,  selfAdvances: true  },
+  { key: 'reinforcement', label: '¡Lección lista!',   icon: '🏆', component: ReinforcementStep,   selfAdvances: false },
 ]
 
 export default function LessonView() {
   const { lessonId } = useParams()
   const { profile, refreshProfile } = useAuth()
   const navigate = useNavigate()
+
   const [lesson, setLesson] = useState(null)
   const [currentStep, setCurrentStep] = useState(0)
   const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [fontScale, setFontScale] = useState(() => {
-    const saved = parseFloat(localStorage.getItem('lesson_font_scale'))
-    return Number.isFinite(saved) ? saved : 1.05
-  })
+  const [showXP, setShowXP] = useState(false)
+  const [showStreakModal, setShowStreakModal] = useState(false)
+  const [streakCount, setStreakCount] = useState(0)
+  const [activeBadgeToast, setActiveBadgeToast] = useState(null)
+  const [stepToast, setStepToast] = useState(null)
+  const [hasCompleted, setHasCompleted] = useState(false)
 
-  function adjustFont(delta) {
-    setFontScale(prev => {
-      const next = Math.min(1.25, Math.max(0.9, +(prev + delta).toFixed(2)))
-      localStorage.setItem('lesson_font_scale', next)
-      return next
-    })
-  }
+  // Each self-advancing step exposes whether the user can advance
+  const [canAdvance, setCanAdvance] = useState(true)
 
-  useEffect(() => {
-    loadLesson()
-  }, [lessonId])
+  useEffect(() => { loadLesson() }, [lessonId])
 
   async function loadLesson() {
-    // Try cached data first — instant reload when returning from screen lock
     const cached = sessionStorage.getItem(`lesson_cache_${lessonId}`)
     if (cached) {
       try {
@@ -64,9 +58,8 @@ export default function LessonView() {
         setCurrentStep(Number.isFinite(saved) && saved > 0 ? saved : 0)
         setLoading(false)
         return
-      } catch { /* cache corrupted, fetch fresh */ }
+      } catch { /* cache corrupted */ }
     }
-
     setLoading(true)
     try {
       const { data } = await supabase
@@ -75,9 +68,7 @@ export default function LessonView() {
         .eq('id', lessonId)
         .single()
       setLesson(data)
-      // Cache for instant resume
       if (data) sessionStorage.setItem(`lesson_cache_${lessonId}`, JSON.stringify(data))
-      // Restore last step if user was interrupted (screen lock, reload, etc.)
       const saved = parseInt(localStorage.getItem(`lesson_step_${lessonId}`))
       setCurrentStep(Number.isFinite(saved) && saved > 0 ? saved : 0)
     } catch (err) {
@@ -89,7 +80,6 @@ export default function LessonView() {
 
   async function markComplete() {
     if (!profile || !lesson) return false
-    setSaving(true)
     try {
       const routeId = lesson.modules?.route_id || lesson.modules?.routes?.id
       const { error } = await supabase.from('user_progress').upsert({
@@ -100,11 +90,8 @@ export default function LessonView() {
         completed: true,
         completed_at: new Date().toISOString(),
       }, { onConflict: 'user_id,lesson_id' })
-      
       if (error) {
-        console.error('Error saving progress:', error)
-        // Try insert as fallback
-        const { error: insertError } = await supabase.from('user_progress').insert({
+        await supabase.from('user_progress').insert({
           user_id: profile.id,
           lesson_id: lesson.id,
           module_id: lesson.module_id,
@@ -112,53 +99,9 @@ export default function LessonView() {
           completed: true,
           completed_at: new Date().toISOString(),
         })
-        if (insertError) {
-          console.error('Fallback insert also failed:', insertError)
-          return false
-        }
       }
       return true
-    } catch (err) {
-      console.error('Error saving progress:', err)
-      return false
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  const [showXP, setShowXP] = useState(false)
-  const [showStreakModal, setShowStreakModal] = useState(false)
-  const [streakCount, setStreakCount] = useState(0)
-  const [newBadges, setNewBadges] = useState([])
-  const [activeBadgeToast, setActiveBadgeToast] = useState(null)
-  const [stepCompleted, setStepCompleted] = useState(false)
-  const [hasCompleted, setHasCompleted] = useState(false) // prevent double-fire
-  const navRef = useRef(null)
-
-  // Auto-scroll to nav when exercises/match complete
-  useEffect(() => {
-    if (stepCompleted && navRef.current) {
-      setTimeout(() => {
-        navRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      }, 300)
-    }
-  }, [stepCompleted])
-
-  const STREAK_MESSAGES = [
-    { min: 1, msg: '¡Gran comienzo! Cada día cuenta 💪', sub: 'Sigue aprendiendo para construir tu racha' },
-    { min: 2, msg: '¡Vas en racha! No pares ahora 🚀', sub: 'La consistencia es la clave del éxito' },
-    { min: 3, msg: '¡3 días seguidos! Eres imparable 🔥', sub: 'Los mejores resultados vienen con la práctica diaria' },
-    { min: 5, msg: '¡5 días! Tu inglés está subiendo de nivel ⭐', sub: 'Los empleadores notan la diferencia' },
-    { min: 7, msg: '¡Una semana completa! Eres un crack 🏆', sub: 'Tu futuro profesional te lo agradece' },
-    { min: 14, msg: '¡2 semanas! Tu dedicación es inspiradora 👑', sub: 'Ya estás en otro nivel' },
-    { min: 30, msg: '¡1 MES! Eres una leyenda 🌟', sub: 'Nada te detiene' },
-  ]
-
-  function getStreakMessage(days) {
-    for (let i = STREAK_MESSAGES.length - 1; i >= 0; i--) {
-      if (days >= STREAK_MESSAGES[i].min) return STREAK_MESSAGES[i]
-    }
-    return STREAK_MESSAGES[0]
+    } catch { return false }
   }
 
   async function calculateCurrentStreak() {
@@ -170,83 +113,53 @@ export default function LessonView() {
         .eq('user_id', profile.id)
         .eq('completed', true)
         .order('completed_at', { ascending: false })
-      if (!data?.length) return 1 // First lesson = day 1
-
+      if (!data?.length) return 1
       const dates = [...new Set(data.map(r => new Date(r.completed_at).toDateString()))]
       let streak = 0
       const today = new Date()
       for (let i = 0; i < 365; i++) {
         const check = new Date(today)
         check.setDate(check.getDate() - i)
-        if (dates.includes(check.toDateString())) {
-          streak++
-        } else if (i > 0) break
+        if (dates.includes(check.toDateString())) streak++
+        else if (i > 0) break
       }
       return Math.max(streak, 1)
-    } catch (err) {
-      console.warn('calculateCurrentStreak error:', err)
-      return 1
-    }
+    } catch { return 1 }
   }
 
   async function handleLessonComplete() {
-    // Prevent double-fire (ReinforcementStep auto-completes + user could trigger again)
     if (hasCompleted) return
     setHasCompleted(true)
-
     try {
-      const saved = await markComplete()
-      if (!saved) console.warn('Progress may not have been saved')
-
-      // Clear saved step — lesson is done
+      await markComplete()
       localStorage.removeItem(`lesson_step_${lessonId}`)
-      // Also clear session cache to prevent stale lesson restore
       sessionStorage.removeItem(`lesson_cache_${lessonId}`)
-
-      // Show XP animation first
       setShowXP(true)
-
-      // Award XP + check badges in DB
       if (profile?.id) {
         const days = await calculateCurrentStreak()
         let lessonsCount = 1
         try {
-          const { data: progressData } = await supabase
-            .from('user_progress')
-            .select('id')
-            .eq('user_id', profile.id)
-            .eq('completed', true)
-          lessonsCount = progressData?.length ?? 1
-        } catch { /* use fallback */ }
-
+          const { data: pd } = await supabase.from('user_progress').select('id').eq('user_id', profile.id).eq('completed', true)
+          lessonsCount = pd?.length ?? 1
+        } catch { }
         try {
           const { newBadges: badges } = await awardLessonXP(profile.id, lessonsCount, days)
-          // Update profile in context so XP shows immediately on dashboard
           await refreshProfile().catch(() => {})
           if (badges?.length) {
-            setNewBadges(badges)
-            // Show badge toasts sequentially
             for (let i = 0; i < badges.length; i++) {
               await new Promise(r => setTimeout(r, i === 0 ? 900 : 4200))
               setActiveBadgeToast(badges[i])
               setTimeout(() => setActiveBadgeToast(null), 4000)
             }
           }
-        } catch (xpErr) {
-          console.warn('XP/badge award failed (non-fatal):', xpErr)
-        }
-
+        } catch { }
         setStreakCount(days)
       } else {
         await new Promise(r => setTimeout(r, 900))
-        const days = await calculateCurrentStreak()
-        setStreakCount(days)
+        setStreakCount(await calculateCurrentStreak())
       }
-
       setShowStreakModal(true)
-    } catch (err) {
-      console.error('handleLessonComplete error:', err)
-      // Even on error, show streak modal so user isn't stuck
+    } catch {
       setShowStreakModal(true)
       setStreakCount(1)
     }
@@ -254,21 +167,11 @@ export default function LessonView() {
 
   function handleStreakContinue() {
     setShowStreakModal(false)
-    const routeId = lesson.modules?.route_id || lesson.modules?.routes?.id
-    if (routeId) navigate(`/ruta/${routeId}`)
-    else navigate('/dashboard')
+    const routeId = lesson?.modules?.route_id || lesson?.modules?.routes?.id
+    routeId ? navigate(`/ruta/${routeId}`) : navigate('/dashboard')
   }
 
-  const STEP_TOASTS = [
-    '✨ ¡Buen trabajo!',
-    '💪 ¡Avanzando!',
-    '🔥 ¡Vas muy bien!',
-    '⭐ ¡Excelente!',
-    '🚀 ¡Sigue así!',
-    '🎯 ¡Enfocado!',
-  ]
-  const [stepToast, setStepToast] = useState(null)
-
+  const STEP_TOASTS = ['✨ ¡Buen trabajo!', '💪 ¡Avanzando!', '🔥 ¡Vas muy bien!', '⭐ ¡Excelente!', '🚀 ¡Sigue así!', '🎯 ¡Enfocado!']
   function showStepToast() {
     const msg = STEP_TOASTS[Math.floor(Math.random() * STEP_TOASTS.length)]
     setStepToast(msg)
@@ -279,36 +182,39 @@ export default function LessonView() {
     if (index >= 0 && index < STEPS.length) {
       if (index > currentStep) showStepToast()
       setCurrentStep(index)
-      setStepCompleted(false)
-      // Persist step so interruptions (screen lock, reload) don't reset progress
+      setCanAdvance(!STEPS[index].selfAdvances) // static steps allow advance immediately
       localStorage.setItem(`lesson_step_${lessonId}`, index)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
-  const MOTIVATIONAL = [
-    '🚀 Preparando tu lección...',
-    '💡 Cargando nuevo vocabulario...',
-    '🎯 Listo para aprender...',
-    '🗣️ Preparando ejercicios de práctica...',
-    '📖 Cargando contenido profesional...',
-  ]
+  function handleNext() {
+    if (!canAdvance) return
+    const isLast = currentStep === STEPS.length - 1
+    if (isLast) {
+      handleLessonComplete()
+    } else {
+      goToStep(currentStep + 1)
+    }
+  }
+
+  const MOTIVATIONAL = ['🚀 Preparando tu lección...', '💡 Cargando vocabulario...', '🎯 Listo para aprender...', '🗣️ Preparando ejercicios...', '📖 Cargando contenido...']
 
   if (loading) return (
-    <div className="lesson-loading-screen" role="status" aria-label="Cargando lección">
+    <div className="lesson-loading-screen" role="status">
       <div className="lesson-loading-spinner">
         <div className="lesson-loading-ring" />
         <span className="lesson-loading-icon">📖</span>
       </div>
-      <p className="lesson-loading-msg">
-        {MOTIVATIONAL[Math.floor(Date.now() / 1000) % MOTIVATIONAL.length]}
-      </p>
-      <div className="lesson-loading-bar">
-        <div className="lesson-loading-bar-fill" />
-      </div>
+      <p className="lesson-loading-msg">{MOTIVATIONAL[Math.floor(Date.now() / 1000) % MOTIVATIONAL.length]}</p>
+      <div className="lesson-loading-bar"><div className="lesson-loading-bar-fill" /></div>
     </div>
   )
-  if (!lesson) return <div className="text-center" style={{ padding: 40 }}><h3>Lección no encontrada</h3></div>
+
+  if (!lesson) return (
+    <div className="lesson-loading-screen">
+      <p className="lesson-loading-msg">Lección no encontrada</p>
+    </div>
+  )
 
   const content = lesson.content || {}
   const step = STEPS[currentStep]
@@ -316,130 +222,46 @@ export default function LessonView() {
   const stepData = content[step.dataKey || step.key] || {}
   const isLast = currentStep === STEPS.length - 1
   const progressPercent = Math.round(((currentStep + 1) / STEPS.length) * 100)
+  const btnLabel = isLast ? 'Ver mis lecciones →' : 'Siguiente →'
 
   return (
-    <div className="lesson-view animate-fadeIn">
+    <>
+      {/* ── Notifications (outside shell so they float) ── */}
       <XPNotification xp={25} show={showXP} />
-      {/* Step advance micro-celebration */}
-      {stepToast && (
-        <div className="lesson-step-toast animate-fadeIn">{stepToast}</div>
-      )}
-      {/* Badge earned toast */}
+      {stepToast && <div className="lesson-step-toast animate-fadeIn">{stepToast}</div>}
       {activeBadgeToast && (
-        <div className="badge-toast">
+        <div className="badge-toast animate-fadeIn">
           <span className="badge-toast-emoji">{activeBadgeToast.emoji}</span>
           <span className="badge-toast-text">
-            <span className="badge-toast-label">🏅 ¡Nuevo logro desbloqueado!</span>
+            <span className="badge-toast-label">🏅 ¡Nuevo logro!</span>
             <span className="badge-toast-name">{activeBadgeToast.name}</span>
           </span>
         </div>
       )}
-      {/* Header */}
-      <div className="lesson-header">
-        <button className="route-back" onClick={() => {
-          const routeId = lesson.modules?.route_id || lesson.modules?.routes?.id
-          routeId ? navigate(`/ruta/${routeId}`) : navigate('/dashboard')
-        }}>
-          ← Volver
-        </button>
-        <h3 className="lesson-title">{lesson.title}</h3>
-      </div>
 
-      {/* Progress bar */}
-      <div className="lesson-progress-bar-container">
-        <div className="lesson-progress-bar">
-          <div 
-            className="lesson-progress-fill"
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
-        <span className="lesson-progress-text">
-          {step.icon} {step.label} — Paso {currentStep + 1} de {STEPS.length}
-        </span>
-      </div>
-
-      {/* Step indicators */}
-      <div className="lesson-progress">
-        {STEPS.map((s, i) => (
-          <button
-            key={s.key}
-            className={`lesson-dot ${i === currentStep ? 'active' : i < currentStep ? 'completed' : ''}`}
-            onClick={() => i <= currentStep && goToStep(i)}
-            title={s.label}
-          >
-            <span className="lesson-dot-inner">{i < currentStep ? '✓' : s.icon}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Font size control */}
-      <div className="lesson-font-control">
-        <button
-          className="lesson-font-btn"
-          onClick={() => adjustFont(-0.05)}
-          disabled={fontScale <= 0.9}
-          aria-label="Reducir tamaño de letra"
-        >A<span className="font-btn-minus">−</span></button>
-        <button
-          className="lesson-font-btn"
-          onClick={() => adjustFont(0.05)}
-          disabled={fontScale >= 1.25}
-          aria-label="Aumentar tamaño de letra"
-        >A<span className="font-btn-plus">+</span></button>
-      </div>
-
-      {/* Step content */}
-      <div className="lesson-content" style={{ fontSize: `calc(var(--text-base) * ${fontScale})` }}>
-        <StepComponent
-          data={stepData}
-          lessonId={lessonId}
-          onComplete={isLast ? handleLessonComplete : () => setStepCompleted(true)}
-        />
-      </div>
-
-      {/* Navigation — hidden for exercises/match until they complete internally */}
-      {(() => {
-        const hasInternalNav = step.key === 'exercises' || step.key === 'match'
-        const showNav = !isLast && (!hasInternalNav || stepCompleted)
-        return showNav ? (
-          <div className="lesson-nav" ref={navRef}>
-            {currentStep > 0 && (
-              <Button variant="ghost" onClick={() => goToStep(currentStep - 1)}>
-                ← Anterior
-              </Button>
-            )}
-            <div style={{ flex: 1 }} />
-            <Button variant="primary" onClick={() => goToStep(currentStep + 1)}>
-              Siguiente →
-            </Button>
-          </div>
-        ) : !isLast && hasInternalNav && !stepCompleted ? (
-          <div className="lesson-nav">
-            {currentStep > 0 && (
-              <Button variant="ghost" onClick={() => goToStep(currentStep - 1)}>
-                ← Anterior
-              </Button>
-            )}
-            <div style={{ flex: 1 }} />
-          </div>
-        ) : null
-      })()}
-
-      {/* ── Streak Celebration Modal ── */}
+      {/* ── Streak modal ── */}
       {showStreakModal && (() => {
-        const streakMsg = getStreakMessage(streakCount)
+        const STREAK_MESSAGES = [
+          { min: 1, msg: '¡Gran comienzo! Cada día cuenta 💪', sub: 'Sigue aprendiendo para construir tu racha' },
+          { min: 2, msg: '¡Vas en racha! No pares ahora 🚀', sub: 'La consistencia es la clave del éxito' },
+          { min: 3, msg: '¡3 días seguidos! Eres imparable 🔥', sub: 'Los mejores resultados vienen con la práctica diaria' },
+          { min: 5, msg: '¡5 días! Tu inglés está subiendo de nivel ⭐', sub: 'Los empleadores notan la diferencia' },
+          { min: 7, msg: '¡Una semana completa! Eres un crack 🏆', sub: 'Tu futuro profesional te lo agradece' },
+          { min: 14, msg: '¡2 semanas! Tu dedicación es inspiradora 👑', sub: 'Ya estás en otro nivel' },
+          { min: 30, msg: '¡1 MES! Eres una leyenda 🌟', sub: 'Nada te detiene' },
+        ]
+        let streakMsg = STREAK_MESSAGES[0]
+        for (let i = STREAK_MESSAGES.length - 1; i >= 0; i--) {
+          if (streakCount >= STREAK_MESSAGES[i].min) { streakMsg = STREAK_MESSAGES[i]; break }
+        }
         return (
           <div className="streak-overlay" onClick={handleStreakContinue}>
             <div className="streak-modal" onClick={e => e.stopPropagation()}>
               <div className="streak-confetti-wrap">
                 {['🔥','⭐','🎉','✨','💪','🏆','🇺🇸','🎯'].map((e, i) => (
-                  <span key={i} className="streak-confetti-piece" style={{
-                    left: `${8 + Math.random() * 84}%`,
-                    animationDelay: `${i * 0.18}s`,
-                  }}>{e}</span>
+                  <span key={i} className="streak-confetti-piece" style={{ left: `${8 + (i * 12) % 84}%`, animationDelay: `${i * 0.18}s` }}>{e}</span>
                 ))}
               </div>
-
               <div className="streak-fire-badge">🔥</div>
               <div className="streak-count-display">
                 <span className="streak-number">{streakCount}</span>
@@ -447,14 +269,62 @@ export default function LessonView() {
               </div>
               <h2 className="streak-main-msg">{streakMsg.msg}</h2>
               <p className="streak-sub-msg">{streakMsg.sub}</p>
-
-              <button className="streak-continue-btn" onClick={handleStreakContinue}>
-                Continuar →
-              </button>
+              <button className="streak-continue-btn" onClick={handleStreakContinue}>Continuar →</button>
             </div>
           </div>
         )
       })()}
-    </div>
+
+      {/* ── Main shell ── */}
+      <div className="lesson-shell">
+        {/* Fixed header */}
+        <div className="lesson-header-fixed">
+          <div className="lesson-header-top">
+            <button className="lesson-back-btn" onClick={() => {
+              const routeId = lesson.modules?.route_id || lesson.modules?.routes?.id
+              routeId ? navigate(`/ruta/${routeId}`) : navigate('/dashboard')
+            }}>←</button>
+            <span className="lesson-title-fixed">{lesson.title}</span>
+          </div>
+          <div className="lesson-dots-row">
+            {STEPS.map((s, i) => (
+              <button
+                key={s.key}
+                className={`lesson-dot-new ${i === currentStep ? 'active' : i < currentStep ? 'done' : ''}`}
+                onClick={() => i < currentStep && goToStep(i)}
+                title={s.label}
+              />
+            ))}
+          </div>
+          <div className="lesson-progress-bar-fixed">
+            <div className="lesson-progress-fill-fixed" style={{ width: `${progressPercent}%` }} />
+          </div>
+        </div>
+
+        {/* Step label */}
+        <div className="lesson-step-label">{step.icon} {step.label}</div>
+
+        {/* Scrollable body (overflow: hidden) */}
+        <div className="lesson-body">
+          <StepComponent
+            data={stepData}
+            lessonId={lessonId}
+            onComplete={isLast ? handleLessonComplete : undefined}
+            onCanAdvance={setCanAdvance}
+          />
+        </div>
+
+        {/* Fixed footer button */}
+        <div className="lesson-footer-fixed">
+          <button
+            className="lesson-next-btn"
+            onClick={handleNext}
+            disabled={!canAdvance}
+          >
+            {btnLabel}
+          </button>
+        </div>
+      </div>
+    </>
   )
 }
