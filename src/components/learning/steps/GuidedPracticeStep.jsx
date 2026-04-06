@@ -64,7 +64,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance }) {
           onClick={() => { if (audioRef.current) { audioRef.current.currentTime = 0; audioRef.current.play().catch(() => {}) } }}
           aria-label="Escuchar" title="Escuchar"
         >🔊</button>
-        <PronunciationButton targetText={scenario.phrase} onScore={(s) => savePronunScore(scenario.phrase, s)} />
+        <PronunciationButton key={current} targetText={scenario.phrase} onScore={(s) => savePronunScore(scenario.phrase, s)} />
       </div>
 
       {/* Pagination dots */}

@@ -49,7 +49,7 @@ export default function PhrasesStep({ data, onCanAdvance }) {
             aria-label="Escuchar pronunciación"
             title="Escuchar"
           >🔊</button>
-          <PronunciationButton targetText={phrase.en} />
+          <PronunciationButton key={current} targetText={phrase.en} />
         </div>
       </div>
 
