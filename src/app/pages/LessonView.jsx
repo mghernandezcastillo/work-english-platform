@@ -357,23 +357,28 @@ export default function LessonView() {
       </div>
 
       {/* Step indicators + font control in same row */}
-      {/* Step indicators */}
-      <div className="lesson-progress" style={{ margin: '0 0 4px', gap: 2 }}>
-        {STEPS.map((s, i) => (
-          <button
-            key={s.key}
-            className={`lesson-dot ${i === currentStep ? 'active' : i < currentStep ? 'completed' : ''}`}
-            onClick={() => i <= currentStep && goToStep(i)}
-            title={s.label}
-            style={{ width: 32, height: 32, minWidth: 32, fontSize: 13 }}
-          >
-            <span className="lesson-dot-inner">{i < currentStep ? '✓' : s.icon}</span>
-          </button>
-        ))}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
+        <div className="lesson-progress" style={{ flex: 1, margin: 0, gap: 2 }}>
+          {STEPS.map((s, i) => (
+            <button
+              key={s.key}
+              className={`lesson-dot ${i === currentStep ? 'active' : i < currentStep ? 'completed' : ''}`}
+              onClick={() => i <= currentStep && goToStep(i)}
+              title={s.label}
+              style={{ width: 30, height: 30, minWidth: 30, fontSize: 12 }}
+            >
+              <span className="lesson-dot-inner">{i < currentStep ? '✓' : s.icon}</span>
+            </button>
+          ))}
+        </div>
+        <div className="lesson-font-control" style={{ margin: 0, justifyContent: 'flex-end' }}>
+          <button className="lesson-font-btn" onClick={() => adjustFont(-0.05)} disabled={fontScale <= 0.9} aria-label="Reducir">A<span className="font-btn-minus">−</span></button>
+          <button className="lesson-font-btn" onClick={() => adjustFont(0.05)} disabled={fontScale >= 1.25} aria-label="Aumentar">A<span className="font-btn-plus">+</span></button>
+        </div>
       </div>
 
       {/* Step content */}
-      <div className="lesson-content">
+      <div className="lesson-content" style={{ fontSize: `calc(var(--text-base) * ${fontScale})` }}>
         <WorkBot
           stepKey={step.key}
           stepIndex={currentStep}
