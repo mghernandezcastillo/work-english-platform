@@ -341,52 +341,40 @@ export default function LessonView() {
           const routeId = lesson.modules?.route_id || lesson.modules?.routes?.id
           routeId ? navigate(`/ruta/${routeId}`) : navigate('/dashboard')
         }}>
-          ← Volver
+          ←
         </button>
-        <h3 className="lesson-title">{lesson.title}</h3>
+        <h3 className="lesson-title" style={{ flex: 1, margin: 0 }}>{lesson.title}</h3>
       </div>
 
-      {/* Progress bar */}
-      <div className="lesson-progress-bar-container">
+      {/* Compact: progress bar + step label in one row */}
+      <div className="lesson-progress-bar-container" style={{ marginBottom: 4 }}>
         <div className="lesson-progress-bar">
           <div 
             className="lesson-progress-fill"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
-        <span className="lesson-progress-text">
-          {step.icon} {step.label} — Paso {currentStep + 1} de {STEPS.length}
-        </span>
       </div>
 
-      {/* Step indicators */}
-      <div className="lesson-progress">
-        {STEPS.map((s, i) => (
-          <button
-            key={s.key}
-            className={`lesson-dot ${i === currentStep ? 'active' : i < currentStep ? 'completed' : ''}`}
-            onClick={() => i <= currentStep && goToStep(i)}
-            title={s.label}
-          >
-            <span className="lesson-dot-inner">{i < currentStep ? '✓' : s.icon}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Font size control */}
-      <div className="lesson-font-control">
-        <button
-          className="lesson-font-btn"
-          onClick={() => adjustFont(-0.05)}
-          disabled={fontScale <= 0.9}
-          aria-label="Reducir tamaño de letra"
-        >A<span className="font-btn-minus">−</span></button>
-        <button
-          className="lesson-font-btn"
-          onClick={() => adjustFont(0.05)}
-          disabled={fontScale >= 1.25}
-          aria-label="Aumentar tamaño de letra"
-        >A<span className="font-btn-plus">+</span></button>
+      {/* Step indicators + font control in same row */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
+        <div className="lesson-progress" style={{ flex: 1, margin: 0, gap: 2 }}>
+          {STEPS.map((s, i) => (
+            <button
+              key={s.key}
+              className={`lesson-dot ${i === currentStep ? 'active' : i < currentStep ? 'completed' : ''}`}
+              onClick={() => i <= currentStep && goToStep(i)}
+              title={s.label}
+              style={{ width: 30, height: 30, minWidth: 30, fontSize: 12 }}
+            >
+              <span className="lesson-dot-inner">{i < currentStep ? '✓' : s.icon}</span>
+            </button>
+          ))}
+        </div>
+        <div className="lesson-font-control" style={{ margin: 0, justifyContent: 'flex-end' }}>
+          <button className="lesson-font-btn" onClick={() => adjustFont(-0.05)} disabled={fontScale <= 0.9} aria-label="Reducir">A<span className="font-btn-minus">−</span></button>
+          <button className="lesson-font-btn" onClick={() => adjustFont(0.05)} disabled={fontScale >= 1.25} aria-label="Aumentar">A<span className="font-btn-plus">+</span></button>
+        </div>
       </div>
 
       {/* Step content */}
