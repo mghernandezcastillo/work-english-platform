@@ -15,22 +15,23 @@ export default function MiniExampleStep({ data }) {
 
   return (
     <div className="step-container animate-fadeIn">
-      <div className="step-badge">📝 Mini-ejemplos</div>
+      {/* Glassmorphism example card */}
+      <div className="glass-card step-card-single" key={current}>
+        <span className="glass-card-counter">{current + 1}/{examples.length}</span>
+        <div className="glass-card-context">{ex.context}</div>
 
-      {/* Single example card */}
-      <div className="example-card step-card-single" key={current}>
-        <div className="example-context">{ex.context}</div>
-        <blockquote className="example-dialogue">
-          <p className="phrase-en">
-            "<ClickablePhrase text={ex.en} />"
-          </p>
-          <p className="phrase-es">"{ex.es}"</p>
-        </blockquote>
-        {ex.audioUrl ? (
-          <AudioPlayer src={ex.audioUrl} label="Escuchar ejemplo" />
-        ) : (
-          <SpeakButton text={ex.en} label="Escuchar ejemplo" />
-        )}
+        <p className="glass-card-phrase">
+          "<ClickablePhrase text={ex.en} />"
+        </p>
+        <p className="glass-card-translation">"{ex.es}"</p>
+
+        <div className="glass-card-actions">
+          {ex.audioUrl ? (
+            <AudioPlayer src={ex.audioUrl} label="" autoPlay={true} />
+          ) : (
+            <SpeakButton text={ex.en} label="" autoPlay={true} />
+          )}
+        </div>
       </div>
 
       {/* Sub-progress dots + navigation */}

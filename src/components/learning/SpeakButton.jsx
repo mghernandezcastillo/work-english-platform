@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import './SpeakButton.css'
 
 const SPEEDS = [
@@ -8,12 +8,20 @@ const SPEEDS = [
   { value: 1.3, emoji: '🐇', label: 'Rápido' },
 ]
 
-export default function SpeakButton({ text, lang = 'en-US', label }) {
+export default function SpeakButton({ text, lang = 'en-US', label, autoPlay = false }) {
   const [speaking, setSpeaking] = useState(false)
   const [speedIdx, setSpeedIdx] = useState(2) // Normal
   const utterRef = useRef(null)
 
   const currentSpeed = SPEEDS[speedIdx]
+
+  // Auto-play on mount or text change
+  useEffect(() => {
+    if (autoPlay && text) {
+      const timer = setTimeout(() => speak(), 300)
+      return () => clearTimeout(timer)
+    }
+  }, [text])
 
   function speak() {
     if (!window.speechSynthesis || !text) return

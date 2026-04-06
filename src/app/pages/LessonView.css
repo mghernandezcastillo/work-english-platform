@@ -117,13 +117,13 @@
   margin-left: 1px;
 }
 
-/* Content */
+/* Content — no borders, tonal shift only (Stitch No-Line rule) */
 .lesson-content {
   min-height: 200px;
-  padding: var(--space-3) var(--space-3);
-  background: var(--color-surface);
+  padding: var(--space-3);
+  background: rgba(15, 25, 48, 0.5);
   border-radius: var(--radius-xl);
-  border: 1px solid var(--color-border);
+  border: none;
   margin-bottom: var(--space-3);
 }
 

@@ -8,7 +8,7 @@ const SPEEDS = [
   { value: 1.25, emoji: '🐇', label: 'Rápido' },
 ]
 
-export default function AudioPlayer({ src, label }) {
+export default function AudioPlayer({ src, label, autoPlay = false }) {
   const audioRef = useRef(null)
   const [playing, setPlaying] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -23,6 +23,16 @@ export default function AudioPlayer({ src, label }) {
     if (audioRef.current) {
       audioRef.current.pause()
       audioRef.current.currentTime = 0
+    }
+    // Auto-play when src changes (if autoPlay is enabled)
+    if (autoPlay && src && audioRef.current) {
+      const a = audioRef.current
+      a.playbackRate = currentSpeed.value
+      const tryPlay = () => {
+        a.play().then(() => setPlaying(true)).catch(() => {})
+      }
+      if (a.readyState >= 2) tryPlay()
+      else a.addEventListener('canplay', tryPlay, { once: true })
     }
   }, [src])
 

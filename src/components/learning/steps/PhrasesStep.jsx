@@ -16,31 +16,31 @@ export default function PhrasesStep({ data }) {
 
   return (
     <div className="step-container animate-fadeIn">
-      <div className="step-badge">💬 Frases clave</div>
+      {/* Glassmorphism phrase card — no borders, tonal shift */}
+      <div className="glass-card step-card-single" key={current}>
+        <span className="glass-card-counter">{current + 1}/{phrases.length}</span>
 
-      {/* Single phrase card */}
-      <div className="phrase-card step-card-single" key={current}>
-        <div className="phrase-number">
-          <span className="phrase-counter">{current + 1}/{phrases.length}</span>
-        </div>
-        <div className="phrase-content">
-          <p className="phrase-en">
-            <ClickablePhrase text={phrase.en} />
-          </p>
-          <p className="phrase-es">{phrase.es}</p>
+        <p className="glass-card-phrase">
+          "<ClickablePhrase text={phrase.en} />"
+        </p>
+        <p className="glass-card-translation">{phrase.es}</p>
+
+        {/* Circular audio buttons */}
+        <div className="glass-card-actions">
           {phrase.audioUrl ? (
-            <AudioPlayer src={phrase.audioUrl} label="Escuchar pronunciación" />
+            <AudioPlayer src={phrase.audioUrl} label="" autoPlay={true} />
           ) : (
-            <SpeakButton text={phrase.en} label="Escuchar pronunciación" />
+            <SpeakButton text={phrase.en} label="" autoPlay={true} />
           )}
           <PronunciationButton targetText={phrase.en} />
-          {phrase.tip && (
-            <div className="phrase-tip">
-              <span>💡</span>
-              <span>{phrase.tip}</span>
-            </div>
-          )}
         </div>
+
+        {phrase.tip && (
+          <div className="glass-card-tip">
+            <span>💡</span>
+            <span>{phrase.tip}</span>
+          </div>
+        )}
       </div>
 
       {/* Sub-progress dots + navigation */}
@@ -58,9 +58,9 @@ export default function PhrasesStep({ data }) {
             Siguiente frase →
           </button>
         ) : (
-          <div className="step-tip" style={{ marginTop: 'var(--space-2)' }}>
+          <div className="glass-card-tip" style={{ marginTop: 'var(--space-2)' }}>
             <span>🎤</span>
-            <p>Repite cada frase en voz alta al menos 2 veces. La práctica oral es clave.</p>
+            <p>Repite cada frase en voz alta al menos 2 veces</p>
           </div>
         )}
       </div>
