@@ -78,7 +78,7 @@ export default function AppLayout() {
         <Outlet />
       </main>
 
-      {/* Bottom navigation (mobile) */}
+      {/* Bottom navigation (mobile only) */}
       <nav className="app-bottom-nav">
         {navItems.map(item => (
           <NavLink
@@ -90,6 +90,42 @@ export default function AppLayout() {
             <span className="app-bottom-nav-label">{item.label}</span>
           </NavLink>
         ))}
+      </nav>
+
+      {/* Sidebar navigation (desktop only) */}
+      <nav className="app-sidebar">
+        <div className="app-sidebar-logo">
+          <img src="/images/facebook-profile.png" alt="" className="app-sidebar-logo-img" />
+          <span className="app-sidebar-logo-name">{brand.name}</span>
+        </div>
+        <div className="app-sidebar-links">
+          {navItems.map(item => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) => `app-sidebar-item ${isActive ? 'active' : ''}`}
+            >
+              <span className="app-sidebar-icon">{item.icon}</span>
+              <span className="app-sidebar-label">{item.label}</span>
+            </NavLink>
+          ))}
+        </div>
+        <div className="app-sidebar-footer">
+          {isAdmin && (
+            <button className="app-sidebar-item" onClick={() => navigate('/admin')} title="Panel Admin">
+              <span className="app-sidebar-icon">⚙️</span>
+              <span className="app-sidebar-label">Admin</span>
+            </button>
+          )}
+          <button className="app-sidebar-item" onClick={toggleTheme} title={isDark ? 'Modo claro' : 'Modo oscuro'}>
+            <span className="app-sidebar-icon">{isDark ? '🌙' : '☀️'}</span>
+            <span className="app-sidebar-label">Tema</span>
+          </button>
+          <button className="app-sidebar-item logout" onClick={handleLogout} title="Cerrar sesión">
+            <span className="app-sidebar-icon">🚪</span>
+            <span className="app-sidebar-label">Salir</span>
+          </button>
+        </div>
       </nav>
 
       {/* WhatsApp floating button — reads from app_settings */}
