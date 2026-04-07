@@ -57,7 +57,7 @@
 
 /* ── Counter label ── */
 .step-counter {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--el-text-muted);
   text-align: right;
@@ -114,7 +114,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--el-primary);
   text-transform: uppercase;
@@ -122,7 +122,7 @@
   margin-bottom: 8px;
 }
 .expl-text {
-  font-size: clamp(15px, 3.8vw, 17px);
+  font-size: clamp(16px, 4.2vw, 19px);
   color: var(--el-text);
   line-height: 1.6;
   margin-bottom: 12px;
@@ -133,7 +133,7 @@
   margin-top: 8px;
 }
 .expl-example-label {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--el-primary);
   letter-spacing: 0.1em;
@@ -141,7 +141,7 @@
   margin-bottom: 4px;
 }
 .expl-example-text {
-  font-size: clamp(14px, 3.5vw, 16px);
+  font-size: clamp(15px, 3.8vw, 17px);
   font-weight: 600;
   color: var(--el-text);
 }
@@ -261,7 +261,7 @@
 }
 .match-col { display: flex; flex-direction: column; gap: 7px; }
 .match-col-label {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--el-text-muted);
   text-transform: uppercase;
@@ -274,7 +274,7 @@
   border: none;
   border-radius: 8px;
   padding: 9px 10px;
-  font-size: clamp(11px, 3vw, 13px);
+  font-size: clamp(13px, 3.5vw, 15px);
   color: var(--el-text);
   cursor: pointer;
   text-align: center;
@@ -292,7 +292,7 @@
 .match-chip.wrong { background: rgba(239,68,68,0.12); color: #fc8181; }
 .match-score {
   text-align: center;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--el-text-muted);
   padding: 6px 0 0;
   flex-shrink: 0;
@@ -307,7 +307,7 @@
   flex-shrink: 0;
 }
 .practice-prompt-label {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--el-text-muted);
   text-transform: uppercase;
@@ -315,7 +315,7 @@
   margin-bottom: 4px;
 }
 .practice-prompt-text {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--el-primary-light);
   font-style: italic;
   line-height: 1.4;
@@ -328,7 +328,7 @@
   flex-shrink: 0;
 }
 .practice-response-label {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--el-text-muted);
   text-transform: uppercase;
@@ -336,14 +336,14 @@
   margin-bottom: 6px;
 }
 .practice-response-text {
-  font-size: clamp(14px, 4vw, 17px);
+  font-size: clamp(16px, 4.5vw, 19px);
   font-weight: 700;
   color: var(--el-text);
   line-height: 1.35;
   margin-bottom: 6px;
 }
 .practice-response-es {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--el-text-muted);
   font-style: italic;
 }
