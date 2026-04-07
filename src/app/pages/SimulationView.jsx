@@ -7,6 +7,7 @@ import { Button } from '../../components/common/Button'
 import { LoadingSpinner } from '../../components/common/LoadingSpinner'
 import AudioPlayer from '../../components/learning/AudioPlayer'
 import ClickablePhrase from '../../components/learning/ClickablePhrase'
+import { PronunciationButton } from '../../components/common/PronunciationButton'
 import './SimulationView.css'
 
 export default function SimulationView() {
@@ -21,6 +22,8 @@ export default function SimulationView() {
   const [finished, setFinished] = useState(false)
   const [loading, setLoading] = useState(true)
   const [showTyping, setShowTyping] = useState(false)
+  const [showPronunOffer, setShowPronunOffer] = useState(false)  // offer to practice pronunciation
+  const [showPronunPanel, setShowPronunPanel] = useState(false)  // pronunciation panel active
 
   useEffect(() => { loadSimulation() }, [simId])
 
@@ -69,6 +72,11 @@ export default function SimulationView() {
     setSelectedOption(option)
     setShowFeedback(true)
     setResponses(prev => [...prev, { turn: currentTurn, choice: option }])
+    // If correct, offer pronunciation practice
+    const t = turns[currentTurn]
+    if (t && option === t.correct) {
+      setShowPronunOffer(true)
+    }
   }
 
   function nextTurn() {
@@ -83,6 +91,8 @@ export default function SimulationView() {
         setSelectedOption(null)
         setShowFeedback(false)
         setShowTyping(false)
+        setShowPronunOffer(false)
+        setShowPronunPanel(false)
         window.scrollTo({ top: 0, behavior: 'smooth' })
       }, 1200)
     }
@@ -222,7 +232,26 @@ export default function SimulationView() {
         </div>
       )}
 
-      {showFeedback && (
+      {/* Pronunciation offer — only on correct answer */}
+      {showPronunOffer && !showPronunPanel && (
+        <div className="sim-pronun-offer animate-fadeIn">
+          <p className="sim-pronun-offer-text">🎤 ¿Quieres practicar la pronunciación?</p>
+          <div className="sim-pronun-offer-btns">
+            <button className="sim-pronun-yes" onClick={() => { setShowPronunOffer(false); setShowPronunPanel(true) }}>Sí, practicar</button>
+            <button className="sim-pronun-skip" onClick={() => { setShowPronunOffer(false); nextTurn() }}>Saltar →</button>
+          </div>
+        </div>
+      )}
+
+      {/* Pronunciation panel */}
+      {showPronunPanel && (
+        <div className="sim-pronun-panel animate-fadeIn">
+          <PronunciationButton targetText={turn.correct} />
+        </div>
+      )}
+
+      {/* Next button — hide when pronunciation offer/panel is active */}
+      {showFeedback && !showPronunOffer && (
         <Button variant="primary" full onClick={nextTurn} style={{ marginTop: 'var(--space-4)' }}>
           {currentTurn + 1 >= turns.length ? 'Ver resultados' : 'Siguiente turno →'}
         </Button>

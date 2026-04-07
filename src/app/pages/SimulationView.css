@@ -109,3 +109,55 @@
   0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
   30%            { transform: translateY(-6px); opacity: 1; }
 }
+
+/* ── Pronunciation offer after correct answer ── */
+.sim-pronun-offer {
+  margin-top: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(16,185,129,0.2);
+  text-align: center;
+}
+.sim-pronun-offer-text {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-3);
+}
+.sim-pronun-offer-btns {
+  display: flex;
+  gap: var(--space-2);
+}
+.sim-pronun-yes {
+  flex: 1;
+  padding: 10px 0;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: background 0.15s;
+}
+.sim-pronun-yes:hover { filter: brightness(1.1); }
+.sim-pronun-skip {
+  flex: 1;
+  padding: 10px 0;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: background 0.15s;
+}
+.sim-pronun-skip:hover { background: var(--color-surface-hover, rgba(255,255,255,0.06)); }
+
+.sim-pronun-panel {
+  margin-top: var(--space-3);
+}
