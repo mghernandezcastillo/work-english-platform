@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
@@ -48,6 +48,22 @@ export default function SimulationView() {
       setLoading(false)
     }
   }
+
+  // Shuffle options so correct answer isn't always in same position
+  function shuffle(arr) {
+    const a = [...arr]
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]]
+    }
+    return a
+  }
+
+  const shuffledOptions = useMemo(() => {
+    const turns = simulation?.content?.turns || []
+    const t = turns[currentTurn]
+    return t?.options ? shuffle(t.options) : []
+  }, [currentTurn, simulation])
 
   function handleChoice(option) {
     setSelectedOption(option)
@@ -177,7 +193,7 @@ export default function SimulationView() {
       {/* Your options */}
       <div className="sim-options-header">🗣️ Tu respuesta:</div>
       <div className="sim-options">
-        {(turn?.options || []).map((opt, i) => {
+        {shuffledOptions.map((opt, i) => {
           let cls = 'sim-option'
           if (showFeedback) {
             if (opt === turn.correct) cls += ' correct'
