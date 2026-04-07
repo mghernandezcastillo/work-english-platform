@@ -3,10 +3,12 @@ import { PronunciationButton } from '../../common/PronunciationButton'
 import ClickablePhrase from '../ClickablePhrase'
 import './Steps.css'
 
-export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onActivity }) {
+export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onActivity, muted }) {
   const scenarios = data?.scenarios || []
   const [current, setCurrent] = useState(0)
-  const [speed, setSpeed] = useState(1)
+  const SPEEDS = [1, 0.85, 0.7, 0.5]
+  const [speedIdx, setSpeedIdx] = useState(0)
+  const speed = SPEEDS[speedIdx]
   const audioRef = useRef(null)
 
   useEffect(() => { onCanAdvance?.(true) }, [])
@@ -14,11 +16,12 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
   // Auto-play audio on scenario change (and on first mount)
   useEffect(() => {
     if (!scenarios.length) return
-    const t = setTimeout(() => { playAudio() }, 400)
+    const t = setTimeout(() => { if (!muted) playAudio() }, 400)
     return () => clearTimeout(t)
-  }, [current, scenarios.length])
+  }, [current, scenarios.length, muted])
 
   function playAudio() {
+    if (muted) return
     const el = audioRef.current
     if (el) {
       el.playbackRate = speed
@@ -40,9 +43,9 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
   }
 
   function toggleSpeed() {
-    const next = speed === 1 ? 0.75 : 1
-    setSpeed(next)
-    if (audioRef.current) audioRef.current.playbackRate = next
+    const next = (speedIdx + 1) % SPEEDS.length
+    setSpeedIdx(next)
+    if (audioRef.current) audioRef.current.playbackRate = SPEEDS[next]
   }
 
   function savePronunScore(phrase, score) {
@@ -90,7 +93,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         <div className="listen-speed-group">
           <button className="step-circle-btn" onClick={playAudio} aria-label="Escuchar" title="Escuchar">🔊</button>
           <button className="speed-toggle-btn" onClick={toggleSpeed} title="Cambiar velocidad">
-            {speed === 1 ? '1×' : '0.75×'}
+            {speed}×
           </button>
         </div>
         <div className="practice-pronun-inline">

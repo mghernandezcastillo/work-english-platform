@@ -52,6 +52,8 @@ export default function LessonView() {
   const [hasCompleted, setHasCompleted] = useState(false)
   const [showIncompleteModal, setShowIncompleteModal] = useState(false)
   const [incompleteItems, setIncompleteItems] = useState([])
+  // Session-only mute — resets to false (audio ON) on every page load
+  const [muted, setMuted] = useState(false)
 
   // Track which optional activities the user has done
   const [completedActivities, setCompletedActivities] = useState(new Set())
@@ -376,6 +378,12 @@ export default function LessonView() {
               routeId ? navigate(`/ruta/${routeId}`) : navigate('/dashboard')
             }}>←</button>
             <span className="lesson-title-fixed">{lesson.title}</span>
+            <button
+              className="lesson-mute-btn"
+              onClick={() => setMuted(m => !m)}
+              title={muted ? 'Activar audio' : 'Silenciar'}
+              aria-label={muted ? 'Activar audio' : 'Silenciar'}
+            >{muted ? '🔇' : '🔊'}</button>
           </div>
           <div className="lesson-dots-row">
             {STEPS.map((s, i) => (
@@ -401,6 +409,7 @@ export default function LessonView() {
           <StepComponent
             data={stepData}
             lessonId={lessonId}
+            muted={muted}
             onComplete={isLast ? handleLessonComplete : undefined}
             onCanAdvance={setCanAdvance}
             onActivity={logActivity}

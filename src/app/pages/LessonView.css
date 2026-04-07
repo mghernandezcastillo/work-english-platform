@@ -75,6 +75,20 @@
   font-family: var(--el-font);
 }
 
+/* Mute toggle — sits in top-right corner, subtle, session-only */
+.lesson-mute-btn {
+  background: none;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  opacity: 0.45;
+  padding: 4px;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: opacity 0.15s;
+}
+.lesson-mute-btn:hover { opacity: 0.85; }
+
 /* Step dots row */
 .lesson-dots-row {
   display: flex;

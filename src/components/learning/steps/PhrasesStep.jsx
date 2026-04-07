@@ -5,10 +5,12 @@ import { PronunciationButton } from '../../common/PronunciationButton'
 import ClickablePhrase from '../ClickablePhrase'
 import './Steps.css'
 
-export default function PhrasesStep({ data, onCanAdvance }) {
+export default function PhrasesStep({ data, onCanAdvance, muted }) {
   const phrases = data?.phrases || []
   const [current, setCurrent] = useState(0)
-  const [speed, setSpeed] = useState(1)
+  const SPEEDS = [1, 0.85, 0.7, 0.5]
+  const [speedIdx, setSpeedIdx] = useState(0)
+  const speed = SPEEDS[speedIdx]
   const audioRef = useRef(null)
 
   useEffect(() => { onCanAdvance?.(true) }, [])
@@ -17,16 +19,17 @@ export default function PhrasesStep({ data, onCanAdvance }) {
   useEffect(() => {
     if (!phrases.length) return
     const t = setTimeout(() => {
-      if (audioRef.current) {
+      if (!muted && audioRef.current) {
         audioRef.current.playbackRate = speed
         audioRef.current.currentTime = 0
         audioRef.current.play().catch(() => {})
       }
     }, 350)
     return () => clearTimeout(t)
-  }, [current])
+  }, [current, muted])
 
   function playAudio() {
+    if (muted) return
     if (audioRef.current) {
       audioRef.current.playbackRate = speed
       audioRef.current.currentTime = 0
@@ -35,9 +38,9 @@ export default function PhrasesStep({ data, onCanAdvance }) {
   }
 
   function toggleSpeed() {
-    const next = speed === 1 ? 0.75 : 1
-    setSpeed(next)
-    if (audioRef.current) audioRef.current.playbackRate = next
+    const next = (speedIdx + 1) % SPEEDS.length
+    setSpeedIdx(next)
+    if (audioRef.current) audioRef.current.playbackRate = SPEEDS[next]
   }
 
   if (!phrases.length) return (
@@ -66,7 +69,7 @@ export default function PhrasesStep({ data, onCanAdvance }) {
               title="Escuchar"
             >🔊</button>
             <button className="speed-toggle-btn" onClick={toggleSpeed} title="Cambiar velocidad">
-              {speed === 1 ? '1×' : '0.75×'}
+              {speed}×
             </button>
           </div>
           <PronunciationButton key={current} targetText={phrase.en} />
