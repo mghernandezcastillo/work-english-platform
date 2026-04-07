@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { lookup, lookupCompound } from '../../lib/dictionary'
 import { useAuth } from '../../context/AuthContext'
 import { supabase } from '../../lib/supabase'
@@ -112,6 +113,7 @@ function tokenize(text) {
  * Renders a phrase where each word is clickable and shows a translation tooltip.
  * Supports compound words (e.g. "customer service" → one tooltip).
  * ALL words are clickable — words without translations show a "save for later" option.
+ * Tooltip is rendered via portal so it's never clipped by parent overflow.
  */
 export default function ClickablePhrase({ text, className = '' }) {
   const { user } = useAuth()
@@ -119,23 +121,27 @@ export default function ClickablePhrase({ text, className = '' }) {
   const [saved, setSaved] = useState(false)
   const [saving, setSaving] = useState(false)
   const tooltipRef = useRef(null)
-  const containerRef = useRef(null)
 
   // Close tooltip on outside click
   useEffect(() => {
+    if (!activeWord) return
     function handleClick(e) {
       if (tooltipRef.current && !tooltipRef.current.contains(e.target)) {
         setActiveWord(null)
         setSaved(false)
       }
     }
-    document.addEventListener('mousedown', handleClick)
-    document.addEventListener('touchstart', handleClick)
+    // Delay listener to avoid closing immediately from the click that opened it
+    const timer = setTimeout(() => {
+      document.addEventListener('mousedown', handleClick)
+      document.addEventListener('touchstart', handleClick)
+    }, 10)
     return () => {
+      clearTimeout(timer)
       document.removeEventListener('mousedown', handleClick)
       document.removeEventListener('touchstart', handleClick)
     }
-  }, [])
+  }, [activeWord])
 
   // Close on Escape
   useEffect(() => {
@@ -151,15 +157,14 @@ export default function ClickablePhrase({ text, className = '' }) {
 
   function handleTokenClick(e, word, translation, isCompound = false) {
     e.stopPropagation()
+    e.preventDefault()
     const rect = e.currentTarget.getBoundingClientRect()
-    const containerRect = containerRef.current?.getBoundingClientRect()
     setActiveWord({
       word,
       translation,
       hasDef: translation !== null,
       isCompound,
       anchorRect: rect,
-      containerRect,
     })
     setSaved(false)
   }
@@ -183,8 +188,41 @@ export default function ClickablePhrase({ text, className = '' }) {
 
   const tokens = tokenize(text)
 
+  // Calculate tooltip position from anchor rect (fixed positioning relative to viewport)
+  function getTooltipStyle() {
+    if (!activeWord?.anchorRect) return {}
+    const r = activeWord.anchorRect
+    const tooltipWidth = 260
+    const padding = 12
+
+    // Center horizontally on the word
+    let left = r.left + r.width / 2 - tooltipWidth / 2
+
+    // Keep within viewport horizontally
+    if (left < padding) left = padding
+    if (left + tooltipWidth > window.innerWidth - padding) left = window.innerWidth - padding - tooltipWidth
+
+    // Position above the word by default
+    let top = r.top - 10
+    let placement = 'above'
+
+    // If not enough space above, position below
+    if (r.top < 150) {
+      top = r.bottom + 10
+      placement = 'below'
+    }
+
+    // Calculate arrow position relative to tooltip left edge
+    const wordCenter = r.left + r.width / 2
+    const arrowLeft = Math.max(20, Math.min(tooltipWidth - 20, wordCenter - left))
+
+    return { left, top, placement, tooltipWidth, arrowLeft }
+  }
+
+  const tooltipPos = activeWord ? getTooltipStyle() : null
+
   return (
-    <span className={`clickable-phrase ${className}`} ref={containerRef}>
+    <span className={`clickable-phrase ${className}`}>
       {tokens.map((token, i) => {
         if (token.type === 'space') {
           return <span key={i}>{token.text}</span>
@@ -230,13 +268,25 @@ export default function ClickablePhrase({ text, className = '' }) {
         )
       })}
 
-      {/* Tooltip */}
-      {activeWord && (
-        <span
+      {/* Tooltip — rendered via portal at document.body so it's never clipped */}
+      {activeWord && tooltipPos && createPortal(
+        <div
           ref={tooltipRef}
-          className="word-tooltip animate-fadeIn"
+          className={`word-tooltip-portal animate-fadeIn ${tooltipPos.placement}`}
+          style={{
+            position: 'fixed',
+            left: tooltipPos.left,
+            ...(tooltipPos.placement === 'above'
+              ? { bottom: window.innerHeight - tooltipPos.top }
+              : { top: tooltipPos.top }),
+            width: tooltipPos.tooltipWidth,
+            zIndex: 10000,
+          }}
         >
-          <span className="word-tooltip-arrow" />
+          <span
+            className={`word-tooltip-arrow-portal ${tooltipPos.placement}`}
+            style={{ left: tooltipPos.arrowLeft }}
+          />
           <span className="word-tooltip-word">
             {activeWord.isCompound ? '🔗 ' : ''}{activeWord.word}
           </span>
@@ -270,9 +320,9 @@ export default function ClickablePhrase({ text, className = '' }) {
               </button>
             )}
           </div>
-        </span>
+        </div>,
+        document.body
       )}
     </span>
   )
 }
-

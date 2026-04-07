@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { PronunciationButton } from '../../common/PronunciationButton'
+import ClickablePhrase from '../ClickablePhrase'
 import './Steps.css'
 
 export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onActivity }) {
@@ -72,13 +73,13 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       {/* Prompt card */}
       <div className="practice-prompt-card">
         <div className="practice-prompt-label">Te preguntan:</div>
-        <p className="practice-prompt-text">"{scenario.prompt || scenario.context}"</p>
+        <p className="practice-prompt-text">"<ClickablePhrase text={scenario.prompt || scenario.context} />"</p>
       </div>
 
       {/* Response card — takes flex space */}
       <div className="practice-response-card" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <div className="practice-response-label">Tú respondes:</div>
-        <p className="practice-response-text">{scenario.phrase}</p>
+        <p className="practice-response-text"><ClickablePhrase text={scenario.phrase} /></p>
         <p className="practice-response-es">{scenario.translation}</p>
       </div>
 

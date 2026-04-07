@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import ClickablePhrase from '../ClickablePhrase'
 import './Steps.css'
 
 export default function ExplanationStep({ data, onCanAdvance }) {
@@ -25,7 +26,7 @@ export default function ExplanationStep({ data, onCanAdvance }) {
         {point.example && (
           <div className="expl-example">
             <p className="expl-example-label">Ejemplo:</p>
-            <p className="expl-example-text">{point.example}</p>
+            <p className="expl-example-text"><ClickablePhrase text={point.example} /></p>
           </div>
         )}
       </div>

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import AudioPlayer from '../AudioPlayer'
 import SpeakButton from '../SpeakButton'
 import { PronunciationButton } from '../../common/PronunciationButton'
+import ClickablePhrase from '../ClickablePhrase'
 import './Steps.css'
 
 export default function PhrasesStep({ data, onCanAdvance }) {
@@ -36,7 +37,7 @@ export default function PhrasesStep({ data, onCanAdvance }) {
 
       {/* Main phrase card */}
       <div className="step-card-glass" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 0 }}>
-        <p className="phrase-main-text">{phrase.en}</p>
+        <p className="phrase-main-text"><ClickablePhrase text={phrase.en} /></p>
         <p className="phrase-translation">{phrase.es}</p>
 
         {/* Action buttons */}
