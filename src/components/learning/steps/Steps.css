@@ -271,8 +271,14 @@
   gap: 10px;
   flex: 1;
   min-height: 0;
+  align-items: stretch;
 }
-.match-col { display: flex; flex-direction: column; gap: 7px; }
+/* Each column is a flex column that distributes chips evenly */
+.match-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 .match-col-label {
   font-size: 11px;
   font-weight: 700;
@@ -285,22 +291,26 @@
 .match-chip {
   background: var(--el-surface);
   border: none;
-  border-radius: 8px;
-  padding: 9px 10px;
-  font-size: clamp(13px, 3.5vw, 15px);
+  border-radius: 10px;
+  padding: 12px 10px;
+  font-size: clamp(12px, 3.2vw, 14px);
   color: var(--el-text);
   cursor: pointer;
   text-align: center;
-  line-height: 1.3;
-  transition: background 0.18s, transform 0.1s;
+  line-height: 1.35;
+  transition: background 0.18s, transform 0.1s, box-shadow 0.18s;
   font-family: 'Manrope', system-ui, sans-serif;
-  height: 44px;
+  /* Grow equally to fill all available vertical space */
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 52px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 }
+.match-chip:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
 .match-chip:active { transform: scale(0.97); }
-.match-chip.selected { background: var(--el-surface-highest); outline: 2px solid var(--el-primary); }
+.match-chip.selected { background: var(--el-surface-highest); outline: 2px solid var(--el-primary); box-shadow: 0 0 0 4px rgba(16,185,129,0.15); }
 .match-chip.matched { background: rgba(16,185,129,0.12); color: var(--el-primary-light); pointer-events: none; opacity: 0.7; }
 .match-chip.wrong { background: rgba(239,68,68,0.12); color: #fc8181; }
 .match-score {
