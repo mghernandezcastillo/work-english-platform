@@ -148,29 +148,15 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
               onKeyDown={e => e.key === 'Enter' && !showResult && checkAnswer(selectedAnswer)}
               style={{ paddingRight: 44 }}
             />
-            {/* Hint button — only while not answered */}
+            {/* Hint button */}
             {!showResult && (
               <button
-                onClick={() => {
-                  if (hintLevel === 0) {
-                    // Level 1: show first letter of each word + underscores
-                    const hint = current.correct
-                      .split(' ')
-                      .map(w => w[0] + '_'.repeat(Math.max(0, w.length - 1)))
-                      .join(' ')
-                    setSelectedAnswer(hint)
-                    setHintLevel(1)
-                  } else {
-                    // Level 2: reveal full answer
-                    setSelectedAnswer(current.correct)
-                    setHintLevel(2)
-                  }
-                }}
-                title={hintLevel === 0 ? 'Ver pista' : hintLevel === 1 ? 'Ver respuesta' : 'Respuesta revelada'}
+                onClick={() => setHintLevel(h => Math.min(h + 1, 2))}
                 disabled={hintLevel >= 2}
+                title={hintLevel === 0 ? 'Ver pista' : hintLevel === 1 ? 'Ver respuesta completa' : 'Pista máxima'}
                 style={{
                   position: 'absolute',
-                  right: 8,
+                  right: 10,
                   top: '50%',
                   transform: 'translateY(-50%)',
                   background: 'none',
@@ -178,8 +164,8 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
                   cursor: hintLevel < 2 ? 'pointer' : 'default',
                   fontSize: 20,
                   lineHeight: 1,
-                  opacity: hintLevel >= 2 ? 0.4 : 1,
-                  transition: 'opacity 0.2s',
+                  opacity: hintLevel >= 2 ? 0.35 : 1,
+                  transition: 'opacity 0.2s, transform 0.15s',
                 }}
                 aria-label="Pista"
               >
@@ -187,11 +173,42 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
               </button>
             )}
           </div>
-          {/* Hint label */}
-          {hintLevel > 0 && !showResult && (
-            <p style={{ fontSize: 11, color: 'var(--el-text-muted)', marginTop: 4, fontStyle: 'italic', paddingLeft: 2 }}>
-              {hintLevel === 1 ? '💡 Pista: primeras letras reveladas — edita si quieres' : '🔓 Respuesta revelada — se contará como incorrecta'}
-            </p>
+
+          {/* Hint panel — shown BELOW the input, never fills it */}
+          {hintLevel === 1 && !showResult && (
+            <div style={{
+              background: 'rgba(245,158,11,0.10)',
+              border: '1px solid rgba(245,158,11,0.25)',
+              borderRadius: 10,
+              padding: '10px 14px',
+              marginTop: 8,
+            }}>
+              <p style={{ fontSize: 10, fontWeight: 700, color: '#F59E0B', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
+                💡 Pista
+              </p>
+              <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--el-text)', letterSpacing: 3, fontFamily: 'monospace' }}>
+                {current.correct.split(' ').map(w => w[0] + ' ‿'.repeat(w.length - 1)).join('  ')}
+              </p>
+              <p style={{ fontSize: 11, color: 'var(--el-text-muted)', marginTop: 4 }}>
+                {current.correct.split(' ').length} {current.correct.split(' ').length === 1 ? 'palabra' : 'palabras'} • {current.correct.length} letras en total
+              </p>
+            </div>
+          )}
+          {hintLevel === 2 && !showResult && (
+            <div style={{
+              background: 'rgba(239,68,68,0.10)',
+              border: '1px solid rgba(239,68,68,0.25)',
+              borderRadius: 10,
+              padding: '10px 14px',
+              marginTop: 8,
+            }}>
+              <p style={{ fontSize: 10, fontWeight: 700, color: '#EF4444', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
+                🔓 Respuesta — escríbela tú mismo
+              </p>
+              <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--el-text)' }}>
+                {current.correct}
+              </p>
+            </div>
           )}
         </div>
       )}
