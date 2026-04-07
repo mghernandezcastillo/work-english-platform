@@ -122,6 +122,21 @@
   border: none;
 }
 
+/* ── Explanation decorative SVG ── */
+.expl-icon-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+.expl-bulb-svg {
+  animation: bulb-glow 3s ease-in-out infinite;
+}
+@keyframes bulb-glow {
+  0%, 100% { filter: drop-shadow(0 0 2px rgba(16,185,129,0.15)); }
+  50%      { filter: drop-shadow(0 0 8px rgba(16,185,129,0.35)); }
+}
+
 /* ── Explanation point pin ── */
 .expl-pin {
   display: inline-flex;
