@@ -13,27 +13,18 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
   // Auto-play audio on scenario change (and on first mount)
   useEffect(() => {
     if (!scenarios.length) return
-    // Small delay to let the <audio> element mount/update its src
-    const t = setTimeout(() => {
-      playAudio()
-    }, 400)
+    const t = setTimeout(() => { playAudio() }, 400)
     return () => clearTimeout(t)
   }, [current, scenarios.length])
 
   function playAudio() {
     const el = audioRef.current
-    if (el) {
-      el.currentTime = 0
-      el.play().catch(() => {})
-      return
-    }
-    // Fallback: TTS if no audio file
+    if (el) { el.currentTime = 0; el.play().catch(() => {}); return }
     const scenario = scenarios[current]
     if (scenario?.phrase && window.speechSynthesis) {
       window.speechSynthesis.cancel()
       const u = new SpeechSynthesisUtterance(scenario.phrase)
-      u.lang = 'en-US'
-      u.rate = 0.85
+      u.lang = 'en-US'; u.rate = 0.85
       const voices = window.speechSynthesis.getVoices()
       const voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel')))
         || voices.find(v => v.lang.startsWith('en-US'))
@@ -44,7 +35,6 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
 
   function savePronunScore(phrase, score) {
     if (!lessonId) return
-    // Notify parent that pronunciation was attempted
     onActivity?.('pronunciation')
     try {
       const key = `lesson_pronun_scores_${lessonId}`
@@ -61,8 +51,8 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
   const scenario = scenarios[current]
 
   return (
-    <div className="step-wrapper animate-fadeIn">
-      {/* Hidden audio — rendered first so ref is ready for auto-play */}
+    /* step-wrapper-scroll: same as step-wrapper but overflow-y:auto so result panel never overlaps */
+    <div className="step-wrapper-scroll animate-fadeIn">
       {scenario.audioUrl && (
         <audio key={`audio-${current}`} ref={audioRef} src={scenario.audioUrl} preload="auto" style={{ display: 'none' }} />
       )}
@@ -76,36 +66,28 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         <p className="practice-prompt-text">"<ClickablePhrase text={scenario.prompt || scenario.context} />"</p>
       </div>
 
-      {/* Response card */}
+      {/* Response card — compact, no flex:1 */}
       <div className="practice-response-card">
         <div className="practice-response-label">Tú respondes:</div>
         <p className="practice-response-text"><ClickablePhrase text={scenario.phrase} /></p>
         <p className="practice-response-es">{scenario.translation}</p>
       </div>
 
-      {/* Listen button — separate row, compact */}
-      <div className="step-btn-row" style={{ marginTop: 8 }}>
-        <button
-          className="step-circle-btn"
-          onClick={playAudio}
-          aria-label="Escuchar" title="Escuchar"
-        >🔊</button>
+      {/* Listen + Pronunciation in a single row so they don't stack */}
+      <div className="practice-actions-row">
+        <button className="step-circle-btn" onClick={playAudio} aria-label="Escuchar" title="Escuchar">🔊</button>
+        <div className="practice-pronun-inline">
+          <PronunciationButton key={current} targetText={scenario.phrase} onScore={(s) => savePronunScore(scenario.phrase, s)} />
+        </div>
       </div>
 
-      {/* PronunciationButton — own flex area so results don't overlap */}
-      <div className="practice-pronun-area">
-        <PronunciationButton key={current} targetText={scenario.phrase} onScore={(s) => savePronunScore(scenario.phrase, s)} />
-      </div>
-
-      {/* Pagination dots */}
-      <div className="step-page-dots">
+      {/* Pagination — always visible at bottom */}
+      <div className="step-page-dots" style={{ marginTop: 'auto', paddingTop: 8 }}>
         {scenarios.map((_, i) => (
           <button key={i} className={`step-page-dot ${i === current ? 'active' : i < current ? 'done' : ''}`} onClick={() => setCurrent(i)} />
         ))}
       </div>
-
-      {/* Inline prev/next — chevrons only */}
-      <div className="step-inline-nav">
+      <div className="step-inline-nav" style={{ paddingBottom: 4 }}>
         <button className="step-inline-btn" onClick={() => current > 0 && setCurrent(c => c - 1)} disabled={current === 0}>‹</button>
         <span className="step-inline-label">{current + 1} de {scenarios.length}</span>
         <button className="step-inline-btn pulse" onClick={() => current < scenarios.length - 1 && setCurrent(c => c + 1)} disabled={current === scenarios.length - 1}>›</button>

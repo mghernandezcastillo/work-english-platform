@@ -12,6 +12,19 @@
   font-family: 'Manrope', system-ui, sans-serif;
 }
 
+/* Scrollable variant — for steps where content can expand (e.g. Ahora habla tú) */
+.step-wrapper-scroll {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 0;
+  font-family: 'Manrope', system-ui, sans-serif;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+.step-wrapper-scroll::-webkit-scrollbar { display: none; }
+
 /* ── Card (glassmorphism) ── */
 .step-card {
   background: var(--el-surface);
@@ -348,16 +361,28 @@
   font-style: italic;
 }
 
-/* PronunciationButton container — grows to fill available space, scrolls if needed */
-.practice-pronun-area {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  /* hide scrollbar visually but keep it functional */
-  scrollbar-width: none;
+/* Actions row: listen button + pronunciation inline */
+.practice-actions-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 12px;
+  flex-shrink: 0;
 }
-.practice-pronun-area::-webkit-scrollbar { display: none; }
+
+/* PronunciationButton inside actions row — takes remaining width, expands downward */
+.practice-pronun-inline {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Hide the "Di en voz alta:" target inside GuidedPracticeStep since phrase is already shown above */
+.practice-pronun-inline .pronun-target {
+  display: none;
+}
+.practice-pronun-inline .pronun-wrap {
+  margin-top: 0;
+}
 
 /* ── Objective ── */
 .objective-title {
