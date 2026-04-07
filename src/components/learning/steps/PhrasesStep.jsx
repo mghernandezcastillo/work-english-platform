@@ -8,6 +8,7 @@ import './Steps.css'
 export default function PhrasesStep({ data, onCanAdvance }) {
   const phrases = data?.phrases || []
   const [current, setCurrent] = useState(0)
+  const [speed, setSpeed] = useState(1)
   const audioRef = useRef(null)
 
   useEffect(() => { onCanAdvance?.(true) }, [])
@@ -17,12 +18,27 @@ export default function PhrasesStep({ data, onCanAdvance }) {
     if (!phrases.length) return
     const t = setTimeout(() => {
       if (audioRef.current) {
+        audioRef.current.playbackRate = speed
         audioRef.current.currentTime = 0
         audioRef.current.play().catch(() => {})
       }
     }, 350)
     return () => clearTimeout(t)
   }, [current])
+
+  function playAudio() {
+    if (audioRef.current) {
+      audioRef.current.playbackRate = speed
+      audioRef.current.currentTime = 0
+      audioRef.current.play().catch(() => {})
+    }
+  }
+
+  function toggleSpeed() {
+    const next = speed === 1 ? 0.75 : 1
+    setSpeed(next)
+    if (audioRef.current) audioRef.current.playbackRate = next
+  }
 
   if (!phrases.length) return (
     <div className="step-wrapper"><p style={{ color: 'var(--el-text-muted)', fontSize: 15 }}>Sin frases disponibles.</p></div>
@@ -42,14 +58,17 @@ export default function PhrasesStep({ data, onCanAdvance }) {
 
         {/* Action buttons */}
         <div className="step-btn-row">
-          <button
-            className="step-circle-btn"
-            onClick={() => {
-              if (audioRef.current) { audioRef.current.currentTime = 0; audioRef.current.play().catch(() => {}) }
-            }}
-            aria-label="Escuchar pronunciación"
-            title="Escuchar"
-          >🔊</button>
+          <div className="listen-speed-group">
+            <button
+              className="step-circle-btn"
+              onClick={playAudio}
+              aria-label="Escuchar pronunciación"
+              title="Escuchar"
+            >🔊</button>
+            <button className="speed-toggle-btn" onClick={toggleSpeed} title="Cambiar velocidad">
+              {speed === 1 ? '1×' : '0.75×'}
+            </button>
+          </div>
           <PronunciationButton key={current} targetText={phrase.en} />
         </div>
       </div>

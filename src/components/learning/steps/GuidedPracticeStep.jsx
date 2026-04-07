@@ -6,6 +6,7 @@ import './Steps.css'
 export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onActivity }) {
   const scenarios = data?.scenarios || []
   const [current, setCurrent] = useState(0)
+  const [speed, setSpeed] = useState(1)
   const audioRef = useRef(null)
 
   useEffect(() => { onCanAdvance?.(true) }, [])
@@ -19,18 +20,29 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
 
   function playAudio() {
     const el = audioRef.current
-    if (el) { el.currentTime = 0; el.play().catch(() => {}); return }
+    if (el) {
+      el.playbackRate = speed
+      el.currentTime = 0
+      el.play().catch(() => {})
+      return
+    }
     const scenario = scenarios[current]
     if (scenario?.phrase && window.speechSynthesis) {
       window.speechSynthesis.cancel()
       const u = new SpeechSynthesisUtterance(scenario.phrase)
-      u.lang = 'en-US'; u.rate = 0.85
+      u.lang = 'en-US'; u.rate = speed * 0.85
       const voices = window.speechSynthesis.getVoices()
       const voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel')))
         || voices.find(v => v.lang.startsWith('en-US'))
       if (voice) u.voice = voice
       window.speechSynthesis.speak(u)
     }
+  }
+
+  function toggleSpeed() {
+    const next = speed === 1 ? 0.75 : 1
+    setSpeed(next)
+    if (audioRef.current) audioRef.current.playbackRate = next
   }
 
   function savePronunScore(phrase, score) {
@@ -75,7 +87,12 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
 
       {/* Listen + Pronunciation in a single row so they don't stack */}
       <div className="practice-actions-row">
-        <button className="step-circle-btn" onClick={playAudio} aria-label="Escuchar" title="Escuchar">🔊</button>
+        <div className="listen-speed-group">
+          <button className="step-circle-btn" onClick={playAudio} aria-label="Escuchar" title="Escuchar">🔊</button>
+          <button className="speed-toggle-btn" onClick={toggleSpeed} title="Cambiar velocidad">
+            {speed === 1 ? '1×' : '0.75×'}
+          </button>
+        </div>
         <div className="practice-pronun-inline">
           <PronunciationButton key={current} targetText={scenario.phrase} onScore={(s) => savePronunScore(scenario.phrase, s)} />
         </div>

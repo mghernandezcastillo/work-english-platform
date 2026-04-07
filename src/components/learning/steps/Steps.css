@@ -613,3 +613,29 @@
   min-width: 70px;
   text-align: center;
 }
+
+/* ── Speed control (listen button group) ── */
+/* Wraps 🔊 + speed badge so they stay together without breaking surrounding layout */
+.listen-speed-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+/* Tiny pill showing 1× or 0.75× — click to toggle */
+.speed-toggle-btn {
+  background: var(--el-surface);
+  border: none;
+  border-radius: 20px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--el-text-muted);
+  cursor: pointer;
+  font-family: 'Manrope', system-ui, sans-serif;
+  letter-spacing: 0.02em;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.speed-toggle-btn:hover { background: var(--el-surface-high); color: var(--el-primary); }
