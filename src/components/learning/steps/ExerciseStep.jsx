@@ -182,6 +182,31 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
             )}
           </div>
 
+          {/* Submit button for mobile (no Enter key) */}
+          {!showResult && (
+            <button
+              onClick={() => selectedAnswer?.trim() && checkAnswer(selectedAnswer)}
+              disabled={!selectedAnswer?.trim()}
+              style={{
+                width: '100%',
+                padding: '11px 0',
+                marginTop: 8,
+                background: selectedAnswer?.trim() ? 'var(--el-primary)' : 'var(--el-surface)',
+                color: selectedAnswer?.trim() ? '#fff' : 'var(--el-text-muted)',
+                border: 'none',
+                borderRadius: 10,
+                fontSize: 14,
+                fontWeight: 700,
+                cursor: selectedAnswer?.trim() ? 'pointer' : 'default',
+                fontFamily: 'Manrope, sans-serif',
+                transition: 'background 0.2s, color 0.2s',
+                flexShrink: 0,
+              }}
+            >
+              Verificar
+            </button>
+          )}
+
           {/* Hint panel level 1: first half of each word + context */}
           {hintLevel === 1 && !showResult && (
             <div style={{
