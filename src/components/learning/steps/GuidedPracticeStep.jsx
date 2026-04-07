@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { PronunciationButton } from '../../common/PronunciationButton'
 import './Steps.css'
 
-export default function GuidedPracticeStep({ data, lessonId, onCanAdvance }) {
+export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onActivity }) {
   const scenarios = data?.scenarios || []
   const [current, setCurrent] = useState(0)
   const audioRef = useRef(null)
@@ -43,6 +43,8 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance }) {
 
   function savePronunScore(phrase, score) {
     if (!lessonId) return
+    // Notify parent that pronunciation was attempted
+    onActivity?.('pronunciation')
     try {
       const key = `lesson_pronun_scores_${lessonId}`
       const existing = JSON.parse(localStorage.getItem(key) || '{}')

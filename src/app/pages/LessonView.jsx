@@ -50,6 +50,18 @@ export default function LessonView() {
   const [activeBadgeToast, setActiveBadgeToast] = useState(null)
   const [stepToast, setStepToast] = useState(null)
   const [hasCompleted, setHasCompleted] = useState(false)
+  const [showIncompleteModal, setShowIncompleteModal] = useState(false)
+  const [incompleteItems, setIncompleteItems] = useState([])
+
+  // Track which optional activities the user has done
+  const [completedActivities, setCompletedActivities] = useState(new Set())
+  function logActivity(key) {
+    setCompletedActivities(prev => {
+      const next = new Set(prev)
+      next.add(key)
+      return next
+    })
+  }
 
   // Each self-advancing step exposes whether the user can advance
   const [canAdvance, setCanAdvance] = useState(true)
@@ -204,14 +216,47 @@ export default function LessonView() {
     }
   }
 
+  // Check which optional activities were skipped
+  function getIncompleteItems() {
+    const items = []
+    // Check pronunciation practice (GuidedPracticeStep)
+    const content = lesson?.content || {}
+    const hasPracticeScenarios = (content.practice?.scenarios || []).length > 0
+    if (hasPracticeScenarios && !completedActivities.has('pronunciation')) {
+      const pronunKey = `lesson_pronun_scores_${lessonId}`
+      const pronunScores = JSON.parse(localStorage.getItem(pronunKey) || '{}')
+      if (Object.keys(pronunScores).length === 0) {
+        items.push({
+          icon: '🗣️',
+          label: 'Practicar pronunciación',
+          detail: 'No practicaste la pronunciación en "Ahora habla tú"',
+          stepIdx: STEPS.findIndex(s => s.key === 'practice'),
+        })
+      }
+    }
+    return items
+  }
+
   function handleNext() {
     if (!canAdvance) return
     const isLast = currentStep === STEPS.length - 1
     if (isLast) {
+      // Gate: check for missing activities before completing
+      const missing = getIncompleteItems()
+      if (missing.length > 0 && !hasCompleted) {
+        setIncompleteItems(missing)
+        setShowIncompleteModal(true)
+        return
+      }
       handleLessonComplete()
     } else {
       goToStep(currentStep + 1)
     }
+  }
+
+  function handleForceComplete() {
+    setShowIncompleteModal(false)
+    handleLessonComplete()
   }
 
   const MOTIVATIONAL = ['🚀 Preparando tu lección...', '💡 Cargando vocabulario...', '🎯 Listo para aprender...', '🗣️ Preparando ejercicios...', '📖 Cargando contenido...']
@@ -246,6 +291,35 @@ export default function LessonView() {
       {/* ── Notifications (outside shell so they float) ── */}
       <XPNotification xp={25} show={showXP} />
       {stepToast && <div className="lesson-step-toast animate-fadeIn">{stepToast}</div>}
+      {/* ── Incomplete activities modal ── */}
+      {showIncompleteModal && (
+        <div className="incomplete-overlay" onClick={() => setShowIncompleteModal(false)}>
+          <div className="incomplete-modal" onClick={e => e.stopPropagation()}>
+            <div className="incomplete-icon">⚠️</div>
+            <h3 className="incomplete-title">¡Te faltaron actividades!</h3>
+            <p className="incomplete-sub">Completa estas actividades para aprovechar al máximo la lección:</p>
+            <div className="incomplete-list">
+              {incompleteItems.map((item, i) => (
+                <div key={i} className="incomplete-item">
+                  <span className="incomplete-item-icon">{item.icon}</span>
+                  <div className="incomplete-item-text">
+                    <span className="incomplete-item-label">{item.label}</span>
+                    <span className="incomplete-item-detail">{item.detail}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="incomplete-actions">
+              <button className="incomplete-btn-primary" onClick={() => {
+                setShowIncompleteModal(false)
+                if (incompleteItems[0]?.stepIdx >= 0) goToStep(incompleteItems[0].stepIdx)
+              }}>← Volver a practicar</button>
+              <button className="incomplete-btn-secondary" onClick={handleForceComplete}>Finalizar de todas formas</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {activeBadgeToast && (
         <div className="badge-toast animate-fadeIn">
           <span className="badge-toast-emoji">{activeBadgeToast.emoji}</span>
@@ -329,6 +403,7 @@ export default function LessonView() {
             lessonId={lessonId}
             onComplete={isLast ? handleLessonComplete : undefined}
             onCanAdvance={setCanAdvance}
+            onActivity={logActivity}
           />
         </div>
 
