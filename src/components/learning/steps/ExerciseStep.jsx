@@ -12,12 +12,14 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
   const [score, setScore] = useState(0)
   const [finished, setFinished] = useState(false)
   const [mistakes, setMistakes] = useState([])
+  const [hintLevel, setHintLevel] = useState(0) // 0=none, 1=partial, 2=full
 
   const current = exercises[currentIndex]
 
   // While answer not verified, disable global Next button
   useEffect(() => {
     onCanAdvance?.(false)
+    setHintLevel(0) // reset hint on new question
   }, [currentIndex])
 
   // After result shown, re-enable global Next button only when finished
@@ -52,6 +54,7 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
       setCurrentIndex(i => i + 1)
       setSelectedAnswer(null)
       setShowResult(false)
+      setHintLevel(0)
       onCanAdvance?.(false)
     }
   }
@@ -134,14 +137,62 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
       {/* Fill in blank */}
       {current.type === 'fill' && (
         <div style={{ flexShrink: 0 }}>
-          <input
-            className="exercise-input"
-            placeholder="Escribe tu respuesta..."
-            value={selectedAnswer || ''}
-            onChange={e => setSelectedAnswer(e.target.value)}
-            disabled={showResult}
-            onKeyDown={e => e.key === 'Enter' && !showResult && checkAnswer(selectedAnswer)}
-          />
+          {/* Input row + hint icon */}
+          <div style={{ position: 'relative' }}>
+            <input
+              className="exercise-input"
+              placeholder="Escribe tu respuesta..."
+              value={selectedAnswer || ''}
+              onChange={e => setSelectedAnswer(e.target.value)}
+              disabled={showResult}
+              onKeyDown={e => e.key === 'Enter' && !showResult && checkAnswer(selectedAnswer)}
+              style={{ paddingRight: 44 }}
+            />
+            {/* Hint button — only while not answered */}
+            {!showResult && (
+              <button
+                onClick={() => {
+                  if (hintLevel === 0) {
+                    // Level 1: show first letter of each word + underscores
+                    const hint = current.correct
+                      .split(' ')
+                      .map(w => w[0] + '_'.repeat(Math.max(0, w.length - 1)))
+                      .join(' ')
+                    setSelectedAnswer(hint)
+                    setHintLevel(1)
+                  } else {
+                    // Level 2: reveal full answer
+                    setSelectedAnswer(current.correct)
+                    setHintLevel(2)
+                  }
+                }}
+                title={hintLevel === 0 ? 'Ver pista' : hintLevel === 1 ? 'Ver respuesta' : 'Respuesta revelada'}
+                disabled={hintLevel >= 2}
+                style={{
+                  position: 'absolute',
+                  right: 8,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: hintLevel < 2 ? 'pointer' : 'default',
+                  fontSize: 20,
+                  lineHeight: 1,
+                  opacity: hintLevel >= 2 ? 0.4 : 1,
+                  transition: 'opacity 0.2s',
+                }}
+                aria-label="Pista"
+              >
+                {hintLevel === 0 ? '💡' : hintLevel === 1 ? '🔓' : '✓'}
+              </button>
+            )}
+          </div>
+          {/* Hint label */}
+          {hintLevel > 0 && !showResult && (
+            <p style={{ fontSize: 11, color: 'var(--el-text-muted)', marginTop: 4, fontStyle: 'italic', paddingLeft: 2 }}>
+              {hintLevel === 1 ? '💡 Pista: primeras letras reveladas — edita si quieres' : '🔓 Respuesta revelada — se contará como incorrecta'}
+            </p>
+          )}
         </div>
       )}
 
