@@ -9,14 +9,37 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance }) {
 
   useEffect(() => { onCanAdvance?.(true) }, [])
 
-  // Auto-play audio on scenario change
+  // Auto-play audio on scenario change (and on first mount)
   useEffect(() => {
     if (!scenarios.length) return
+    // Small delay to let the <audio> element mount/update its src
     const t = setTimeout(() => {
-      if (audioRef.current) { audioRef.current.currentTime = 0; audioRef.current.play().catch(() => {}) }
-    }, 350)
+      playAudio()
+    }, 400)
     return () => clearTimeout(t)
-  }, [current])
+  }, [current, scenarios.length])
+
+  function playAudio() {
+    const el = audioRef.current
+    if (el) {
+      el.currentTime = 0
+      el.play().catch(() => {})
+      return
+    }
+    // Fallback: TTS if no audio file
+    const scenario = scenarios[current]
+    if (scenario?.phrase && window.speechSynthesis) {
+      window.speechSynthesis.cancel()
+      const u = new SpeechSynthesisUtterance(scenario.phrase)
+      u.lang = 'en-US'
+      u.rate = 0.85
+      const voices = window.speechSynthesis.getVoices()
+      const voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel')))
+        || voices.find(v => v.lang.startsWith('en-US'))
+      if (voice) u.voice = voice
+      window.speechSynthesis.speak(u)
+    }
+  }
 
   function savePronunScore(phrase, score) {
     if (!lessonId) return
@@ -36,6 +59,11 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance }) {
 
   return (
     <div className="step-wrapper animate-fadeIn">
+      {/* Hidden audio — rendered first so ref is ready for auto-play */}
+      {scenario.audioUrl && (
+        <audio key={`audio-${current}`} ref={audioRef} src={scenario.audioUrl} preload="auto" style={{ display: 'none' }} />
+      )}
+
       {/* Counter */}
       <div className="step-counter">Situación {current + 1} / {scenarios.length}</div>
 
@@ -52,16 +80,11 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance }) {
         <p className="practice-response-es">{scenario.translation}</p>
       </div>
 
-      {/* Hidden audio */}
-      {scenario.audioUrl && (
-        <audio ref={audioRef} src={scenario.audioUrl} preload="auto" style={{ display: 'none' }} />
-      )}
-
       {/* Action buttons */}
       <div className="step-btn-row">
         <button
           className="step-circle-btn"
-          onClick={() => { if (audioRef.current) { audioRef.current.currentTime = 0; audioRef.current.play().catch(() => {}) } }}
+          onClick={playAudio}
           aria-label="Escuchar" title="Escuchar"
         >🔊</button>
         <PronunciationButton key={current} targetText={scenario.phrase} onScore={(s) => savePronunScore(scenario.phrase, s)} />
