@@ -56,21 +56,20 @@ export function AuthProvider({ children }) {
           return
         }
 
-        // Has session:
-        // - INITIAL_SESSION: fresh page load with existing session
-        // - SIGNED_IN: login or token refresh on F5
-        // - TOKEN_REFRESHED: background token refresh (don't flash spinner)
-        if (event === 'TOKEN_REFRESHED') {
-          // Silent update — don't reset loading state (user already sees content)
+        // TOKEN_REFRESHED or SIGNED_IN with same user already loaded
+        // → silent update, don't flash spinner (fixes screen-lock race condition)
+        if (
+          event === 'TOKEN_REFRESHED' ||
+          (event === 'SIGNED_IN' && user?.id === currentUser.id && profileLoaded)
+        ) {
           setUser(currentUser)
-          // Update profile silently in background
           getProfile(currentUser.id)
             .then(p => { if (mounted) setProfile(p) })
             .catch(() => {})
           return
         }
 
-        // For INITIAL_SESSION and SIGNED_IN: show spinner + load profile
+        // Fresh INITIAL_SESSION or real new login: show spinner + load profile
         setLoading(true)
         setProfileLoaded(false)
         setUser(currentUser)
@@ -78,9 +77,25 @@ export function AuthProvider({ children }) {
       }
     )
 
+    // Refresh session silently when user comes back from phone screen lock
+    function handleVisibilityChange() {
+      if (document.visibilityState === 'visible') {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (session?.user && mounted) {
+            setUser(session.user)
+            getProfile(session.user.id)
+              .then(p => { if (mounted) setProfile(p) })
+              .catch(() => {})
+          }
+        }).catch(() => {})
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
     return () => {
       mounted = false
       subscription.unsubscribe()
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [])
 

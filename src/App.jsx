@@ -70,8 +70,11 @@ function AppLayoutGuard() {
 function AccessRequired({ children }) {
   const { user, hasAccess, loading, profileLoaded } = useAuth()
   if (loading) return <LoadingSpinner fullPage />
-  // Wait for profile fetch to COMPLETE (success or failure)
-  if (user && !profileLoaded) return <LoadingSpinner fullPage />
+  // No user at all (session expired or logged out) → go to login, not /sin-acceso
+  if (!user) return <Navigate to="/login" replace />
+  // User exists but profile still loading → show spinner
+  if (!profileLoaded) return <LoadingSpinner fullPage />
+  // User loaded but no paid access
   if (!hasAccess) return <Navigate to="/sin-acceso" replace />
   return children
 }
