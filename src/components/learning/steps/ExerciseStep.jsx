@@ -66,20 +66,28 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
       : selectedAnswer === current.correct
   }
 
+  // Build a revealing hint: first half of each word visible
+  function buildHint(answer) {
+    return answer.split(' ').map(w => {
+      const show = Math.max(1, Math.ceil(w.length / 2))
+      return w.slice(0, show) + '\u00b7'.repeat(w.length - show)
+    }).join('  ')
+  }
+
   if (exercises.length === 0) return (
     <div className="step-wrapper">
       <p style={{ color: 'var(--el-text-muted)', fontSize: 14 }}>Ejercicios en desarrollo...</p>
     </div>
   )
 
-  // ── Finished screen ──
+  // Finished screen
   if (finished) {
     const percent = Math.round((score / exercises.length) * 100)
     return (
       <div className="step-wrapper animate-fadeIn">
         <div className="exercise-result">
-          <div className="exercise-result-emoji">{percent >= 80 ? '🎉' : percent >= 50 ? '💪' : '📚'}</div>
-          <p className="exercise-result-title">¡Ejercicios completados!</p>
+          <div className="exercise-result-emoji">{percent >= 80 ? '\ud83c\udf89' : percent >= 50 ? '\ud83d\udcaa' : '\ud83d\udcda'}</div>
+          <p className="exercise-result-title">{'\u00a1'}Ejercicios completados!</p>
           <p className="exercise-result-sub">{score} de {exercises.length} correctas ({percent}%)</p>
           <div className="exercise-result-bar-wrap">
             <div className="exercise-result-bar-fill" style={{
@@ -88,14 +96,14 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
             }} />
           </div>
           <p style={{ fontSize: 13, color: 'var(--el-text-muted)' }}>
-            {percent === 100 ? '¡Perfecto! Dominaste todos los ejercicios 🏆' : percent < 80 ? 'Repasa las frases para mejorar tu puntaje' : '¡Muy bien! Sigue así.'}
+            {percent === 100 ? '\u00a1Perfecto! Dominaste todos los ejercicios \ud83c\udfc6' : percent < 80 ? 'Repasa las frases para mejorar tu puntaje' : '\u00a1Muy bien! Sigue as\u00ed.'}
           </p>
         </div>
       </div>
     )
   }
 
-  // ── Question in progress ──
+  // Question in progress
   const progressPct = Math.round((currentIndex / exercises.length) * 100)
 
   return (
@@ -153,7 +161,7 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
               <button
                 onClick={() => setHintLevel(h => Math.min(h + 1, 2))}
                 disabled={hintLevel >= 2}
-                title={hintLevel === 0 ? 'Ver pista' : hintLevel === 1 ? 'Ver respuesta completa' : 'Pista máxima'}
+                title={hintLevel === 0 ? 'Ver pista' : hintLevel === 1 ? 'Ver respuesta completa' : 'Pista m\u00e1xima'}
                 style={{
                   position: 'absolute',
                   right: 10,
@@ -169,12 +177,12 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
                 }}
                 aria-label="Pista"
               >
-                {hintLevel === 0 ? '💡' : hintLevel === 1 ? '🔓' : '✓'}
+                {hintLevel === 0 ? '\ud83d\udca1' : hintLevel === 1 ? '\ud83d\udd13' : '\u2713'}
               </button>
             )}
           </div>
 
-          {/* Hint panel — shown BELOW the input, never fills it */}
+          {/* Hint panel level 1: first half of each word + context */}
           {hintLevel === 1 && !showResult && (
             <div style={{
               background: 'rgba(245,158,11,0.10)',
@@ -183,17 +191,29 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
               padding: '10px 14px',
               marginTop: 8,
             }}>
-              <p style={{ fontSize: 10, fontWeight: 700, color: '#F59E0B', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
-                💡 Pista
+              <p style={{ fontSize: 10, fontWeight: 700, color: '#F59E0B', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
+                {'\ud83d\udca1'} Pista
               </p>
-              <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--el-text)', letterSpacing: 3, fontFamily: 'monospace' }}>
-                {current.correct.split(' ').map(w => w[0] + ' ‿'.repeat(w.length - 1)).join('  ')}
+              <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--el-text)', letterSpacing: 2, fontFamily: 'monospace' }}>
+                {buildHint(current.correct)}
               </p>
-              <p style={{ fontSize: 11, color: 'var(--el-text-muted)', marginTop: 4 }}>
-                {current.correct.split(' ').length} {current.correct.split(' ').length === 1 ? 'palabra' : 'palabras'} • {current.correct.length} letras en total
+              <p style={{ fontSize: 12, color: 'var(--el-text-muted)', marginTop: 6 }}>
+                {current.correct.split(' ').length} {current.correct.split(' ').length === 1 ? 'palabra' : 'palabras'} {'\u00b7'} {current.correct.length} letras en total
               </p>
+              {current.context && (
+                <p style={{ fontSize: 12, color: 'var(--el-text-muted)', marginTop: 3, fontStyle: 'italic' }}>
+                  {'\ud83d\udcdd'} Contexto: &quot;{current.context}&quot;
+                </p>
+              )}
+              {current.explanation && (
+                <p style={{ fontSize: 12, color: '#F59E0B', marginTop: 3 }}>
+                  {'\ud83d\udca1'} {current.explanation}
+                </p>
+              )}
             </div>
           )}
+
+          {/* Hint panel level 2: full answer */}
           {hintLevel === 2 && !showResult && (
             <div style={{
               background: 'rgba(239,68,68,0.10)',
@@ -203,7 +223,7 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
               marginTop: 8,
             }}>
               <p style={{ fontSize: 10, fontWeight: 700, color: '#EF4444', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
-                🔓 Respuesta — escríbela tú mismo
+                {'\ud83d\udd13'} Respuesta {'\u2014'} escr{'\u00ed'}bela t{'\u00fa'} mismo
               </p>
               <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--el-text)' }}>
                 {current.correct}
@@ -217,9 +237,9 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
       {showResult && (
         <div className={`exercise-feedback ${isCurrentCorrect() ? 'correct' : 'wrong'} animate-fadeIn`}>
           {isCurrentCorrect()
-            ? '✅ ¡Correcto!'
-            : `❌ Correcta: "${current.correct}"`}
-          {current.explanation && <p style={{ fontSize: 12, marginTop: 4, opacity: 0.85 }}>💡 {current.explanation}</p>}
+            ? '\u2705 \u00a1Correcto!'
+            : `\u274c Correcta: "${current.correct}"`}
+          {current.explanation && <p style={{ fontSize: 12, marginTop: 4, opacity: 0.85 }}>{'\ud83d\udca1'} {current.explanation}</p>}
         </div>
       )}
 
@@ -242,7 +262,7 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
             flexShrink: 0,
           }}
         >
-          {currentIndex + 1 >= exercises.length ? 'Ver resultado →' : 'Siguiente ejercicio →'}
+          {currentIndex + 1 >= exercises.length ? 'Ver resultado \u2192' : 'Siguiente ejercicio \u2192'}
         </button>
       )}
     </div>
