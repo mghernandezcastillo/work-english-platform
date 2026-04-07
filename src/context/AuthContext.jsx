@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import { getProfile } from '../lib/auth'
 
@@ -19,6 +19,14 @@ export function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [profileLoaded, setProfileLoaded] = useState(false)
+
+  // Refs so the onAuthStateChange closure always reads the LATEST values
+  const userRef = useRef(null)
+  const profileLoadedRef = useRef(false)
+
+  // Keep refs in sync
+  useEffect(() => { userRef.current = user }, [user])
+  useEffect(() => { profileLoadedRef.current = profileLoaded }, [profileLoaded])
 
   useEffect(() => {
     let mounted = true
@@ -47,7 +55,7 @@ export function AuthProvider({ children }) {
 
         const currentUser = session?.user ?? null
 
-        // No session cases
+        // ── No session ──
         if (!currentUser) {
           setUser(null)
           setProfile(null)
@@ -56,20 +64,19 @@ export function AuthProvider({ children }) {
           return
         }
 
-        // TOKEN_REFRESHED or SIGNED_IN with same user already loaded
-        // → silent update, don't flash spinner (fixes screen-lock race condition)
-        if (
-          event === 'TOKEN_REFRESHED' ||
-          (event === 'SIGNED_IN' && user?.id === currentUser.id && profileLoaded)
-        ) {
+        // ── Silent update: same user coming back (wake-up, token refresh) ──
+        // Use refs to read the CURRENT values, not the stale closure values
+        const alreadyLoaded = userRef.current?.id === currentUser.id && profileLoadedRef.current
+        if (event === 'TOKEN_REFRESHED' || (event === 'SIGNED_IN' && alreadyLoaded)) {
           setUser(currentUser)
+          // Silently refresh profile in background
           getProfile(currentUser.id)
             .then(p => { if (mounted) setProfile(p) })
             .catch(() => {})
           return
         }
 
-        // Fresh INITIAL_SESSION or real new login: show spinner + load profile
+        // ── Fresh session (first load or actual new login) ──
         setLoading(true)
         setProfileLoaded(false)
         setUser(currentUser)
@@ -77,18 +84,22 @@ export function AuthProvider({ children }) {
       }
     )
 
-    // Refresh session silently when user comes back from phone screen lock
+    // ── Refresh session when user comes back from phone screen lock ──
     function handleVisibilityChange() {
-      if (document.visibilityState === 'visible') {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-          if (session?.user && mounted) {
-            setUser(session.user)
-            getProfile(session.user.id)
-              .then(p => { if (mounted) setProfile(p) })
-              .catch(() => {})
-          }
-        }).catch(() => {})
-      }
+      if (document.visibilityState !== 'visible') return
+      console.log('[Auth] Tab visible — refreshing session...')
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (!mounted) return
+        if (session?.user) {
+          setUser(session.user)
+          getProfile(session.user.id)
+            .then(p => { if (mounted) setProfile(p) })
+            .catch(() => {})
+        }
+        // If no session, let onAuthStateChange handle the logout redirect
+      }).catch(err => {
+        console.warn('[Auth] visibilitychange getSession error:', err.message)
+      })
     }
     document.addEventListener('visibilitychange', handleVisibilityChange)
 
