@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../../../context/AuthContext'
 import { checkAndAwardBadges } from '../../../lib/xp'
 import './Steps.css'
@@ -13,6 +13,7 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
   const [finished, setFinished] = useState(false)
   const [mistakes, setMistakes] = useState([])
   const [hintLevel, setHintLevel] = useState(0) // 0=none, 1=partial, 2=full
+  const inputRef = useRef(null)
 
   const current = exercises[currentIndex]
 
@@ -20,6 +21,10 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
   useEffect(() => {
     onCanAdvance?.(false)
     setHintLevel(0) // reset hint on new question
+    // Auto-focus fill input so keyboard opens immediately
+    if (exercises[currentIndex]?.type === 'fill') {
+      setTimeout(() => inputRef.current?.focus(), 120)
+    }
   }, [currentIndex])
 
   // After result shown, re-enable global Next button only when finished
@@ -148,6 +153,7 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
           {/* Input row + hint icon */}
           <div style={{ position: 'relative' }}>
             <input
+              ref={inputRef}
               className="exercise-input"
               placeholder="Escribe tu respuesta..."
               value={selectedAnswer || ''}
