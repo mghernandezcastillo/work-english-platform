@@ -348,6 +348,17 @@
   font-style: italic;
 }
 
+/* PronunciationButton container — grows to fill available space, scrolls if needed */
+.practice-pronun-area {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* hide scrollbar visually but keep it functional */
+  scrollbar-width: none;
+}
+.practice-pronun-area::-webkit-scrollbar { display: none; }
+
 /* ── Objective ── */
 .objective-title {
   font-size: 20px;

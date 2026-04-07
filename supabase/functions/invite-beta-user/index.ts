@@ -13,7 +13,7 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const BREVO_API_KEY = Deno.env.get("BREVO_API_KEY")!;
 const APP_URL = "https://english-for-work.vercel.app";
-const SENDER = { name: "English for Work", email: "mghernandezcastillo@gmail.com" };
+const SENDER = { name: "English for Work", email: "englishforworkapp@gmail.com" };
 
 Deno.serve(async (req: Request) => {
   const cors = { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" };

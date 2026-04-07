@@ -6,7 +6,7 @@ const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const BREVO_API_KEY = Deno.env.get("BREVO_API_KEY")!;
 const APP_URL = "https://english-for-work.vercel.app";
 // Sender verificado en Brevo — cambiar a hola@englishforwork.co cuando el dominio esté configurado
-const SENDER = { name: "English for Work", email: "mghernandezcastillo@gmail.com" };
+const SENDER = { name: "English for Work", email: "englishforworkapp@gmail.com" };
 
 async function sendBrevoEmail(to: string, name: string, subject: string, html: string) {
   const res = await fetch("https://api.brevo.com/v3/smtp/email", {
@@ -71,7 +71,7 @@ const templates: Record<number, (name: string, lessons: number) => { subject: st
     html: base(`<p>Hola <strong>${name.split(" ")[0]}</strong>!</p>
       <p>Llevas 5 dias${lessons>0?` y completaste <strong>${lessons} leccion${lessons>1?"es":""}</strong>`:""}.
       Puedes <strong>contarme como va tu experiencia</strong>?</p>
-      <a class="cta" href="mailto:mghernandezcastillo@gmail.com?subject=Mi%20experiencia%20con%20English%20for%20Work">Escribirme &#8594;</a>
+      <a class="cta" href="mailto:englishforworkapp@gmail.com?subject=Mi%20experiencia%20con%20English%20for%20Work">Escribirme &#8594;</a>
       <p style="font-size:13px;color:#9ca3af;text-align:center">O simplemente responde este email.</p>`),
   }),
   7: (name, lessons) => ({

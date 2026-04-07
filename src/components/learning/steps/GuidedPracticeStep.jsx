@@ -76,20 +76,24 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         <p className="practice-prompt-text">"<ClickablePhrase text={scenario.prompt || scenario.context} />"</p>
       </div>
 
-      {/* Response card — takes flex space */}
-      <div className="practice-response-card" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      {/* Response card */}
+      <div className="practice-response-card">
         <div className="practice-response-label">Tú respondes:</div>
         <p className="practice-response-text"><ClickablePhrase text={scenario.phrase} /></p>
         <p className="practice-response-es">{scenario.translation}</p>
       </div>
 
-      {/* Action buttons */}
-      <div className="step-btn-row">
+      {/* Listen button — separate row, compact */}
+      <div className="step-btn-row" style={{ marginTop: 8 }}>
         <button
           className="step-circle-btn"
           onClick={playAudio}
           aria-label="Escuchar" title="Escuchar"
         >🔊</button>
+      </div>
+
+      {/* PronunciationButton — own flex area so results don't overlap */}
+      <div className="practice-pronun-area">
         <PronunciationButton key={current} targetText={scenario.phrase} onScore={(s) => savePronunScore(scenario.phrase, s)} />
       </div>
 
