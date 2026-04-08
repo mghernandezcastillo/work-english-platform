@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
@@ -24,6 +24,20 @@ export default function SimulationView() {
   const [showTyping, setShowTyping] = useState(false)
   const [showPronunOffer, setShowPronunOffer] = useState(false)  // offer to practice pronunciation
   const [showPronunPanel, setShowPronunPanel] = useState(false)  // pronunciation panel active
+  const audioRef = useRef(null)
+
+  // Auto-play turn audio when turn changes or simulation first loads
+  useEffect(() => {
+    const turns = simulation?.content?.turns || []
+    const url = turns[currentTurn]?.audioUrl
+    if (!url || !audioRef.current) return
+    const t = setTimeout(() => {
+      audioRef.current.src = url
+      audioRef.current.currentTime = 0
+      audioRef.current.play().catch(() => {})
+    }, 400)
+    return () => clearTimeout(t)
+  }, [currentTurn, simulation])
 
   useEffect(() => { loadSimulation() }, [simId])
 
@@ -166,6 +180,8 @@ export default function SimulationView() {
 
   return (
     <div className="sim-view animate-fadeIn">
+      {/* Hidden audio for auto-play */}
+      <audio ref={audioRef} style={{ display: 'none' }} />
       <button className="route-back" onClick={() => navigate(-1)}>← Volver</button>
 
       <h3 className="sim-title">{simulation.title}</h3>
