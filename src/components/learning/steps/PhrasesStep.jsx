@@ -13,7 +13,24 @@ export default function PhrasesStep({ data, onCanAdvance, onActivity, muted }) {
   const speed = SPEEDS[speedIdx]
   const audioRef = useRef(null)
 
-  useEffect(() => { onCanAdvance?.(true) }, [])
+  // Track which sub-steps (phrases) the user has visited
+  const [visited, setVisited] = useState(new Set([0])) // first one is visited on mount
+
+  // Only allow advancing when ALL phrases have been viewed
+  useEffect(() => {
+    const allVisited = phrases.length > 0 && visited.size >= phrases.length
+    onCanAdvance?.(allVisited)
+  }, [visited, phrases.length])
+
+  // Navigate to a sub-step and mark it as visited
+  function goTo(idx) {
+    setCurrent(idx)
+    setVisited(prev => {
+      const next = new Set(prev)
+      next.add(idx)
+      return next
+    })
+  }
 
   // Auto-play audio on card change
   useEffect(() => {
@@ -84,15 +101,15 @@ export default function PhrasesStep({ data, onCanAdvance, onActivity, muted }) {
       {/* Pagination dots */}
       <div className="step-page-dots">
         {phrases.map((_, i) => (
-          <button key={i} className={`step-page-dot ${i === current ? 'active' : i < current ? 'done' : ''}`} onClick={() => setCurrent(i)} />
+          <button key={i} className={`step-page-dot ${i === current ? 'active' : visited.has(i) ? 'done' : ''}`} onClick={() => goTo(i)} />
         ))}
       </div>
 
       {/* Inline prev/next — use chevron symbols to not duplicate footer "Siguiente" */}
       <div className="step-inline-nav">
-        <button className="step-inline-btn" onClick={() => current > 0 && setCurrent(c => c - 1)} disabled={current === 0}>‹</button>
+        <button className="step-inline-btn" onClick={() => current > 0 && goTo(current - 1)} disabled={current === 0}>‹</button>
         <span className="step-inline-label">{current + 1} de {phrases.length}</span>
-        <button className="step-inline-btn pulse" onClick={() => current < phrases.length - 1 && setCurrent(c => c + 1)} disabled={current === phrases.length - 1}>›</button>
+        <button className="step-inline-btn pulse" onClick={() => current < phrases.length - 1 && goTo(current + 1)} disabled={current === phrases.length - 1}>›</button>
       </div>
     </div>
   )

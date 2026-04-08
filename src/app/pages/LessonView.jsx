@@ -22,7 +22,7 @@ import '../../components/common/BadgesPanel.css'
 // startsLocked: false → Next button starts ENABLED immediately (user controls pace)
 const STEPS = [
   { key: 'objective',     label: '¿Qué aprenderás?', icon: '🎯', component: ObjectiveStep,       startsLocked: false },
-  { key: 'phrases',       label: 'Escucha y repite',  icon: '💬', component: PhrasesStep,         startsLocked: false },
+  { key: 'phrases',       label: 'Escucha y repite',  icon: '💬', component: PhrasesStep,         startsLocked: true  },
   { key: 'explanation',   label: '¿Por qué así?',     icon: '💡', component: ExplanationStep,     startsLocked: false },
   { key: 'exercises',     label: 'Pon a prueba',       icon: '✏️', component: ExerciseStep,        startsLocked: true  },
   { key: 'match',         label: 'Conecta frases',     icon: '🔗', component: MatchStep,           startsLocked: true, dataKey: 'phrases' },
