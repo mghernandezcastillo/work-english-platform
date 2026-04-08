@@ -686,11 +686,21 @@
 }
 /* Next button pulses to guide the user */
 .step-inline-btn.pulse:not(:disabled) {
-  animation: btn-pulse 1.8s ease-in-out infinite;
+  animation: btn-pulse 1.6s ease-in-out infinite;
 }
 @keyframes btn-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); background: var(--el-surface); }
-  50%       { box-shadow: 0 0 0 6px rgba(16,185,129,0.18); background: var(--el-surface-high); }
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(16,185,129,0);
+    background: var(--el-surface);
+    transform: scale(1);
+    color: var(--el-primary);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(16,185,129,0.30), 0 0 16px rgba(16,185,129,0.45);
+    background: rgba(16,185,129,0.18);
+    transform: scale(1.14);
+    color: #fff;
+  }
 }
 .step-inline-label {
   font-size: 12px;
