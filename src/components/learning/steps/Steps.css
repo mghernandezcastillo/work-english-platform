@@ -150,7 +150,7 @@
   margin-bottom: 8px;
 }
 .expl-text {
-  font-size: clamp(16px, 4.2vw, 19px);
+  font-size: clamp(18px, 4.5vw, 21px);
   color: var(--el-text);
   line-height: 1.6;
   margin-bottom: 12px;
@@ -169,7 +169,7 @@
   margin-bottom: 4px;
 }
 .expl-example-text {
-  font-size: clamp(15px, 3.8vw, 17px);
+  font-size: clamp(17px, 4.2vw, 19px);
   font-weight: 600;
   color: var(--el-text);
 }
@@ -308,7 +308,7 @@
   border: none;
   border-radius: 10px;
   padding: 12px 10px;
-  font-size: clamp(12px, 3.2vw, 14px);
+  font-size: clamp(14px, 3.8vw, 16px);
   color: var(--el-text);
   cursor: pointer;
   text-align: center;
@@ -353,7 +353,7 @@
   margin-bottom: 4px;
 }
 .practice-prompt-text {
-  font-size: 15px;
+  font-size: clamp(16px, 4.2vw, 18px);
   color: var(--el-primary-light);
   font-style: italic;
   line-height: 1.4;
@@ -374,14 +374,14 @@
   margin-bottom: 6px;
 }
 .practice-response-text {
-  font-size: clamp(16px, 4.5vw, 19px);
+  font-size: clamp(18px, 4.8vw, 21px);
   font-weight: 700;
   color: var(--el-text);
   line-height: 1.35;
   margin-bottom: 6px;
 }
 .practice-response-es {
-  font-size: 14px;
+  font-size: clamp(15px, 3.8vw, 16px);
   color: var(--el-text-muted);
   font-style: italic;
 }
@@ -458,14 +458,14 @@
   min-width: 0;
 }
 .practice-sentence-en {
-  font-size: clamp(14px, 3.8vw, 16px);
+  font-size: clamp(16px, 4.2vw, 18px);
   font-weight: 600;
   color: var(--el-text);
   line-height: 1.4;
   margin: 0 0 3px;
 }
 .practice-sentence-es {
-  font-size: 12px;
+  font-size: clamp(13px, 3.3vw, 14px);
   color: var(--el-text-muted);
   font-style: italic;
   line-height: 1.35;
