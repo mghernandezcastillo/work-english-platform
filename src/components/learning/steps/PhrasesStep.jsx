@@ -67,17 +67,17 @@ export default function PhrasesStep({ data, onCanAdvance, onActivity, muted }) {
   const phrase = phrases[current]
 
   return (
-    <div className="step-wrapper animate-fadeIn">
+    <div className="step-wrapper-scroll animate-fadeIn">
       {/* Counter */}
       <div className="step-counter">{current + 1} / {phrases.length}</div>
 
       {/* Main phrase card */}
-      <div className="step-card-glass" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 0 }}>
+      <div className="step-card-glass" style={{ flexShrink: 0 }}>
         <p className="phrase-main-text"><ClickablePhrase text={phrase.en} /></p>
         <p className="phrase-translation">{phrase.es}</p>
 
-        {/* Action buttons */}
-        <div className="step-btn-row">
+        {/* Listen + speed */}
+        <div className="step-btn-row" style={{ justifyContent: 'flex-start', marginTop: 14 }}>
           <div className="listen-speed-group">
             <button
               className="step-circle-btn"
@@ -89,8 +89,12 @@ export default function PhrasesStep({ data, onCanAdvance, onActivity, muted }) {
               {speed}×
             </button>
           </div>
-          <PronunciationButton key={current} targetText={phrase.en} onScore={() => onActivity?.('phrases_pronunciation')} />
         </div>
+      </div>
+
+      {/* Pronunciation — outside the card so result can expand without overlapping nav */}
+      <div style={{ flexShrink: 0, marginTop: 8 }}>
+        <PronunciationButton key={current} targetText={phrase.en} onScore={() => onActivity?.('phrases_pronunciation')} />
       </div>
 
       {/* Hidden audio element for auto-play */}
