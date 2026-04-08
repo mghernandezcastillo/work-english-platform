@@ -23,7 +23,24 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
   const speed = SPEEDS[speedIdx]
   const audioRef = useRef(null)
 
-  useEffect(() => { onCanAdvance?.(true) }, [])
+  // Track which scenarios the user has visited
+  const [visited, setVisited] = useState(new Set([0])) // first one is visited on mount
+
+  // Only allow advancing when ALL scenarios have been viewed
+  useEffect(() => {
+    const allVisited = scenarios.length > 0 && visited.size >= scenarios.length
+    onCanAdvance?.(allVisited)
+  }, [visited, scenarios.length])
+
+  // Navigate to a scenario and mark it as visited
+  function goTo(idx) {
+    setCurrent(idx)
+    setVisited(prev => {
+      const next = new Set(prev)
+      next.add(idx)
+      return next
+    })
+  }
 
   const scenario = scenarios[current] || {}
   const sentences = splitSentences(scenario.phrase)
@@ -157,13 +174,13 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       {/* Pagination — always visible at bottom */}
       <div className="step-page-dots" style={{ marginTop: 'auto', paddingTop: 8 }}>
         {scenarios.map((_, i) => (
-          <button key={i} className={`step-page-dot ${i === current ? 'active' : i < current ? 'done' : ''}`} onClick={() => setCurrent(i)} />
+          <button key={i} className={`step-page-dot ${i === current ? 'active' : visited.has(i) ? 'done' : ''}`} onClick={() => goTo(i)} />
         ))}
       </div>
       <div className="step-inline-nav" style={{ paddingBottom: 4 }}>
-        <button className="step-inline-btn" onClick={() => current > 0 && setCurrent(c => c - 1)} disabled={current === 0}>‹</button>
+        <button className="step-inline-btn" onClick={() => current > 0 && goTo(current - 1)} disabled={current === 0}>‹</button>
         <span className="step-inline-label">{current + 1} de {scenarios.length}</span>
-        <button className="step-inline-btn pulse" onClick={() => current < scenarios.length - 1 && setCurrent(c => c + 1)} disabled={current === scenarios.length - 1}>›</button>
+        <button className="step-inline-btn pulse" onClick={() => current < scenarios.length - 1 && goTo(current + 1)} disabled={current === scenarios.length - 1}>›</button>
       </div>
     </div>
   )

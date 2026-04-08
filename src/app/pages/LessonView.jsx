@@ -26,7 +26,7 @@ const STEPS = [
   { key: 'explanation',   label: '¿Por qué así?',     icon: '💡', component: ExplanationStep,     startsLocked: false },
   { key: 'exercises',     label: 'Pon a prueba',       icon: '✏️', component: ExerciseStep,        startsLocked: true  },
   { key: 'match',         label: 'Conecta frases',     icon: '🔗', component: MatchStep,           startsLocked: true, dataKey: 'phrases' },
-  { key: 'practice',      label: 'Ahora habla tú',    icon: '🗣️', component: GuidedPracticeStep,  startsLocked: false },
+  { key: 'practice',      label: 'Ahora habla tú',    icon: '🗣️', component: GuidedPracticeStep,  startsLocked: true  },
   { key: 'reinforcement', label: '¡Lección lista!',   icon: '🏆', component: ReinforcementStep,   startsLocked: false },
 ]
 
