@@ -55,7 +55,9 @@ export default function LessonView() {
   // Session-only mute — resets to false (audio ON) on every page load
   const [muted, setMuted] = useState(false)
 
-  // Track which optional activities the user has done
+  /* ── Comprehensive activity tracking ──
+     Each key represents a completable exercise within the lesson.
+     Steps call onActivity('key') when the user actually does it. */
   const [completedActivities, setCompletedActivities] = useState(new Set())
   function logActivity(key) {
     setCompletedActivities(prev => {
@@ -218,22 +220,55 @@ export default function LessonView() {
     }
   }
 
-  // Check which optional activities were skipped
+  /* ── Check which activities were skipped ──
+     Covers every interactive exercise the user could do in the lesson. */
   function getIncompleteItems() {
     const items = []
-    // Pronunciation practice — only skip if done this session OR localStorage has scores
+
+    // Step 2: "Escucha y repite" — pronunciation practice on phrases
+    if (!completedActivities.has('phrases_pronunciation')) {
+      items.push({
+        icon: '💬',
+        label: 'Pronunciación en "Escucha y repite"',
+        detail: 'No practicaste la pronunciación de las frases',
+        stepIdx: STEPS.findIndex(s => s.key === 'phrases'),
+      })
+    }
+
+    // Step 4: "Pon a prueba" — exercises (choose + fill)
+    if (!completedActivities.has('exercises_done')) {
+      items.push({
+        icon: '✏️',
+        label: 'Ejercicios de "Pon a prueba"',
+        detail: 'No completaste los ejercicios de selección/escritura',
+        stepIdx: STEPS.findIndex(s => s.key === 'exercises'),
+      })
+    }
+
+    // Step 5: "Conecta frases" — matching
+    if (!completedActivities.has('match_done')) {
+      items.push({
+        icon: '🔗',
+        label: 'Conectar frases',
+        detail: 'No completaste el ejercicio de conectar frases',
+        stepIdx: STEPS.findIndex(s => s.key === 'match'),
+      })
+    }
+
+    // Step 6: "Ahora habla tú" — guided pronunciation practice
     if (!completedActivities.has('pronunciation')) {
       const pronunKey = `lesson_pronun_scores_${lessonId}`
       const pronunScores = JSON.parse(localStorage.getItem(pronunKey) || '{}')
       if (Object.keys(pronunScores).length === 0) {
         items.push({
           icon: '🗣️',
-          label: 'Practicar pronunciación',
-          detail: 'No practicaste la pronunciación en "Ahora habla tú"',
+          label: 'Pronunciación en "Ahora habla tú"',
+          detail: 'No practicaste la pronunciación guiada',
           stepIdx: STEPS.findIndex(s => s.key === 'practice'),
         })
       }
     }
+
     return items
   }
 
@@ -241,13 +276,7 @@ export default function LessonView() {
     if (!canAdvance) return
     const isLast = currentStep === STEPS.length - 1
     if (isLast) {
-      // Gate: check for missing activities before completing
-      const missing = getIncompleteItems()
-      if (missing.length > 0 && !hasCompleted) {
-        setIncompleteItems(missing)
-        setShowIncompleteModal(true)
-        return
-      }
+      // ReinforcementStep gates via onCanAdvance — if we get here, all done
       handleLessonComplete()
     } else {
       goToStep(currentStep + 1)
@@ -291,34 +320,7 @@ export default function LessonView() {
       {/* ── Notifications (outside shell so they float) ── */}
       <XPNotification xp={25} show={showXP} />
       {stepToast && <div className="lesson-step-toast animate-fadeIn">{stepToast}</div>}
-      {/* ── Incomplete activities modal ── */}
-      {showIncompleteModal && (
-        <div className="incomplete-overlay" onClick={() => setShowIncompleteModal(false)}>
-          <div className="incomplete-modal" onClick={e => e.stopPropagation()}>
-            <div className="incomplete-icon">⚠️</div>
-            <h3 className="incomplete-title">¡Te faltaron actividades!</h3>
-            <p className="incomplete-sub">Completa estas actividades para aprovechar al máximo la lección:</p>
-            <div className="incomplete-list">
-              {incompleteItems.map((item, i) => (
-                <div key={i} className="incomplete-item">
-                  <span className="incomplete-item-icon">{item.icon}</span>
-                  <div className="incomplete-item-text">
-                    <span className="incomplete-item-label">{item.label}</span>
-                    <span className="incomplete-item-detail">{item.detail}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="incomplete-actions">
-              <button className="incomplete-btn-primary" onClick={() => {
-                setShowIncompleteModal(false)
-                if (incompleteItems[0]?.stepIdx >= 0) goToStep(incompleteItems[0].stepIdx)
-              }}>← Volver a practicar</button>
-              <button className="incomplete-btn-secondary" onClick={handleForceComplete}>Finalizar de todas formas</button>
-            </div>
-          </div>
-        </div>
-      )}
+
 
       {activeBadgeToast && (
         <div className="badge-toast animate-fadeIn">
@@ -384,15 +386,33 @@ export default function LessonView() {
             >{muted ? '🔇' : '🔊'}</button>
           </div>
           <div className="lesson-dots-row">
-            {STEPS.map((s, i) => (
-              <button
-                key={s.key}
-                className={`lesson-dot-new ${i === currentStep ? 'active' : i < currentStep ? 'done' : ''}`}
-                onClick={() => i < currentStep && goToStep(i)}
-                title={`${s.icon} ${s.label}${i < currentStep ? ' — toca para volver' : ''}`}
-                style={{ width: i === currentStep ? 24 : 10 }}
-              />
-            ))}
+            {STEPS.map((s, i) => {
+              /* Determine if this step has a trackable activity and whether it was done */
+              const activityMap = {
+                phrases: 'phrases_pronunciation',
+                exercises: 'exercises_done',
+                match: 'match_done',
+                practice: 'pronunciation',
+              }
+              const actKey = activityMap[s.key]
+              const wasDone = actKey ? completedActivities.has(actKey) : true
+              const isVisited = i < currentStep
+              const dotClass = [
+                'lesson-dot-new',
+                i === currentStep ? 'active' : '',
+                isVisited ? 'done' : '',
+                isVisited && actKey && !wasDone ? 'skipped' : '',
+              ].filter(Boolean).join(' ')
+              return (
+                <button
+                  key={s.key}
+                  className={dotClass}
+                  onClick={() => i < currentStep && goToStep(i)}
+                  title={`${s.icon} ${s.label}${isVisited && actKey && !wasDone ? ' — ¡pendiente!' : isVisited ? ' — toca para volver' : ''}`}
+                  style={{ width: i === currentStep ? 24 : 10 }}
+                />
+              )
+            })}
           </div>
           <div className="lesson-progress-bar-fixed">
             <div className="lesson-progress-fill-fixed" style={{ width: `${progressPercent}%` }} />
@@ -411,6 +431,10 @@ export default function LessonView() {
             onComplete={isLast ? handleLessonComplete : undefined}
             onCanAdvance={setCanAdvance}
             onActivity={logActivity}
+            completedActivities={completedActivities}
+            getIncompleteItems={isLast ? getIncompleteItems : undefined}
+            onGoToStep={isLast ? goToStep : undefined}
+            onForceComplete={isLast ? handleForceComplete : undefined}
           />
         </div>
 
@@ -426,39 +450,7 @@ export default function LessonView() {
         </div>
       </div>
 
-      {/* ── Incomplete activities modal ── */}
-      {showIncompleteModal && (
-        <div className="incomplete-modal-overlay" onClick={() => setShowIncompleteModal(false)}>
-          <div className="incomplete-modal" onClick={e => e.stopPropagation()}>
-            <div className="incomplete-modal-icon">⚠️</div>
-            <h3 className="incomplete-modal-title">Tienes ejercicios pendientes</h3>
-            <p className="incomplete-modal-sub">Completarlos mejora tu aprendizaje. ¿Qué quieres hacer?</p>
-            <ul className="incomplete-modal-list">
-              {incompleteItems.map((item, i) => (
-                <li key={i} className="incomplete-modal-item">
-                  <span className="incomplete-modal-item-icon">{item.icon}</span>
-                  <div className="incomplete-modal-item-text">
-                    <span className="incomplete-modal-item-label">{item.label}</span>
-                    <span className="incomplete-modal-item-detail">{item.detail}</span>
-                  </div>
-                  <button
-                    className="incomplete-modal-go"
-                    onClick={() => { setShowIncompleteModal(false); goToStep(item.stepIdx) }}
-                  >Ir →</button>
-                </li>
-              ))}
-            </ul>
-            <div className="incomplete-modal-btns">
-              <button className="incomplete-modal-finish" onClick={handleForceComplete}>
-                Finalizar así
-              </button>
-              <button className="incomplete-modal-cancel" onClick={() => setShowIncompleteModal(false)}>
-                Revisar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* duplicate modal removed — incomplete review now lives inside ReinforcementStep */}
     </>
   )
 }

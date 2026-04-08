@@ -3,7 +3,7 @@ import { useAuth } from '../../../context/AuthContext'
 import { checkAndAwardBadges } from '../../../lib/xp'
 import './Steps.css'
 
-export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
+export default function ExerciseStep({ data, onComplete, onCanAdvance, onActivity }) {
   const { profile } = useAuth()
   const exercises = data?.exercises || []
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -51,6 +51,7 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance }) {
     if (isLast) {
       const finalScore = score + (isCurrentCorrect() ? 1 : 0)
       setFinished(true)
+      onActivity?.('exercises_done')
       if (onComplete) onComplete(finalScore)
       if (profile?.id && finalScore === exercises.length && exercises.length > 0) {
         checkAndAwardBadges(profile.id, { perfect_exercises: 1, lessonsCompleted: 0, streakDays: 0, totalXP: profile.xp ?? 0 }).catch(() => {})

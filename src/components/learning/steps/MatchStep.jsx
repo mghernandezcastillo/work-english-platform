@@ -19,7 +19,7 @@ function derange(arr) {
   return result
 }
 
-export default function MatchStep({ data, onComplete, onCanAdvance }) {
+export default function MatchStep({ data, onComplete, onCanAdvance, onActivity }) {
   const { profile } = useAuth()
   const allPhrases = data?.phrases || []
   const [pairs, setPairs] = useState([])
@@ -61,6 +61,7 @@ export default function MatchStep({ data, onComplete, onCanAdvance }) {
       if (newMatched.size === pairs.length) {
         setCompleted(true)
         onCanAdvance?.(true)
+        onActivity?.('match_done')
         if (onComplete) onComplete()
         if (profile?.id) {
           const finalAccuracy = Math.round((newMatched.size / (attempts + 1)) * 100)

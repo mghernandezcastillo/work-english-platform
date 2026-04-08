@@ -5,7 +5,7 @@ import { PronunciationButton } from '../../common/PronunciationButton'
 import ClickablePhrase from '../ClickablePhrase'
 import './Steps.css'
 
-export default function PhrasesStep({ data, onCanAdvance, muted }) {
+export default function PhrasesStep({ data, onCanAdvance, onActivity, muted }) {
   const phrases = data?.phrases || []
   const [current, setCurrent] = useState(0)
   const SPEEDS = [1, 0.85, 0.7, 0.5]
@@ -72,7 +72,7 @@ export default function PhrasesStep({ data, onCanAdvance, muted }) {
               {speed}×
             </button>
           </div>
-          <PronunciationButton key={current} targetText={phrase.en} />
+          <PronunciationButton key={current} targetText={phrase.en} onScore={() => onActivity?.('phrases_pronunciation')} />
         </div>
       </div>
 
