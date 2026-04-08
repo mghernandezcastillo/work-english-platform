@@ -110,54 +110,121 @@
   30%            { transform: translateY(-6px); opacity: 1; }
 }
 
-/* ── Pronunciation offer after correct answer ── */
-.sim-pronun-offer {
-  margin-top: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  background: var(--color-surface);
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(16,185,129,0.2);
-  text-align: center;
+/* ── Feedback modal overlay ── */
+.sim-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;          /* sheet slides up from bottom */
+  justify-content: center;
+  padding: 0 0 env(safe-area-inset-bottom, 0);
 }
-.sim-pronun-offer-text {
-  font-size: var(--text-sm);
+.sim-modal {
+  background: var(--color-surface, #1e293b);
+  border-radius: 20px 20px 0 0;
+  padding: 24px 20px 28px;
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: sim-modal-in 0.22s cubic-bezier(0.34,1.3,0.64,1) both;
+}
+@keyframes sim-modal-in {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.sim-modal-emoji { font-size: 36px; text-align: center; }
+.sim-modal-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-text);
+  text-align: center;
+  margin: 0;
+  font-family: var(--font-heading, var(--font-body));
+}
+.sim-modal-sub {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  text-align: center;
+  margin: 0;
+}
+.sim-modal-sub strong { color: var(--color-text); }
+.sim-modal-explanation {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Pronunciation offer inside modal */
+.sim-modal-pronun-offer {
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sim-modal-pronun-label {
+  font-size: 14px;
   font-weight: 600;
   color: var(--color-text);
-  margin-bottom: var(--space-3);
+  text-align: center;
+  margin: 0;
 }
-.sim-pronun-offer-btns {
+.sim-modal-pronun-btns {
   display: flex;
-  gap: var(--space-2);
+  gap: 10px;
 }
 .sim-pronun-yes {
   flex: 1;
-  padding: 10px 0;
+  padding: 12px 0;
   background: var(--color-primary);
   color: #fff;
   border: none;
-  border-radius: var(--radius-md);
-  font-size: var(--text-sm);
+  border-radius: 12px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   font-family: var(--font-body);
-  transition: background 0.15s;
+  transition: filter 0.15s;
 }
-.sim-pronun-yes:hover { filter: brightness(1.1); }
+.sim-pronun-yes:hover { filter: brightness(1.08); }
 .sim-pronun-skip {
   flex: 1;
-  padding: 10px 0;
-  background: var(--color-surface);
+  padding: 12px 0;
+  background: rgba(255,255,255,0.06);
   color: var(--color-text-muted);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  font-size: var(--text-sm);
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   font-family: var(--font-body);
   transition: background 0.15s;
 }
-.sim-pronun-skip:hover { background: var(--color-surface-hover, rgba(255,255,255,0.06)); }
+.sim-pronun-skip:hover { background: rgba(255,255,255,0.1); }
 
-.sim-pronun-panel {
-  margin-top: var(--space-3);
+.sim-modal-pronun-panel { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 12px; }
+
+/* Next button */
+.sim-modal-next {
+  width: 100%;
+  padding: 14px 0;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-body);
+  margin-top: 4px;
+  transition: filter 0.15s;
 }
+.sim-modal-next:hover { filter: brightness(1.08); }

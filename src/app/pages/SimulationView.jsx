@@ -222,39 +222,54 @@ export default function SimulationView() {
         })}
       </div>
 
-      {/* Feedback */}
+      {/* ── Feedback modal overlay ── */}
       {showFeedback && (
-        <div className={`sim-feedback ${selectedOption === turn.correct ? 'correct' : 'wrong'}`}>
-          {selectedOption === turn.correct
-            ? '✅ ¡Excelente! Esa es la mejor respuesta.'
-            : `❌ La mejor respuesta era: "${turn.correct}"`}
-          {turn.explanation && <p className="text-sm" style={{ marginTop: 4 }}>{turn.explanation}</p>}
-        </div>
-      )}
+        <div className="sim-modal-overlay">
+          <div className="sim-modal animate-fadeIn">
+            {/* Result */}
+            <div className="sim-modal-emoji">
+              {selectedOption === turn.correct ? '✅' : '❌'}
+            </div>
+            <p className="sim-modal-title">
+              {selectedOption === turn.correct
+                ? '¡Excelente!'
+                : 'Respuesta incorrecta'}
+            </p>
+            <p className="sim-modal-sub">
+              {selectedOption === turn.correct
+                ? 'Esa es la mejor respuesta.'
+                : <>La mejor respuesta era: <strong>"{turn.correct}"</strong></>}
+            </p>
+            {turn.explanation && (
+              <p className="sim-modal-explanation">💡 {turn.explanation}</p>
+            )}
 
-      {/* Pronunciation offer — only on correct answer */}
-      {showPronunOffer && !showPronunPanel && (
-        <div className="sim-pronun-offer animate-fadeIn">
-          <p className="sim-pronun-offer-text">🎤 ¿Quieres practicar la pronunciación?</p>
-          <div className="sim-pronun-offer-btns">
-            <button className="sim-pronun-yes" onClick={() => { setShowPronunOffer(false); setShowPronunPanel(true) }}>Sí, practicar</button>
-            <button className="sim-pronun-skip" onClick={() => { setShowPronunOffer(false); nextTurn() }}>Saltar →</button>
+            {/* Pronunciation offer — only on correct */}
+            {showPronunOffer && !showPronunPanel && (
+              <div className="sim-modal-pronun-offer">
+                <p className="sim-modal-pronun-label">🎤 ¿Quieres practicar la pronunciación?</p>
+                <div className="sim-modal-pronun-btns">
+                  <button className="sim-pronun-yes" onClick={() => { setShowPronunOffer(false); setShowPronunPanel(true) }}>Sí, practicar</button>
+                  <button className="sim-pronun-skip" onClick={() => { setShowPronunOffer(false); nextTurn() }}>Saltar →</button>
+                </div>
+              </div>
+            )}
+
+            {/* Pronunciation panel inline in modal */}
+            {showPronunPanel && (
+              <div className="sim-modal-pronun-panel">
+                <PronunciationButton targetText={turn.correct} />
+              </div>
+            )}
+
+            {/* Next button — only when not showing pronun offer */}
+            {!showPronunOffer && (
+              <button className="sim-modal-next" onClick={nextTurn}>
+                {currentTurn + 1 >= turns.length ? 'Ver resultados' : 'Siguiente turno →'}
+              </button>
+            )}
           </div>
         </div>
-      )}
-
-      {/* Pronunciation panel */}
-      {showPronunPanel && (
-        <div className="sim-pronun-panel animate-fadeIn">
-          <PronunciationButton targetText={turn.correct} />
-        </div>
-      )}
-
-      {/* Next button — hide when pronunciation offer/panel is active */}
-      {showFeedback && !showPronunOffer && (
-        <Button variant="primary" full onClick={nextTurn} style={{ marginTop: 'var(--space-4)' }}>
-          {currentTurn + 1 >= turns.length ? 'Ver resultados' : 'Siguiente turno →'}
-        </Button>
       )}
     </div>
   )
