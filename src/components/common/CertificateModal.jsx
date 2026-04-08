@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { brand } from '../../lib/brand'
 import './CertificateModal.css'
 
@@ -213,7 +214,7 @@ export function CertificateModal({ userName, routeName, onClose }) {
     window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}&summary=${text}`, '_blank')
   }
 
-  return (
+  return createPortal(
     <div className="cert-overlay" onClick={onClose}>
       <div className="cert-modal" onClick={e => e.stopPropagation()}>
         {/* Header */}
@@ -245,6 +246,7 @@ export function CertificateModal({ userName, routeName, onClose }) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
