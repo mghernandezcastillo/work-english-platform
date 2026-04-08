@@ -41,7 +41,7 @@ function detectBrowserSupport() {
  * Usa Web Speech API. Funciona en: Chrome, Edge, Safari, iOS Safari 15+.
  * En browsers no soportados (Firefox) muestra guía clara.
  */
-export function PronunciationButton({ targetText, language = 'en-US', onScore }) {
+export function PronunciationButton({ targetText, language = 'en-US', onScore, compact = false }) {
   const browserInfo = detectBrowserSupport()
   const [state, setState] = useState('idle') // idle | listening | processing | result
   const [result, setResult] = useState(null)
@@ -231,45 +231,61 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore })
 
       {/* Resultado con score */}
       {state === 'result' && result && (
-        <div className="pronun-result">
-          <div
-            className="pronun-score-ring"
-            style={{ '--score-color': result.feedback.color }}
-          >
-            <span className="pronun-score-num">{result.score}%</span>
-            <span className="pronun-score-lbl">precisión</span>
+        compact ? (
+          /* ── Compact result: slim horizontal row ── */
+          <div className="pronun-result-compact">
+            <span className="pronun-result-compact-score" style={{ color: result.feedback.color }}>
+              {result.feedback.emoji} {result.score}%
+            </span>
+            <span className="pronun-result-compact-text" style={{ color: result.feedback.color }}>
+              {result.feedback.text}
+            </span>
+            <button className="pronun-result-compact-retry" onClick={startListening}>
+              🔄 Intentar de nuevo
+            </button>
           </div>
-          <div className="pronun-score-info">
-            <div className="pronun-feedback">
-              <span>{result.feedback.emoji}</span>
-              <span style={{ color: result.feedback.color }}>{result.feedback.text}</span>
+        ) : (
+          /* ── Full result: score ring + transcript + missed words ── */
+          <div className="pronun-result">
+            <div
+              className="pronun-score-ring"
+              style={{ '--score-color': result.feedback.color }}
+            >
+              <span className="pronun-score-num">{result.score}%</span>
+              <span className="pronun-score-lbl">precisión</span>
             </div>
-            <div className="pronun-transcript">
-              <span className="pronun-transcript-lbl">Escuché:</span>
-              <span className="pronun-transcript-text">"{result.transcript}"</span>
-            </div>
-            {result.missed?.length > 0 && (
-              <div className="pronun-missed">
-                <span className="pronun-missed-lbl">💡 Practica estas palabras:</span>
-                <div className="pronun-missed-words">
-                  {result.missed.map((w, i) => (
-                    <button
-                      key={i}
-                      className="pronun-missed-word"
-                      onClick={() => speakWord(w)}
-                      title={`Escuchar "${w}"`}
-                    >
-                      <span className="pronun-missed-speaker">🔊</span> {w}
-                    </button>
-                  ))}
-                </div>
+            <div className="pronun-score-info">
+              <div className="pronun-feedback">
+                <span>{result.feedback.emoji}</span>
+                <span style={{ color: result.feedback.color }}>{result.feedback.text}</span>
               </div>
-            )}
+              <div className="pronun-transcript">
+                <span className="pronun-transcript-lbl">Escuché:</span>
+                <span className="pronun-transcript-text">"{result.transcript}"</span>
+              </div>
+              {result.missed?.length > 0 && (
+                <div className="pronun-missed">
+                  <span className="pronun-missed-lbl">💡 Practica estas palabras:</span>
+                  <div className="pronun-missed-words">
+                    {result.missed.map((w, i) => (
+                      <button
+                        key={i}
+                        className="pronun-missed-word"
+                        onClick={() => speakWord(w)}
+                        title={`Escuchar "${w}"`}
+                      >
+                        <span className="pronun-missed-speaker">🔊</span> {w}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            <button className="pronun-retry-btn" onClick={startListening}>
+              🔄 Intentar de nuevo
+            </button>
           </div>
-          <button className="pronun-retry-btn" onClick={startListening}>
-            🔄 Intentar de nuevo
-          </button>
-        </div>
+        )
       )}
     </div>
   )
