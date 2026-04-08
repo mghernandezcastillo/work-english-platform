@@ -22,8 +22,9 @@ export default function SimulationView() {
   const [finished, setFinished] = useState(false)
   const [loading, setLoading] = useState(true)
   const [showTyping, setShowTyping] = useState(false)
-  const [showPronunOffer, setShowPronunOffer] = useState(false)  // offer to practice pronunciation
-  const [showPronunPanel, setShowPronunPanel] = useState(false)  // pronunciation panel active
+  const [showPronunOffer, setShowPronunOffer] = useState(false)
+  const [showPronunPanel, setShowPronunPanel] = useState(false)
+  const [hasRetried, setHasRetried] = useState(false)  // block retry after first retry
   const audioRef = useRef(null)
 
   // Auto-play turn audio when turn changes or simulation first loads
@@ -86,11 +87,18 @@ export default function SimulationView() {
     setSelectedOption(option)
     setShowFeedback(true)
     setResponses(prev => [...prev, { turn: currentTurn, choice: option }])
-    // If correct, offer pronunciation practice
     const t = turns[currentTurn]
     if (t && option === t.correct) {
       setShowPronunOffer(true)
     }
+  }
+
+  function handleRetry() {
+    // Remove the last (wrong) response so scoring stays clean
+    setResponses(prev => prev.slice(0, -1))
+    setSelectedOption(null)
+    setShowFeedback(false)
+    setHasRetried(true)   // only one retry allowed
   }
 
   function nextTurn() {
@@ -107,6 +115,7 @@ export default function SimulationView() {
         setShowTyping(false)
         setShowPronunOffer(false)
         setShowPronunPanel(false)
+        setHasRetried(false)
         window.scrollTo({ top: 0, behavior: 'smooth' })
       }, 1200)
     }
@@ -278,8 +287,21 @@ export default function SimulationView() {
               </div>
             )}
 
-            {/* Next button — only when not showing pronun offer */}
-            {!showPronunOffer && (
+            {/* Wrong answer: retry + continue */}
+            {selectedOption !== turn.correct && !hasRetried && (
+              <div className="sim-modal-pronun-btns" style={{ marginTop: 4 }}>
+                <button className="sim-pronun-yes" onClick={handleRetry}>🔄 Intentar de nuevo</button>
+                <button className="sim-pronun-skip" onClick={nextTurn}>Continuar →</button>
+              </div>
+            )}
+
+            {/* Wrong answer after retry: only continue */}
+            {selectedOption !== turn.correct && hasRetried && (
+              <button className="sim-modal-next" onClick={nextTurn}>Continuar →</button>
+            )}
+
+            {/* Next button — only when not showing pronun offer (correct path) */}
+            {selectedOption === turn.correct && !showPronunOffer && (
               <button className="sim-modal-next" onClick={nextTurn}>
                 {currentTurn + 1 >= turns.length ? 'Ver resultados' : 'Siguiente turno →'}
               </button>
