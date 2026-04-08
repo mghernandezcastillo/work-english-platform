@@ -53,11 +53,17 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
   // Reset active sentence when scenario changes
   useEffect(() => { setActiveSentence(0) }, [current])
 
-  // Auto-play audio on scenario change (and on first mount)
+  // Auto-play audio on scenario change — no delay for instant playback
   useEffect(() => {
-    if (!scenarios.length) return
-    const t = setTimeout(() => { if (!muted) playAudio() }, 400)
-    return () => clearTimeout(t)
+    if (!scenarios.length || muted) return
+    const el = audioRef.current
+    if (el) {
+      el.playbackRate = speed
+      el.currentTime = 0
+      el.play().catch(() => {})
+    } else {
+      playAudio()
+    }
   }, [current, scenarios.length, muted])
 
   function playAudio() {
@@ -160,7 +166,16 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
           </button>
         </div>
         <div className="practice-pronun-inline">
-          <PronunciationButton key={`${current}-${activeSentence}`} targetText={pronunTarget} onScore={(s) => savePronunScore(pronunTarget, s)} />
+          <PronunciationButton
+            key={`${current}-${activeSentence}`}
+            targetText={pronunTarget}
+            onScore={(s) => savePronunScore(pronunTarget, s)}
+            onBeforeRecord={() => {
+              const el = audioRef.current
+              if (el) { el.pause(); el.currentTime = 0 }
+              else window.speechSynthesis?.cancel()
+            }}
+          />
         </div>
       </div>
 

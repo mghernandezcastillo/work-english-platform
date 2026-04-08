@@ -41,7 +41,7 @@ function detectBrowserSupport() {
  * Usa Web Speech API. Funciona en: Chrome, Edge, Safari, iOS Safari 15+.
  * En browsers no soportados (Firefox) muestra guía clara.
  */
-export function PronunciationButton({ targetText, language = 'en-US', onScore, compact = false }) {
+export function PronunciationButton({ targetText, language = 'en-US', onScore, compact = false, onBeforeRecord }) {
   const browserInfo = detectBrowserSupport()
   const [state, setState] = useState('idle') // idle | listening | processing | result
   const [result, setResult] = useState(null)
@@ -169,6 +169,7 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
 
     setResult(null)
     setError(null)
+    onBeforeRecord?.()   // stop any playing audio before mic opens
     recognition.start()
   }
 

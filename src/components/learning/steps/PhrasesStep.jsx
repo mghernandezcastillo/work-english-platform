@@ -32,17 +32,16 @@ export default function PhrasesStep({ data, onCanAdvance, onActivity, muted }) {
     })
   }
 
-  // Auto-play audio on card change
+  // Auto-play audio on card change — no delay for instant playback
   useEffect(() => {
     if (!phrases.length) return
-    const t = setTimeout(() => {
-      if (!muted && audioRef.current) {
-        audioRef.current.playbackRate = speed
-        audioRef.current.currentTime = 0
-        audioRef.current.play().catch(() => {})
-      }
-    }, 350)
-    return () => clearTimeout(t)
+    if (muted) return
+    const el = audioRef.current
+    if (el) {
+      el.playbackRate = speed
+      el.currentTime = 0
+      el.play().catch(() => {})
+    }
   }, [current, muted])
 
   function playAudio() {
@@ -89,7 +88,16 @@ export default function PhrasesStep({ data, onCanAdvance, onActivity, muted }) {
               {speed}×
             </button>
           </div>
-          <PronunciationButton compact key={current} targetText={phrase.en} onScore={() => onActivity?.('phrases_pronunciation')} />
+          <PronunciationButton
+            compact
+            key={current}
+            targetText={phrase.en}
+            onScore={() => onActivity?.('phrases_pronunciation')}
+            onBeforeRecord={() => {
+              const el = audioRef.current
+              if (el) { el.pause(); el.currentTime = 0 }
+            }}
+          />
         </div>
       </div>
 
