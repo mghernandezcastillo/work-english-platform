@@ -221,10 +221,8 @@ export default function LessonView() {
   // Check which optional activities were skipped
   function getIncompleteItems() {
     const items = []
-    // Check pronunciation practice (GuidedPracticeStep)
-    const content = lesson?.content || {}
-    const hasPracticeScenarios = (content.practice?.scenarios || []).length > 0
-    if (hasPracticeScenarios && !completedActivities.has('pronunciation')) {
+    // Pronunciation practice — only skip if done this session OR localStorage has scores
+    if (!completedActivities.has('pronunciation')) {
       const pronunKey = `lesson_pronun_scores_${lessonId}`
       const pronunScores = JSON.parse(localStorage.getItem(pronunKey) || '{}')
       if (Object.keys(pronunScores).length === 0) {
@@ -427,6 +425,40 @@ export default function LessonView() {
           </button>
         </div>
       </div>
+
+      {/* ── Incomplete activities modal ── */}
+      {showIncompleteModal && (
+        <div className="incomplete-modal-overlay" onClick={() => setShowIncompleteModal(false)}>
+          <div className="incomplete-modal" onClick={e => e.stopPropagation()}>
+            <div className="incomplete-modal-icon">⚠️</div>
+            <h3 className="incomplete-modal-title">Tienes ejercicios pendientes</h3>
+            <p className="incomplete-modal-sub">Completarlos mejora tu aprendizaje. ¿Qué quieres hacer?</p>
+            <ul className="incomplete-modal-list">
+              {incompleteItems.map((item, i) => (
+                <li key={i} className="incomplete-modal-item">
+                  <span className="incomplete-modal-item-icon">{item.icon}</span>
+                  <div className="incomplete-modal-item-text">
+                    <span className="incomplete-modal-item-label">{item.label}</span>
+                    <span className="incomplete-modal-item-detail">{item.detail}</span>
+                  </div>
+                  <button
+                    className="incomplete-modal-go"
+                    onClick={() => { setShowIncompleteModal(false); goToStep(item.stepIdx) }}
+                  >Ir →</button>
+                </li>
+              ))}
+            </ul>
+            <div className="incomplete-modal-btns">
+              <button className="incomplete-modal-finish" onClick={handleForceComplete}>
+                Finalizar así
+              </button>
+              <button className="incomplete-modal-cancel" onClick={() => setShowIncompleteModal(false)}>
+                Revisar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
