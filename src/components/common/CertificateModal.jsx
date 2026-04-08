@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { brand } from '../../lib/brand'
 import './CertificateModal.css'
 
 /**
