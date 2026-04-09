@@ -63,7 +63,7 @@ body{margin:0;padding:0;background:#f4f4f5;font-family:'Segoe UI',Arial,sans-ser
     <p>¡Hola <strong>${firstName}</strong>! &#128075;</p>
     <p>¡<strong>Felicitaciones por tu compra!</strong> Tu acceso de por vida a English for Work está listo.</p>
     <p>Solo necesitas <strong>crear tu contraseña</strong> para empezar:</p>
-    <a class="cta" href="${passwordUrl}">Crear mi contraseña &#8594;</a>
+    <a class="cta" href="${passwordUrl}" sib-link-notrack>Crear mi contraseña &#8594;</a>
     <div class="steps">
       <p><strong>¿Cómo funciona?</strong></p>
       <p>1️⃣ Haz clic en el botón de arriba</p>
@@ -72,7 +72,7 @@ body{margin:0;padding:0;background:#f4f4f5;font-family:'Segoe UI',Arial,sans-ser
     </div>
     <div class="tip">&#128161; Haz al menos una lección al día. Son 10-15 minutos y están diseñadas para aprender haciendo, no memorizando.</div>
     <p style="font-size:13px;color:#9ca3af;text-align:center">Tienes acceso completo: 36 lecciones + 12 simulaciones + vocabulario laboral.</p>
-    <p style="font-size:12px;color:#9ca3af;text-align:center">Si el botón no funciona, copia y pega este enlace:<br><span style="color:#6366f1;word-break:break-all">${passwordUrl}</span></p>
+    <p style="font-size:12px;color:#9ca3af;text-align:center">Si el botón no funciona, copia y pega este enlace:<br><a href="${passwordUrl}" sib-link-notrack style="color:#6366f1;word-break:break-all">${passwordUrl}</a></p>
   </div>
   <div class="foot">Recibiste este email porque compraste English for Work.<br>
   <a href="${APP_URL}" style="color:#6366f1">Ir a la plataforma</a> · <a href="mailto:englishforworkapp@gmail.com" style="color:#6366f1">¿Necesitas ayuda?</a></div>
@@ -86,9 +86,6 @@ body{margin:0;padding:0;background:#f4f4f5;font-family:'Segoe UI',Arial,sans-ser
       to: [{ email, name }],
       subject: '🎉 ¡Bienvenido/a a English for Work! — Crea tu contraseña',
       htmlContent: html,
-      // Disable click tracking: Brevo's redirect proxy strips the URL hash (#access_token=...)
-      // that Supabase needs for the recovery flow
-      trackClicks: false,
     }),
   })
   const body = await res.text()
