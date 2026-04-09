@@ -72,9 +72,14 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
 
   // Track which sentence is currently selected for pronunciation
   const [activeSentence, setActiveSentence] = useState(0)
+  // Track which sentences have already been practiced in this scenario
+  const [practicedSentences, setPracticedSentences] = useState(new Set())
 
-  // Reset active sentence when scenario changes
-  useEffect(() => { setActiveSentence(0) }, [current])
+  // Reset active sentence and practiced set when scenario changes
+  useEffect(() => {
+    setActiveSentence(0)
+    setPracticedSentences(new Set())
+  }, [current])
 
   // Auto-play audio on scenario change — cancel previous first to avoid overlap
   useEffect(() => {
@@ -137,6 +142,20 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       }
       localStorage.setItem(key, JSON.stringify(existing))
     } catch { }
+
+    // Mark sentence as practiced and auto-advance to next unpracticed sentence after 1.5s
+    if (hasMultiple) {
+      setPracticedSentences(prev => {
+        const next = new Set(prev)
+        next.add(activeSentence)
+        // Find next unpracticed sentence after current
+        const nextIdx = sentences.findIndex((_, i) => i > activeSentence && !next.has(i))
+        if (nextIdx !== -1) {
+          setTimeout(() => setActiveSentence(nextIdx), 1500)
+        }
+        return next
+      })
+    }
   }
 
   if (!scenarios.length) return (
@@ -166,21 +185,34 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
 
         {hasMultiple ? (
           <div className="practice-sentences">
-            {sentences.map((sentence, i) => (
-              <div
-                key={i}
-                className={`practice-sentence ${i === activeSentence ? 'active' : ''}`}
-                onClick={() => setActiveSentence(i)}
-              >
-                <span className="practice-sentence-num">{i + 1}</span>
-                <div className="practice-sentence-body">
-                  <p className="practice-sentence-en"><ClickablePhrase text={sentence} /></p>
-                  {translations[i] && (
-                    <p className="practice-sentence-es">{translations[i]}</p>
-                  )}
+            {sentences.map((sentence, i) => {
+              const isPracticed = practicedSentences.has(i)
+              // Next unpracticed sentence after the last practiced one
+              const nextUp = !isPracticed && i !== activeSentence &&
+                [...practicedSentences].every(p => p < i) &&
+                !sentences.slice(0, i).some((_, j) => !practicedSentences.has(j) && j !== activeSentence)
+              return (
+                <div
+                  key={i}
+                  className={[
+                    'practice-sentence',
+                    i === activeSentence ? 'active' : '',
+                    isPracticed ? 'practiced' : '',
+                    nextUp ? 'next-up' : '',
+                  ].filter(Boolean).join(' ')}
+                  onClick={() => setActiveSentence(i)}
+                >
+                  <span className="practice-sentence-num">{i + 1}</span>
+                  <div className="practice-sentence-body">
+                    <p className="practice-sentence-en"><ClickablePhrase text={sentence} /></p>
+                    {translations[i] && (
+                      <p className="practice-sentence-es">{translations[i]}</p>
+                    )}
+                  </div>
+                  {isPracticed && <span className="practice-sentence-done">✓</span>}
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         ) : (
           <>

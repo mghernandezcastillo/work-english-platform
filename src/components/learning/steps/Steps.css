@@ -484,6 +484,35 @@
   flex-shrink: 0;
 }
 
+/* ── Sentence practiced / next-up states ── */
+.practice-sentence.practiced {
+  opacity: 0.6;
+}
+.practice-sentence.practiced .practice-sentence-num {
+  background: rgba(16,185,129,0.3);
+  color: #10B981;
+}
+.practice-sentence-done {
+  font-size: 13px;
+  color: #10B981;
+  font-weight: 700;
+  flex-shrink: 0;
+  align-self: center;
+}
+/* Next sentence to practice — pulsing green border hint */
+.practice-sentence.next-up {
+  border-color: rgba(16,185,129,0.5);
+  animation: sentence-next-pulse 1.4s ease-in-out infinite;
+}
+.practice-sentence.next-up .practice-sentence-num {
+  background: rgba(16,185,129,0.15);
+  color: #10B981;
+}
+@keyframes sentence-next-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.0); border-color: rgba(16,185,129,0.35); }
+  50%       { box-shadow: 0 0 0 4px rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.7); }
+}
+
 /* ── Objective ── */
 .objective-title {
   font-size: 20px;
