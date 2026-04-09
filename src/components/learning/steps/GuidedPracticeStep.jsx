@@ -15,16 +15,27 @@ function splitSentences(text) {
   return parts.map(s => s.trim()).filter(Boolean)
 }
 
-export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onActivity, muted }) {
+export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onActivity, muted, startAtScenario = 0, missedScenarioIndices = [] }) {
   const scenarios = data?.scenarios || []
-  const [current, setCurrent] = useState(0)
+  const [current, setCurrent] = useState(startAtScenario)
   const SPEEDS = [1, 0.85, 0.7, 0.5]
   const [speedIdx, setSpeedIdx] = useState(0)
   const speed = SPEEDS[speedIdx]
   const audioRef = useRef(null)
 
-  // Track which scenarios the user has visited
-  const [visited, setVisited] = useState(new Set([0])) // first one is visited on mount
+  // Initialize visited:
+  // — scenarios that already have a saved score count as visited (done)
+  // — startAtScenario is always included
+  const [visited, setVisited] = useState(() => {
+    const set = new Set([startAtScenario])
+    if (lessonId) {
+      try {
+        const scores = JSON.parse(localStorage.getItem(`lesson_pronun_scores_${lessonId}`) || '{}')
+        scenarios.forEach((s, i) => { if (scores[s.phrase]) set.add(i) })
+      } catch { }
+    }
+    return set
+  })
 
   // Only allow advancing when ALL scenarios have been viewed
   useEffect(() => {
@@ -188,9 +199,15 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
 
       {/* Pagination — always visible at bottom */}
       <div className="step-page-dots" style={{ marginTop: 'auto', paddingTop: 8 }}>
-        {scenarios.map((_, i) => (
-          <button key={i} className={`step-page-dot ${i === current ? 'active' : visited.has(i) ? 'done' : ''}`} onClick={() => goTo(i)} />
-        ))}
+        {scenarios.map((_, i) => {
+          const isMissed = missedScenarioIndices.includes(i) && !visited.has(i)
+          const cls = [
+            'step-page-dot',
+            i === current ? 'active' : visited.has(i) ? 'done' : '',
+            isMissed ? 'missed' : '',
+          ].filter(Boolean).join(' ')
+          return <button key={i} className={cls} onClick={() => goTo(i)} />
+        })}
       </div>
       <div className="step-inline-nav" style={{ paddingBottom: 4 }}>
         <button className="step-inline-btn" onClick={() => current > 0 && goTo(current - 1)} disabled={current === 0}>‹</button>

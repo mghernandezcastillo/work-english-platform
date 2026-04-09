@@ -54,6 +54,9 @@ export default function LessonView() {
   const [incompleteItems, setIncompleteItems] = useState([])
   // Session-only mute — resets to false (audio ON) on every page load
   const [muted, setMuted] = useState(false)
+  // Practice step return-to context (set when navigating back from step 7)
+  const [practiceStartAt, setPracticeStartAt] = useState(0)
+  const [practiceMissedIndices, setPracticeMissedIndices] = useState([])
 
   /* ── Comprehensive activity tracking ──
      Each key represents a completable exercise within the lesson.
@@ -220,6 +223,15 @@ export default function LessonView() {
     }
   }
 
+  // handleGoToStep: called by ReinforcementStep — stores practice context before navigating
+  function handleGoToStep(stepIdx, options = {}) {
+    if (STEPS[stepIdx]?.key === 'practice') {
+      setPracticeStartAt(options.startAt ?? 0)
+      setPracticeMissedIndices(options.missedIndices ?? [])
+    }
+    goToStep(stepIdx)
+  }
+
   /* ── Check which activities were skipped ──
      Covers every interactive exercise the user could do in the lesson. */
   function getIncompleteItems() {
@@ -255,18 +267,30 @@ export default function LessonView() {
       })
     }
 
-    // Step 6: "Ahora habla tú" — guided pronunciation practice
-    if (!completedActivities.has('pronunciation')) {
-      const pronunKey = `lesson_pronun_scores_${lessonId}`
-      const pronunScores = JSON.parse(localStorage.getItem(pronunKey) || '{}')
-      if (Object.keys(pronunScores).length === 0) {
-        items.push({
-          icon: '🗣️',
-          label: 'Pronunciación en "Ahora habla tú"',
-          detail: 'No practicaste la pronunciación guiada',
-          stepIdx: STEPS.findIndex(s => s.key === 'practice'),
-        })
-      }
+    // Step 6: "Ahora habla tú" — per-scenario pronunciation check
+    const pronunKey = `lesson_pronun_scores_${lessonId}`
+    const pronunScores = JSON.parse(localStorage.getItem(pronunKey) || '{}')
+    const practiceScenarios = lesson?.content?.practice?.scenarios || []
+    const missedPronunIndices = practiceScenarios
+      .map((s, i) => ({ phrase: s.phrase, idx: i }))
+      .filter(({ phrase }) => !pronunScores[phrase])
+      .map(({ idx }) => idx)
+    if (missedPronunIndices.length > 0) {
+      const allMissed = missedPronunIndices.length === practiceScenarios.length
+      const startAt = allMissed ? 0 : missedPronunIndices[0]
+      const count = missedPronunIndices.length
+      items.push({
+        icon: '🗣️',
+        label: allMissed
+          ? 'Pronunciación en "Ahora habla tú"'
+          : `Falta pronunciar ${count === 1 ? '1 situación' : `${count} situaciones`} en "Ahora habla tú"`,
+        detail: allMissed
+          ? 'No practicaste la pronunciación guiada'
+          : `Te ${count === 1 ? 'falta la situación' : 'faltan las situaciones'} ${missedPronunIndices.map(i => i + 1).join(', ')}`,
+        stepIdx: STEPS.findIndex(s => s.key === 'practice'),
+        startAt,
+        missedIndices: missedPronunIndices,
+      })
     }
 
     return items
@@ -433,8 +457,10 @@ export default function LessonView() {
             onActivity={logActivity}
             completedActivities={completedActivities}
             getIncompleteItems={isLast ? getIncompleteItems : undefined}
-            onGoToStep={isLast ? goToStep : undefined}
+            onGoToStep={isLast ? handleGoToStep : undefined}
             onForceComplete={isLast ? handleForceComplete : undefined}
+            startAtScenario={step.key === 'practice' ? practiceStartAt : undefined}
+            missedScenarioIndices={step.key === 'practice' ? practiceMissedIndices : undefined}
           />
         </div>
 

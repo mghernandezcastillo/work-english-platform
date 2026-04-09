@@ -60,7 +60,7 @@ export default function ReinforcementStep({
                 </div>
                 <button
                   className="incomplete-inline-go"
-                  onClick={() => onGoToStep?.(item.stepIdx)}
+                  onClick={() => onGoToStep?.(item.stepIdx, { startAt: item.startAt, missedIndices: item.missedIndices })}
                 >Ir →</button>
               </div>
             ))}
