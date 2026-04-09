@@ -19,21 +19,24 @@ function derange(arr) {
   return result
 }
 
-export default function MatchStep({ data, onComplete, onCanAdvance, onActivity }) {
+export default function MatchStep({ data, onComplete, onCanAdvance, onActivity, completedActivities }) {
   const { profile } = useAuth()
   const allPhrases = data?.phrases || []
+  const alreadyCompleted = completedActivities?.has('match_done')
+
   const [pairs, setPairs] = useState([])
   const [selectedLeft, setSelectedLeft] = useState(null)
   const [selectedRight, setSelectedRight] = useState(null)
   const [matched, setMatched] = useState(new Set())
   const [wrongPair, setWrongPair] = useState(null)
   const [shuffledRight, setShuffledRight] = useState([])
-  const [completed, setCompleted] = useState(false)
+  const [completed, setCompleted] = useState(alreadyCompleted || false)
   const [attempts, setAttempts] = useState(0)
   const [startTime] = useState(Date.now())
   const [elapsed, setElapsed] = useState(0)
 
   useEffect(() => {
+    if (alreadyCompleted) { onCanAdvance?.(true); return }
     if (allPhrases.length === 0) return
     const selected = [...allPhrases].sort(() => Math.random() - 0.5).slice(0, Math.min(5, allPhrases.length))
     setPairs(selected)
@@ -46,6 +49,19 @@ export default function MatchStep({ data, onComplete, onCanAdvance, onActivity }
     const interval = setInterval(() => setElapsed(Math.floor((Date.now() - startTime) / 1000)), 1000)
     return () => clearInterval(interval)
   }, [completed, startTime])
+
+  // Already completed — show summary without forcing redo
+  if (alreadyCompleted) {
+    return (
+      <div className="step-wrapper animate-fadeIn">
+        <div className="match-complete">
+          <div style={{ fontSize: 44 }}>✅</div>
+          <p style={{ fontSize: 18, fontWeight: 700, color: 'var(--el-text)', fontFamily: 'Manrope,sans-serif' }}>¡Todas conectadas!</p>
+          <p style={{ fontSize: 13, color: 'var(--el-text-muted)' }}>Ya completaste este ejercicio</p>
+        </div>
+      </div>
+    )
+  }
 
   const checkMatch = useCallback((leftIdx, rightIdx) => {
     const leftPhrase = pairs[leftIdx]

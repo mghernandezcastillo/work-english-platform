@@ -3,34 +3,49 @@ import { useAuth } from '../../../context/AuthContext'
 import { checkAndAwardBadges } from '../../../lib/xp'
 import './Steps.css'
 
-export default function ExerciseStep({ data, onComplete, onCanAdvance, onActivity }) {
+export default function ExerciseStep({ data, onComplete, onCanAdvance, onActivity, completedActivities }) {
   const { profile } = useAuth()
   const exercises = data?.exercises || []
+  const alreadyCompleted = completedActivities?.has('exercises_done')
+
   const [currentIndex, setCurrentIndex] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState(null)
   const [showResult, setShowResult] = useState(false)
   const [score, setScore] = useState(0)
-  const [finished, setFinished] = useState(false)
+  const [finished, setFinished] = useState(alreadyCompleted || false)
   const [mistakes, setMistakes] = useState([])
-  const [hintLevel, setHintLevel] = useState(0) // 0=none, 1=partial, 2=full
+  const [hintLevel, setHintLevel] = useState(0)
   const inputRef = useRef(null)
 
   const current = exercises[currentIndex]
 
-  // While answer not verified, disable global Next button
+  // If already completed, enable advance immediately
   useEffect(() => {
+    if (alreadyCompleted) { onCanAdvance?.(true); return }
     onCanAdvance?.(false)
-    setHintLevel(0) // reset hint on new question
-    // Auto-focus fill input so keyboard opens immediately
+    setHintLevel(0)
     if (exercises[currentIndex]?.type === 'fill') {
       setTimeout(() => inputRef.current?.focus(), 120)
     }
-  }, [currentIndex])
+  }, [currentIndex, alreadyCompleted])
 
   // After result shown, re-enable global Next button only when finished
   useEffect(() => {
     if (finished) onCanAdvance?.(true)
   }, [finished])
+
+  // Already completed — show summary without forcing redo
+  if (alreadyCompleted) {
+    return (
+      <div className="step-wrapper animate-fadeIn">
+        <div className="exercise-result">
+          <div className="exercise-result-emoji">✅</div>
+          <p className="exercise-result-title">¡Ejercicios completados!</p>
+          <p className="exercise-result-sub">Ya completaste estos ejercicios</p>
+        </div>
+      </div>
+    )
+  }
 
   function checkAnswer(answer) {
     if (showResult) return

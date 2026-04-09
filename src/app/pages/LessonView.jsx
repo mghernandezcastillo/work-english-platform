@@ -54,18 +54,27 @@ export default function LessonView() {
   const [incompleteItems, setIncompleteItems] = useState([])
   // Session-only mute — resets to false (audio ON) on every page load
   const [muted, setMuted] = useState(false)
-  // Practice step return-to context (set when navigating back from step 7)
+  // Return-to context when navigating back from step 7
   const [practiceStartAt, setPracticeStartAt] = useState(0)
   const [practiceMissedIndices, setPracticeMissedIndices] = useState([])
+  const [phrasesStartAt, setPhrasesStartAt] = useState(0)
+  const [phrasesMissedIndices, setPhrasesMissedIndices] = useState([])
 
   /* ── Comprehensive activity tracking ──
      Each key represents a completable exercise within the lesson.
-     Steps call onActivity('key') when the user actually does it. */
-  const [completedActivities, setCompletedActivities] = useState(new Set())
+     Steps call onActivity('key') when the user actually does it.
+     Persisted to sessionStorage so a page refresh doesn't lose progress. */
+  const [completedActivities, setCompletedActivities] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem(`lesson_activities_${lessonId}`)
+      return saved ? new Set(JSON.parse(saved)) : new Set()
+    } catch { return new Set() }
+  })
   function logActivity(key) {
     setCompletedActivities(prev => {
       const next = new Set(prev)
       next.add(key)
+      try { sessionStorage.setItem(`lesson_activities_${lessonId}`, JSON.stringify([...next])) } catch {}
       return next
     })
   }
@@ -161,6 +170,7 @@ export default function LessonView() {
       await markComplete()
       localStorage.removeItem(`lesson_step_${lessonId}`)
       sessionStorage.removeItem(`lesson_cache_${lessonId}`)
+      sessionStorage.removeItem(`lesson_activities_${lessonId}`)
       setShowXP(true)
       if (profile?.id) {
         const days = await calculateCurrentStreak()
@@ -223,11 +233,15 @@ export default function LessonView() {
     }
   }
 
-  // handleGoToStep: called by ReinforcementStep — stores practice context before navigating
+  // handleGoToStep: called by ReinforcementStep — stores return-to context before navigating
   function handleGoToStep(stepIdx, options = {}) {
     if (STEPS[stepIdx]?.key === 'practice') {
       setPracticeStartAt(options.startAt ?? 0)
       setPracticeMissedIndices(options.missedIndices ?? [])
+    }
+    if (STEPS[stepIdx]?.key === 'phrases') {
+      setPhrasesStartAt(options.startAt ?? 0)
+      setPhrasesMissedIndices(options.missedIndices ?? [])
     }
     goToStep(stepIdx)
   }
@@ -237,13 +251,29 @@ export default function LessonView() {
   function getIncompleteItems() {
     const items = []
 
-    // Step 2: "Escucha y repite" — pronunciation practice on phrases
-    if (!completedActivities.has('phrases_pronunciation')) {
+    // Step 2: "Escucha y repite" — per-phrase pronunciation check
+    const phrasesPronunKey = `lesson_phrases_pronun_${lessonId}`
+    const phrasesPronunScores = JSON.parse(localStorage.getItem(phrasesPronunKey) || '{}')
+    const phrasesData = lesson?.content?.phrases?.phrases || []
+    const missedPhraseIdxs = phrasesData
+      .map((p, i) => ({ phrase: p.en, idx: i }))
+      .filter(({ phrase }) => !phrasesPronunScores[phrase])
+      .map(({ idx }) => idx)
+    if (missedPhraseIdxs.length > 0) {
+      const allMissed = missedPhraseIdxs.length === phrasesData.length
+      const startAt = allMissed ? 0 : missedPhraseIdxs[0]
+      const count = missedPhraseIdxs.length
       items.push({
         icon: '💬',
-        label: 'Pronunciación en "Escucha y repite"',
-        detail: 'No practicaste la pronunciación de las frases',
+        label: allMissed
+          ? 'Pronunciación en "Escucha y repite"'
+          : `Falta pronunciar ${count === 1 ? '1 frase' : `${count} frases`} en "Escucha y repite"`,
+        detail: allMissed
+          ? 'No practicaste la pronunciación de las frases'
+          : `Te ${count === 1 ? 'falta la frase' : 'faltan las frases'} ${missedPhraseIdxs.map(i => i + 1).join(', ')}`,
         stepIdx: STEPS.findIndex(s => s.key === 'phrases'),
+        startAt,
+        missedIndices: missedPhraseIdxs,
       })
     }
 
@@ -461,6 +491,8 @@ export default function LessonView() {
             onForceComplete={isLast ? handleForceComplete : undefined}
             startAtScenario={step.key === 'practice' ? practiceStartAt : undefined}
             missedScenarioIndices={step.key === 'practice' ? practiceMissedIndices : undefined}
+            startAtPhrase={step.key === 'phrases' ? phrasesStartAt : undefined}
+            missedPhraseIndices={step.key === 'phrases' ? phrasesMissedIndices : undefined}
           />
         </div>
 
