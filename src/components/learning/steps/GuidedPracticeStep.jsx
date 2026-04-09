@@ -33,7 +33,12 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
     if (lessonId) {
       try {
         const scores = JSON.parse(localStorage.getItem(`lesson_pronun_scores_${lessonId}`) || '{}')
-        scenarios.forEach((s, i) => { if (scores[s.phrase]) set.add(i) })
+        scenarios.forEach((s, i) => {
+          // Check full phrase key OR any individual sentence key
+          if (scores[s.phrase]) { set.add(i); return }
+          const sents = splitSentences(s.phrase)
+          if (sents.length > 1 && sents.some(sent => scores[sent])) set.add(i)
+        })
       } catch { }
     }
     return set
@@ -71,9 +76,11 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
   // Reset active sentence when scenario changes
   useEffect(() => { setActiveSentence(0) }, [current])
 
-  // Auto-play audio on scenario change — no delay for instant playback
+  // Auto-play audio on scenario change — cancel previous first to avoid overlap
   useEffect(() => {
     if (!scenarios.length || muted) return
+    // Cancel any ongoing speech before starting new
+    window.speechSynthesis?.cancel()
     const el = audioRef.current
     if (el) {
       el.playbackRate = speed
@@ -81,6 +88,10 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       el.play().catch(() => {})
     } else {
       playAudio()
+    }
+    return () => {
+      window.speechSynthesis?.cancel()
+      if (audioRef.current) { audioRef.current.pause(); audioRef.current.currentTime = 0 }
     }
   }, [current, scenarios.length, muted])
 
@@ -120,6 +131,10 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       const key = `lesson_pronun_scores_${lessonId}`
       const existing = JSON.parse(localStorage.getItem(key) || '{}')
       existing[phrase] = Math.max(existing[phrase] ?? 0, score)
+      // Also save under full scenario phrase so step 7 (getIncompleteItems) can find it
+      if (hasMultiple && scenario.phrase && scenario.phrase !== phrase) {
+        existing[scenario.phrase] = Math.max(existing[scenario.phrase] ?? 0, score)
+      }
       localStorage.setItem(key, JSON.stringify(existing))
     } catch { }
   }
