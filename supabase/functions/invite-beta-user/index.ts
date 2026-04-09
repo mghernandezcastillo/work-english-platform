@@ -12,7 +12,7 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const BREVO_API_KEY = Deno.env.get("BREVO_API_KEY")!;
-const APP_URL = "https://english-for-work.vercel.app";
+const APP_URL = "https://work-english-platform.vercel.app";
 const SENDER = { name: "English for Work", email: "englishforworkapp@gmail.com" };
 
 Deno.serve(async (req: Request) => {
@@ -111,7 +111,7 @@ body{margin:0;padding:0;background:#f4f4f5;font-family:'Segoe UI',Arial,sans-ser
   </p>
 </div>
 <div class="foot">English for Work — Acceso Beta<br>
-<a href="${APP_URL}" style="color:#6366f1">english-for-work.vercel.app</a></div>
+<a href="${APP_URL}" style="color:#6366f1">work-english-platform.vercel.app</a></div>
 </div></body></html>`;
 
   const emailRes = await fetch("https://api.brevo.com/v3/smtp/email", {

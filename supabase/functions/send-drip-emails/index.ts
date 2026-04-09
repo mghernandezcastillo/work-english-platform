@@ -4,7 +4,7 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const BREVO_API_KEY = Deno.env.get("BREVO_API_KEY")!;
-const APP_URL = "https://english-for-work.vercel.app";
+const APP_URL = "https://work-english-platform.vercel.app";
 // Sender verificado en Brevo — cambiar a hola@englishforwork.co cuando el dominio esté configurado
 const SENDER = { name: "English for Work", email: "englishforworkapp@gmail.com" };
 
