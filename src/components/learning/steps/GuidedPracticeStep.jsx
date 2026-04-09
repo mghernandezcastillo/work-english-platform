@@ -212,8 +212,12 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         </div>
       </div>
 
-      {/* Sentence selector hint (only for multi-sentence) */}
-      {hasMultiple && (
+      {/* Hint: in repair mode tell user to click Siguiente; else show sentence selector */}
+      {missedScenarioIndices.length > 0 ? (
+        <div className="practice-sentence-hint" style={{ color: 'var(--el-accent)' }}>
+          ✅ Practica la pronunciación y luego toca <strong>Siguiente →</strong> para continuar
+        </div>
+      ) : hasMultiple && (
         <div className="practice-sentence-hint">
           Frase {activeSentence + 1} de {sentences.length} · Toca una frase para seleccionarla
         </div>
@@ -234,7 +238,21 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       <div className="step-inline-nav" style={{ paddingBottom: 4 }}>
         <button className="step-inline-btn" onClick={() => current > 0 && goTo(current - 1)} disabled={current === 0}>‹</button>
         <span className="step-inline-label">{current + 1} de {scenarios.length}</span>
-        <button className="step-inline-btn pulse" onClick={() => current < scenarios.length - 1 && goTo(current + 1)} disabled={current === scenarios.length - 1}>›</button>
+        {missedScenarioIndices.length > 0 ? (
+          // Repair mode: › only goes to next pending missed index
+          (() => {
+            const nextMissed = missedScenarioIndices.filter(i => i > current)[0]
+            return (
+              <button
+                className="step-inline-btn"
+                onClick={() => nextMissed !== undefined && goTo(nextMissed)}
+                disabled={nextMissed === undefined}
+              >›</button>
+            )
+          })()
+        ) : (
+          <button className="step-inline-btn pulse" onClick={() => current < scenarios.length - 1 && goTo(current + 1)} disabled={current === scenarios.length - 1}>›</button>
+        )}
       </div>
     </div>
   )

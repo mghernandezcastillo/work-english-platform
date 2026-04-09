@@ -150,10 +150,28 @@ export default function PhrasesStep({ data, onCanAdvance, onActivity, muted, les
       </div>
 
       {/* Inline prev/next — use chevron symbols to not duplicate footer "Siguiente" */}
+      {missedPhraseIndices.length > 0 && (
+        <div className="practice-sentence-hint" style={{ color: 'var(--el-accent)' }}>
+          ✅ Practica la pronunciación y luego toca <strong>Siguiente →</strong> para continuar
+        </div>
+      )}
       <div className="step-inline-nav">
         <button className="step-inline-btn" onClick={() => current > 0 && goTo(current - 1)} disabled={current === 0}>‹</button>
         <span className="step-inline-label">{current + 1} de {phrases.length}</span>
-        <button className="step-inline-btn pulse" onClick={() => current < phrases.length - 1 && goTo(current + 1)} disabled={current === phrases.length - 1}>›</button>
+        {missedPhraseIndices.length > 0 ? (
+          (() => {
+            const nextMissed = missedPhraseIndices.filter(i => i > current)[0]
+            return (
+              <button
+                className="step-inline-btn"
+                onClick={() => nextMissed !== undefined && goTo(nextMissed)}
+                disabled={nextMissed === undefined}
+              >›</button>
+            )
+          })()
+        ) : (
+          <button className="step-inline-btn pulse" onClick={() => current < phrases.length - 1 && goTo(current + 1)} disabled={current === phrases.length - 1}>›</button>
+        )}
       </div>
     </div>
   )
