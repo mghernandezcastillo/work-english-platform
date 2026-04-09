@@ -46,37 +46,79 @@ async function sendWelcomeEmail(email: string, name: string, passwordUrl: string
 
   const firstName = name.split(' ')[0] || 'Estudiante'
 
-  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><style>
-body{margin:0;padding:0;background:#f4f4f5;font-family:'Segoe UI',Arial,sans-serif}
-.wrap{max-width:560px;margin:32px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
-.hdr{background:linear-gradient(135deg,#1a1a2e,#2d2d5e);padding:36px 40px;text-align:center}
-.hdr h1{color:#fff;font-size:22px;margin:0}.hdr p{color:#a0a0c0;font-size:13px;margin:6px 0 0}
-.bd{padding:36px 40px}.bd p{font-size:15px;line-height:1.7;color:#374151;margin:0 0 16px}
-.cta{display:block;background-color:#6366f1;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff!important;text-decoration:none;font-size:16px;font-weight:700;text-align:center;padding:16px 32px;border-radius:10px;margin:24px 0}
-.tip{background:#f0f9ff;border-left:3px solid #6366f1;border-radius:8px;padding:14px 18px;margin:20px 0;font-size:14px}
-.steps{background:#fafafa;border-radius:10px;padding:20px 24px;margin:20px 0}
-.steps p{font-size:14px;margin:8px 0;color:#374151}
-.foot{background:#f9fafb;padding:20px 40px;text-align:center;font-size:12px;color:#9ca3af;border-top:1px solid #f0f0f0}
-</style></head><body><div class="wrap">
-  <div class="hdr"><h1>&#127758; English for Work</h1><p>Tu inglés profesional, un paso a la vez</p></div>
-  <div class="bd">
-    <p>¡Hola <strong>${firstName}</strong>! &#128075;</p>
-    <p>¡<strong>Felicitaciones por tu compra!</strong> Tu acceso de por vida a English for Work está listo.</p>
-    <p>Solo necesitas <strong>crear tu contraseña</strong> para empezar:</p>
-    <a class="cta" href="${passwordUrl}" sib-link-notrack>Crear mi contraseña &#8594;</a>
-    <div class="steps">
-      <p><strong>¿Cómo funciona?</strong></p>
-      <p>1️⃣ Haz clic en el botón de arriba</p>
-      <p>2️⃣ Crea tu contraseña</p>
-      <p>3️⃣ ¡Empieza tu primera lección!</p>
-    </div>
-    <div class="tip">&#128161; Haz al menos una lección al día. Son 10-15 minutos y están diseñadas para aprender haciendo, no memorizando.</div>
-    <p style="font-size:13px;color:#9ca3af;text-align:center">Tienes acceso completo: 36 lecciones + 12 simulaciones + vocabulario laboral.</p>
-    <p style="font-size:12px;color:#9ca3af;text-align:center">Si el botón no funciona, copia y pega este enlace:<br><a href="${passwordUrl}" sib-link-notrack style="color:#6366f1;word-break:break-all">${passwordUrl}</a></p>
-  </div>
-  <div class="foot">Recibiste este email porque compraste English for Work.<br>
-  <a href="${APP_URL}" style="color:#6366f1">Ir a la plataforma</a> · <a href="mailto:englishforworkapp@gmail.com" style="color:#6366f1">¿Necesitas ayuda?</a></div>
-</div></body></html>`
+  const html = `<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background-color:#f4f4f5;font-family:'Segoe UI',Arial,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f5;padding:32px 16px">
+    <tr><td align="center">
+      <table width="100%" style="max-width:560px;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)">
+
+        <!-- HEADER -->
+        <tr>
+          <td style="background-color:#1a1a2e;padding:36px 40px;text-align:center">
+            <h1 style="color:#ffffff;font-size:22px;margin:0;font-family:'Segoe UI',Arial,sans-serif">&#127758; English for Work</h1>
+            <p style="color:#a0a0c0;font-size:13px;margin:8px 0 0;font-family:'Segoe UI',Arial,sans-serif">Tu inglés profesional, un paso a la vez</p>
+          </td>
+        </tr>
+
+        <!-- BODY -->
+        <tr>
+          <td style="padding:36px 40px">
+            <p style="font-size:15px;line-height:1.7;color:#374151;margin:0 0 16px;font-family:'Segoe UI',Arial,sans-serif">¡Hola <strong>${firstName}</strong>! &#128075;</p>
+            <p style="font-size:15px;line-height:1.7;color:#374151;margin:0 0 16px;font-family:'Segoe UI',Arial,sans-serif">¡<strong>Felicitaciones por tu compra!</strong> Tu acceso de por vida a English for Work está listo.</p>
+            <p style="font-size:15px;line-height:1.7;color:#374151;margin:0 0 8px;font-family:'Segoe UI',Arial,sans-serif">Solo necesitas <strong>crear tu contraseña</strong> para empezar:</p>
+
+            <!-- CTA BUTTON -->
+            <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:16px 0">
+              <a href="${passwordUrl}" sib-link-notrack
+                style="display:inline-block;background-color:#6366f1;color:#ffffff;text-decoration:none;font-size:16px;font-weight:700;text-align:center;padding:16px 40px;border-radius:10px;font-family:'Segoe UI',Arial,sans-serif">
+                Crear mi contraseña &#8594;
+              </a>
+            </td></tr></table>
+
+            <!-- STEPS -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#fafafa;border-radius:10px;margin:8px 0 20px">
+              <tr><td style="padding:20px 24px">
+                <p style="font-size:14px;color:#374151;margin:0 0 8px;font-family:'Segoe UI',Arial,sans-serif"><strong>¿Cómo funciona?</strong></p>
+                <p style="font-size:14px;color:#374151;margin:0 0 6px;font-family:'Segoe UI',Arial,sans-serif">1️⃣ Haz clic en el botón de arriba</p>
+                <p style="font-size:14px;color:#374151;margin:0 0 6px;font-family:'Segoe UI',Arial,sans-serif">2️⃣ Crea tu contraseña</p>
+                <p style="font-size:14px;color:#374151;margin:0;font-family:'Segoe UI',Arial,sans-serif">3️⃣ ¡Empieza tu primera lección!</p>
+              </td></tr>
+            </table>
+
+            <!-- TIP -->
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td width="3" style="background-color:#6366f1;border-radius:4px">&nbsp;</td>
+              <td style="background-color:#f0f9ff;padding:14px 18px;border-radius:0 8px 8px 0">
+                <p style="font-size:14px;color:#374151;margin:0;font-family:'Segoe UI',Arial,sans-serif">&#128161; Haz al menos una lección al día. Son 10-15 minutos y están diseñadas para aprender haciendo, no memorizando.</p>
+              </td>
+            </tr></table>
+
+            <p style="font-size:13px;color:#9ca3af;text-align:center;margin:20px 0 8px;font-family:'Segoe UI',Arial,sans-serif">Tienes acceso completo: 36 lecciones + 12 simulaciones + vocabulario laboral.</p>
+            <p style="font-size:12px;color:#9ca3af;text-align:center;margin:0;font-family:'Segoe UI',Arial,sans-serif">Si el botón no funciona, copia este enlace:<br>
+              <a href="${passwordUrl}" sib-link-notrack style="color:#6366f1;word-break:break-all;font-family:'Segoe UI',Arial,sans-serif">${passwordUrl}</a>
+            </p>
+          </td>
+        </tr>
+
+        <!-- FOOTER -->
+        <tr>
+          <td style="background-color:#f9fafb;padding:20px 40px;text-align:center;border-top:1px solid #f0f0f0">
+            <p style="font-size:12px;color:#9ca3af;margin:0;font-family:'Segoe UI',Arial,sans-serif">
+              Recibiste este email porque compraste English for Work.<br>
+              <a href="${APP_URL}" style="color:#6366f1;text-decoration:none">Ir a la plataforma</a>
+              &nbsp;·&nbsp;
+              <a href="mailto:englishforworkapp@gmail.com" style="color:#6366f1;text-decoration:none">¿Necesitas ayuda?</a>
+            </p>
+          </td>
+        </tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`
 
   const res = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
