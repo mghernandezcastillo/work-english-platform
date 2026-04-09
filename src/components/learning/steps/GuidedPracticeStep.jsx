@@ -88,8 +88,8 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       el.play().catch(() => {})
       return
     }
-    // Read only the active sentence (or full phrase if only 1)
-    const textToRead = hasMultiple ? sentences[activeSentence] : scenario.phrase
+    // Read the full phrase via speechSynthesis (matches audioUrl behavior)
+    const textToRead = scenario.phrase
     if (textToRead && window.speechSynthesis) {
       window.speechSynthesis.cancel()
       const u = new SpeechSynthesisUtterance(textToRead)
