@@ -86,8 +86,11 @@ Deno.serve(async (req: Request) => {
     })
   }
 
-  // ── 4. PURCHASE_COMPLETE ─────────────────────────────────
-  if (event === 'PURCHASE_COMPLETE') {
+  // ── 4. PURCHASE — grant access ──────────────────────────
+  // Hotmart sends PURCHASE_APPROVED for real card payments
+  // and PURCHASE_COMPLETE from their test simulator.
+  const isPurchaseEvent = event === 'PURCHASE_APPROVED' || event === 'PURCHASE_COMPLETE'
+  if (isPurchaseEvent) {
     if (!buyerEmail) {
       await logWebhook('error', 'Missing buyer email')
       return err('Missing buyer email')
@@ -148,10 +151,14 @@ Deno.serve(async (req: Request) => {
 
       // Disparar email de bienvenida (día 0) de forma asíncrona
       try {
-        const dripUrl = Deno.env.get('SUPABASE_URL')!.replace('/v1', '') + '/functions/v1/send-drip-emails'
+        const dripUrl = Deno.env.get('SUPABASE_URL')! + '/functions/v1/send-drip-emails'
+        const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
         fetch(dripUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${serviceKey}`,
+          },
           body: JSON.stringify({ targetDay: 0 }),
         }).catch(() => {}) // fire-and-forget
       } catch { /* no bloquear el webhook */ }
@@ -169,8 +176,11 @@ Deno.serve(async (req: Request) => {
     }
   }
 
-  // ── 5. PURCHASE_REFUND ───────────────────────────────────
-  if (event === 'PURCHASE_REFUND') {
+  // ── 5. REFUND — revoke access ───────────────────────────
+  // Hotmart sends PURCHASE_REFUNDED for real refunds
+  // and PURCHASE_REFUND from their test simulator.
+  const isRefundEvent = event === 'PURCHASE_REFUNDED' || event === 'PURCHASE_REFUND'
+  if (isRefundEvent) {
     if (!transactionId && !buyerEmail) {
       await logWebhook('ignored', 'No transaction_id or email to identify user')
       return ok({ success: true, message: 'Ignored: no identifier' })
