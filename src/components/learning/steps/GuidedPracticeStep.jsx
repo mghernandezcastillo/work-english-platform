@@ -6,13 +6,15 @@ import './Steps.css'
 /**
  * Splits a long phrase into individual sentences.
  * "I am not sure. Could you explain? I will take notes." → 3 sentences
+ * Protects decimal numbers (e.g. "3.5 million") from being split.
  */
 function splitSentences(text) {
   if (!text) return []
-  // Split on ". " or "? " or "! " — keep the punctuation with the sentence
-  const parts = text.match(/[^.!?]*[.!?]+/g)
+  // Protect decimals like "3.5" from being treated as sentence-ending periods
+  const safe = text.replace(/(\d)\.(\d)/g, '$1\u00B7$2')
+  const parts = safe.match(/[^.!?]*[.!?]+/g)
   if (!parts || parts.length <= 1) return [text.trim()]
-  return parts.map(s => s.trim()).filter(Boolean)
+  return parts.map(s => s.replace(/\u00B7/g, '.').trim()).filter(Boolean)
 }
 
 export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onActivity, muted, startAtScenario = 0, missedScenarioIndices = [] }) {
