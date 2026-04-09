@@ -31,6 +31,7 @@ export default function MatchStep({ data, onComplete, onCanAdvance, onActivity, 
   const [wrongPair, setWrongPair] = useState(null)
   const [shuffledRight, setShuffledRight] = useState([])
   const [completed, setCompleted] = useState(alreadyCompleted || false)
+  const [justFinished, setJustFinished] = useState(false)
   const [attempts, setAttempts] = useState(0)
   const [startTime] = useState(Date.now())
   const [elapsed, setElapsed] = useState(0)
@@ -63,6 +64,7 @@ export default function MatchStep({ data, onComplete, onCanAdvance, onActivity, 
       setWrongPair(null)
       if (newMatched.size === pairs.length) {
         setCompleted(true)
+        setJustFinished(true)
         onCanAdvance?.(true)
         onActivity?.('match_done')
         if (onComplete) onComplete()
@@ -80,8 +82,9 @@ export default function MatchStep({ data, onComplete, onCanAdvance, onActivity, 
     }
   }, [pairs, shuffledRight, matched, attempts, elapsed])
 
-  // Already completed — show summary without forcing redo
-  if (alreadyCompleted) {
+  // Already completed from a PREVIOUS visit — show summary without forcing redo
+  // (If justFinished, let the regular completed screen show the stats)
+  if (alreadyCompleted && !justFinished) {
     return (
       <div className="step-wrapper animate-fadeIn">
         <div className="match-complete">

@@ -13,6 +13,7 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance, onActivit
   const [showResult, setShowResult] = useState(false)
   const [score, setScore] = useState(0)
   const [finished, setFinished] = useState(alreadyCompleted || false)
+  const [justFinished, setJustFinished] = useState(false)
   const [mistakes, setMistakes] = useState([])
   const [hintLevel, setHintLevel] = useState(0)
   const inputRef = useRef(null)
@@ -34,8 +35,9 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance, onActivit
     if (finished) onCanAdvance?.(true)
   }, [finished])
 
-  // Already completed — show summary without forcing redo
-  if (alreadyCompleted) {
+  // Already completed from a PREVIOUS visit — show summary without forcing redo
+  // (If `finished` was set THIS session, let the regular finished screen show the score)
+  if (alreadyCompleted && !justFinished) {
     return (
       <div className="step-wrapper animate-fadeIn">
         <div className="exercise-result">
@@ -66,6 +68,7 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance, onActivit
     if (isLast) {
       const finalScore = score + (isCurrentCorrect() ? 1 : 0)
       setFinished(true)
+      setJustFinished(true)
       onActivity?.('exercises_done')
       if (onComplete) onComplete(finalScore)
       if (profile?.id && finalScore === exercises.length && exercises.length > 0) {
