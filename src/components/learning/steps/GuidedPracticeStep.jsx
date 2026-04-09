@@ -261,22 +261,33 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         </div>
       )}
 
-      {/* Pagination — hidden in repair mode (only one pending scenario shown) */}
+      {/* Pagination dots — hidden in repair mode */}
       {missedScenarioIndices.length === 0 && (
         <div className="step-page-dots" style={{ marginTop: 'auto', paddingTop: 8 }}>
           {scenarios.map((_, i) => {
-            const isMissed = missedScenarioIndices.includes(i) && !visited.has(i)
             const cls = [
               'step-page-dot',
               i === current ? 'active' : visited.has(i) ? 'done' : '',
-              isMissed ? 'missed' : '',
             ].filter(Boolean).join(' ')
             return <button key={i} className={cls} onClick={() => goTo(i)} />
           })}
         </div>
       )}
-      {/* Nav arrows — hidden in repair mode */}
-      {missedScenarioIndices.length === 0 && (
+      {/* Nav — repair mode: only between missed indices; normal mode: all scenarios */}
+      {missedScenarioIndices.length > 0 ? (() => {
+        const missedPos = missedScenarioIndices.indexOf(current)
+        const prevMissed = missedScenarioIndices.filter(i => i < current).at(-1)
+        const nextMissed = missedScenarioIndices.find(i => i > current)
+        return (
+          <div className="step-inline-nav" style={{ paddingBottom: 4 }}>
+            <button className="step-inline-btn" onClick={() => prevMissed !== undefined && goTo(prevMissed)} disabled={prevMissed === undefined}>‹</button>
+            <span className="step-inline-label">
+              Pendiente {missedPos + 1} de {missedScenarioIndices.length}
+            </span>
+            <button className="step-inline-btn" onClick={() => nextMissed !== undefined && goTo(nextMissed)} disabled={nextMissed === undefined}>›</button>
+          </div>
+        )
+      })() : (
         <div className="step-inline-nav" style={{ paddingBottom: 4 }}>
           <button className="step-inline-btn" onClick={() => current > 0 && goTo(current - 1)} disabled={current === 0}>‹</button>
           <span className="step-inline-label">{current + 1} de {scenarios.length}</span>
