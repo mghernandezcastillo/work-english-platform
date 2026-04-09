@@ -50,19 +50,6 @@ export default function MatchStep({ data, onComplete, onCanAdvance, onActivity, 
     return () => clearInterval(interval)
   }, [completed, startTime])
 
-  // Already completed — show summary without forcing redo
-  if (alreadyCompleted) {
-    return (
-      <div className="step-wrapper animate-fadeIn">
-        <div className="match-complete">
-          <div style={{ fontSize: 44 }}>✅</div>
-          <p style={{ fontSize: 18, fontWeight: 700, color: 'var(--el-text)', fontFamily: 'Manrope,sans-serif' }}>¡Todas conectadas!</p>
-          <p style={{ fontSize: 13, color: 'var(--el-text-muted)' }}>Ya completaste este ejercicio</p>
-        </div>
-      </div>
-    )
-  }
-
   const checkMatch = useCallback((leftIdx, rightIdx) => {
     const leftPhrase = pairs[leftIdx]
     const rightPhrase = shuffledRight[rightIdx]
@@ -92,6 +79,19 @@ export default function MatchStep({ data, onComplete, onCanAdvance, onActivity, 
       setTimeout(() => { setWrongPair(null); setSelectedLeft(null); setSelectedRight(null) }, 600)
     }
   }, [pairs, shuffledRight, matched, attempts, elapsed])
+
+  // Already completed — show summary without forcing redo
+  if (alreadyCompleted) {
+    return (
+      <div className="step-wrapper animate-fadeIn">
+        <div className="match-complete">
+          <div style={{ fontSize: 44 }}>✅</div>
+          <p style={{ fontSize: 18, fontWeight: 700, color: 'var(--el-text)', fontFamily: 'Manrope,sans-serif' }}>¡Todas conectadas!</p>
+          <p style={{ fontSize: 13, color: 'var(--el-text-muted)' }}>Ya completaste este ejercicio</p>
+        </div>
+      </div>
+    )
+  }
 
   function handleLeftClick(idx) {
     if (matched.has(idx) || wrongPair) return
