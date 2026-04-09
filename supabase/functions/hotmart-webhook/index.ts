@@ -86,6 +86,9 @@ body{margin:0;padding:0;background:#f4f4f5;font-family:'Segoe UI',Arial,sans-ser
       to: [{ email, name }],
       subject: '🎉 ¡Bienvenido/a a English for Work! — Crea tu contraseña',
       htmlContent: html,
+      // Disable click tracking: Brevo's redirect proxy strips the URL hash (#access_token=...)
+      // that Supabase needs for the recovery flow
+      trackClicks: false,
     }),
   })
   const body = await res.text()
