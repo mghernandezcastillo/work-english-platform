@@ -52,7 +52,7 @@ body{margin:0;padding:0;background:#f4f4f5;font-family:'Segoe UI',Arial,sans-ser
 .hdr{background:linear-gradient(135deg,#1a1a2e,#2d2d5e);padding:36px 40px;text-align:center}
 .hdr h1{color:#fff;font-size:22px;margin:0}.hdr p{color:#a0a0c0;font-size:13px;margin:6px 0 0}
 .bd{padding:36px 40px}.bd p{font-size:15px;line-height:1.7;color:#374151;margin:0 0 16px}
-.cta{display:block;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff!important;text-decoration:none;font-size:16px;font-weight:700;text-align:center;padding:16px 32px;border-radius:10px;margin:24px 0}
+.cta{display:block;background-color:#6366f1;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff!important;text-decoration:none;font-size:16px;font-weight:700;text-align:center;padding:16px 32px;border-radius:10px;margin:24px 0}
 .tip{background:#f0f9ff;border-left:3px solid #6366f1;border-radius:8px;padding:14px 18px;margin:20px 0;font-size:14px}
 .steps{background:#fafafa;border-radius:10px;padding:20px 24px;margin:20px 0}
 .steps p{font-size:14px;margin:8px 0;color:#374151}
