@@ -170,8 +170,14 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         <audio key={`audio-${current}`} ref={audioRef} src={scenario.audioUrl} preload="auto" style={{ display: 'none' }} />
       )}
 
-      {/* Counter */}
-      <div className="step-counter">Situación {current + 1} / {scenarios.length}</div>
+      {/* Counter — repair mode shows focused label */}
+      {missedScenarioIndices.length > 0 ? (
+        <div className="step-counter" style={{ color: 'var(--el-accent)' }}>
+          ⚠️ Situación pendiente
+        </div>
+      ) : (
+        <div className="step-counter">Situación {current + 1} / {scenarios.length}</div>
+      )}
 
       {/* Prompt card */}
       <div className="practice-prompt-card">
@@ -255,37 +261,28 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         </div>
       )}
 
-      {/* Pagination — always visible at bottom */}
-      <div className="step-page-dots" style={{ marginTop: 'auto', paddingTop: 8 }}>
-        {scenarios.map((_, i) => {
-          const isMissed = missedScenarioIndices.includes(i) && !visited.has(i)
-          const cls = [
-            'step-page-dot',
-            i === current ? 'active' : visited.has(i) ? 'done' : '',
-            isMissed ? 'missed' : '',
-          ].filter(Boolean).join(' ')
-          return <button key={i} className={cls} onClick={() => goTo(i)} />
-        })}
-      </div>
-      <div className="step-inline-nav" style={{ paddingBottom: 4 }}>
-        <button className="step-inline-btn" onClick={() => current > 0 && goTo(current - 1)} disabled={current === 0}>‹</button>
-        <span className="step-inline-label">{current + 1} de {scenarios.length}</span>
-        {missedScenarioIndices.length > 0 ? (
-          // Repair mode: › only goes to next pending missed index
-          (() => {
-            const nextMissed = missedScenarioIndices.filter(i => i > current)[0]
-            return (
-              <button
-                className="step-inline-btn"
-                onClick={() => nextMissed !== undefined && goTo(nextMissed)}
-                disabled={nextMissed === undefined}
-              >›</button>
-            )
-          })()
-        ) : (
+      {/* Pagination — hidden in repair mode (only one pending scenario shown) */}
+      {missedScenarioIndices.length === 0 && (
+        <div className="step-page-dots" style={{ marginTop: 'auto', paddingTop: 8 }}>
+          {scenarios.map((_, i) => {
+            const isMissed = missedScenarioIndices.includes(i) && !visited.has(i)
+            const cls = [
+              'step-page-dot',
+              i === current ? 'active' : visited.has(i) ? 'done' : '',
+              isMissed ? 'missed' : '',
+            ].filter(Boolean).join(' ')
+            return <button key={i} className={cls} onClick={() => goTo(i)} />
+          })}
+        </div>
+      )}
+      {/* Nav arrows — hidden in repair mode */}
+      {missedScenarioIndices.length === 0 && (
+        <div className="step-inline-nav" style={{ paddingBottom: 4 }}>
+          <button className="step-inline-btn" onClick={() => current > 0 && goTo(current - 1)} disabled={current === 0}>‹</button>
+          <span className="step-inline-label">{current + 1} de {scenarios.length}</span>
           <button className="step-inline-btn pulse" onClick={() => current < scenarios.length - 1 && goTo(current + 1)} disabled={current === scenarios.length - 1}>›</button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

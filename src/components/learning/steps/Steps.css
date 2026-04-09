@@ -427,20 +427,26 @@
   padding: 10px 12px;
   border-radius: 10px;
   cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
+  transition: background 0.2s, box-shadow 0.2s, opacity 0.2s, transform 0.15s;
   border: 1px solid transparent;
+  /* Inactive: clearly dimmed */
+  opacity: 0.38;
+  transform: scale(0.98);
 }
 .practice-sentence:hover {
-  background: rgba(16,185,129,0.04);
+  opacity: 0.6;
 }
+/* Active sentence: vivid, full opacity, slightly larger */
 .practice-sentence.active {
-  background: rgba(16,185,129,0.08);
-  border-color: rgba(16,185,129,0.25);
-  box-shadow: 0 0 0 2px rgba(16,185,129,0.08);
+  opacity: 1;
+  transform: scale(1);
+  background: rgba(16,185,129,0.14);
+  border-color: rgba(16,185,129,0.55);
+  box-shadow: 0 0 0 3px rgba(16,185,129,0.12);
 }
 .practice-sentence-num {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--el-surface-highest);
   color: var(--el-text-muted);
@@ -453,9 +459,13 @@
   margin-top: 2px;
   transition: background 0.2s, color 0.2s;
 }
+/* Active: solid green circle with dark number */
 .practice-sentence.active .practice-sentence-num {
   background: var(--el-primary);
   color: #002919;
+  width: 26px;
+  height: 26px;
+  font-size: 12px;
 }
 .practice-sentence-body {
   flex: 1;
@@ -464,9 +474,13 @@
 .practice-sentence-en {
   font-size: clamp(16px, 4.2vw, 18px);
   font-weight: 600;
-  color: var(--el-text);
+  color: var(--el-text-muted); /* muted when inactive (sentence is at 38% opacity) */
   line-height: 1.4;
   margin: 0 0 3px;
+}
+/* Active sentence text: full white/bright */
+.practice-sentence.active .practice-sentence-en {
+  color: var(--el-text);
 }
 .practice-sentence-es {
   font-size: clamp(13px, 3.3vw, 14px);
