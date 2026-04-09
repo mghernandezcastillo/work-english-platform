@@ -151,7 +151,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         // Find next unpracticed sentence after current
         const nextIdx = sentences.findIndex((_, i) => i > activeSentence && !next.has(i))
         if (nextIdx !== -1) {
-          setTimeout(() => setActiveSentence(nextIdx), 1500)
+          setTimeout(() => setActiveSentence(nextIdx), 600)
         }
         return next
       })
