@@ -27,6 +27,11 @@ export default function PhrasesStep({ data, onCanAdvance, onActivity, muted, les
     return set
   })
 
+  // Sync to startAtPhrase if it changes (e.g. coming back from step 7 to a specific missed phrase)
+  useEffect(() => {
+    setCurrent(startAtPhrase)
+  }, [startAtPhrase])
+
   // Only allow advancing when ALL phrases have been viewed
   useEffect(() => {
     const allVisited = phrases.length > 0 && visited.size >= phrases.length

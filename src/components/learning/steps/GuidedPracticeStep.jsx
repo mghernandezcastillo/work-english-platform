@@ -39,6 +39,11 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
     return set
   })
 
+  // Sync to startAtScenario if it changes (e.g. coming back from step 7 to a specific missed scenario)
+  useEffect(() => {
+    setCurrent(startAtScenario)
+  }, [startAtScenario])
+
   // Only allow advancing when ALL scenarios have been viewed
   useEffect(() => {
     const allVisited = scenarios.length > 0 && visited.size >= scenarios.length
