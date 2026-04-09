@@ -16,10 +16,36 @@ export default function ResetPassword() {
   const [checking, setChecking] = useState(true)
 
   useEffect(() => {
-    // Handle the recovery token from the URL hash
-    // Supabase redirects with: #access_token=...&type=recovery
+    // Handle the recovery token from the URL
     async function handleRecovery() {
-      // First check if there's a hash with tokens (Supabase PKCE flow)
+      // ── NEW: Handle token_hash query parameter (from welcome email) ──
+      // The welcome email sends ?token_hash=X&type=recovery to avoid
+      // Brevo's click tracker breaking the Supabase redirect chain
+      const urlParams = new URLSearchParams(window.location.search)
+      const tokenHash = urlParams.get('token_hash')
+      const tokenType = urlParams.get('type')
+
+      if (tokenHash && tokenType === 'recovery') {
+        try {
+          const { error } = await supabase.auth.verifyOtp({
+            token_hash: tokenHash,
+            type: 'recovery',
+          })
+          if (!error) {
+            setReady(true)
+            setChecking(false)
+            // Clean up the URL
+            window.history.replaceState(null, '', '/reset-password')
+            return
+          }
+          console.error('verifyOtp error:', error.message)
+        } catch (err) {
+          console.error('verifyOtp exception:', err)
+        }
+      }
+
+      // ── EXISTING: Handle hash fragment (#access_token=...) ──
+      // Supabase redirects with: #access_token=...&type=recovery
       const hash = window.location.hash
       if (hash && hash.includes('access_token')) {
         // Parse tokens from hash
@@ -45,7 +71,6 @@ export default function ResetPassword() {
       }
 
       // Also check URL query params (some flows use ?token=...&type=recovery)
-      const urlParams = new URLSearchParams(window.location.search)
       const type = urlParams.get('type')
       if (type === 'recovery') {
         // Supabase should handle this automatically via onAuthStateChange

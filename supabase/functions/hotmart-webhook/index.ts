@@ -224,7 +224,16 @@ Deno.serve(async (req: Request) => {
         if (linkError) {
           console.error(`[hotmart-webhook] Error generando link: ${linkError.message}`)
         } else {
-          const passwordUrl = linkData?.properties?.action_link || `${APP_URL}/forgot-password`
+          // Construct direct URL with token_hash as query param instead of
+          // using action_link (which goes through Supabase verify → redirect chain
+          // that Brevo's click tracker breaks by stripping hash fragments)
+          const tokenHash = linkData?.properties?.hashed_token
+          const passwordUrl = tokenHash
+            ? `${APP_URL}/reset-password?token_hash=${encodeURIComponent(tokenHash)}&type=recovery`
+            : `${APP_URL}/forgot-password`
+
+          console.log(`[hotmart-webhook] Password URL generado para ${buyerEmail} (token: ${tokenHash ? 'yes' : 'no'})`)
+
           const emailResult = await sendWelcomeEmail(buyerEmail, buyerName, passwordUrl)
           emailSent = emailResult.ok
 
