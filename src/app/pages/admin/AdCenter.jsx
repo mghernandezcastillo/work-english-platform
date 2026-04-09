@@ -18,13 +18,26 @@ function CopyButton({ text, label = 'Copiar' }) {
 
 function AdCard({ ad }) {
   const [showCards, setShowCards] = useState(false)
+  const [showVariants, setShowVariants] = useState(false)
+  const [activeVariant, setActiveVariant] = useState(0)
   const isCarousel = ad.formato?.toLowerCase().includes('carousel')
+  const hasVariants = ad.imagenesVariantes && ad.imagenesVariantes.length > 0
+
+  // All images: original + variants (for the main preview navigation)
+  const allImages = hasVariants
+    ? [ad.imagen, ...ad.imagenesVariantes]
+    : [ad.imagen]
+
+  const currentImage = allImages[activeVariant] || ad.imagen
 
   return (
     <div className="ad-card">
       {/* Header */}
       <div className="ad-card-header">
         <span className="ad-format-badge">{ad.formato}</span>
+        {hasVariants && (
+          <span className="ad-variants-badge">🎨 {allImages.length} variantes</span>
+        )}
         <h3 className="ad-card-name">{ad.nombre}</h3>
       </div>
 
@@ -32,17 +45,81 @@ function AdCard({ ad }) {
         {/* Image preview */}
         <div className="ad-image-col">
           <div className="ad-image-wrap">
-            <img src={ad.imagen} alt={ad.nombre} className="ad-preview-img" />
+            <img src={currentImage} alt={ad.nombre} className="ad-preview-img" />
+            {allImages.length > 1 && (
+              <>
+                <button
+                  className="variant-nav variant-nav-prev"
+                  onClick={() => setActiveVariant(v => (v - 1 + allImages.length) % allImages.length)}
+                  aria-label="Imagen anterior"
+                >‹</button>
+                <button
+                  className="variant-nav variant-nav-next"
+                  onClick={() => setActiveVariant(v => (v + 1) % allImages.length)}
+                  aria-label="Imagen siguiente"
+                >›</button>
+                <div className="variant-dots">
+                  {allImages.map((_, i) => (
+                    <button
+                      key={i}
+                      className={`variant-dot ${i === activeVariant ? 'active' : ''}`}
+                      onClick={() => setActiveVariant(i)}
+                      aria-label={`Variante ${i + 1}`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
           <a
             className="download-btn"
-            href={ad.imagen}
+            href={currentImage}
             download
             target="_blank"
             rel="noopener noreferrer"
           >
-            ⬇ Descargar imagen
+            ⬇ Descargar imagen {allImages.length > 1 ? `(${activeVariant + 1}/${allImages.length})` : ''}
           </a>
+
+          {/* Variant thumbnails */}
+          {hasVariants && (
+            <div style={{ marginTop: 8 }}>
+              <button
+                className="copy-btn"
+                style={{ width: '100%' }}
+                onClick={() => setShowVariants(s => !s)}
+              >
+                {showVariants ? '▲ Ocultar variantes' : `▼ Ver ${allImages.length} variantes de imagen`}
+              </button>
+              {showVariants && (
+                <div className="variant-grid">
+                  {allImages.map((src, i) => (
+                    <div
+                      key={i}
+                      className={`variant-thumb ${i === activeVariant ? 'active' : ''}`}
+                      onClick={() => setActiveVariant(i)}
+                    >
+                      <img src={src} alt={`Variante ${i + 1}`} />
+                      <p className="variant-thumb-label">
+                        {i === 0 ? 'Original' : `Variante ${i}`}
+                      </p>
+                      <a
+                        className="download-btn"
+                        href={src}
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ fontSize: 11 }}
+                        onClick={e => e.stopPropagation()}
+                      >
+                        ⬇ Descargar
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {isCarousel && ad.imagenCards && (
             <div style={{ marginTop: 8 }}>
