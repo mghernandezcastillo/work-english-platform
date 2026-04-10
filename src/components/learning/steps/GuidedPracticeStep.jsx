@@ -114,27 +114,50 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
     }
   }, [current])
 
-  // Auto-play audio on scenario change — cancel previous first to avoid overlap
+  // Auto-play audio on scenario/sentence change — cancel previous first to avoid overlap
   useEffect(() => {
     if (!scenarios.length || muted) return
     // Cancel any ongoing speech before starting new
     window.speechSynthesis?.cancel()
-    const el = audioRef.current
-    if (el) {
-      el.playbackRate = speed
-      el.currentTime = 0
-      el.play().catch(() => {})
+    if (hasMultiple) {
+      // Multi-sentence: read only the active sentence via speechSynthesis
+      playSentenceAudio(sentences[activeSentence])
     } else {
-      playAudio()
+      const el = audioRef.current
+      if (el) {
+        el.playbackRate = speed
+        el.currentTime = 0
+        el.play().catch(() => {})
+      } else {
+        playSentenceAudio(scenario.phrase)
+      }
     }
     return () => {
       window.speechSynthesis?.cancel()
       if (audioRef.current) { audioRef.current.pause(); audioRef.current.currentTime = 0 }
     }
-  }, [current, scenarios.length, muted])
+  }, [current, activeSentence, scenarios.length, muted])
+
+  // Read a single sentence/text via speechSynthesis
+  function playSentenceAudio(text) {
+    if (!text || !window.speechSynthesis) return
+    window.speechSynthesis.cancel()
+    const u = new SpeechSynthesisUtterance(text)
+    u.lang = 'en-US'; u.rate = speed * 0.85
+    const voices = window.speechSynthesis.getVoices()
+    const voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel')))
+      || voices.find(v => v.lang.startsWith('en-US'))
+    if (voice) u.voice = voice
+    window.speechSynthesis.speak(u)
+  }
 
   function playAudio() {
     if (muted) return
+    if (hasMultiple) {
+      // Multi-sentence: only read the active sentence
+      playSentenceAudio(sentences[activeSentence])
+      return
+    }
     const el = audioRef.current
     if (el) {
       el.playbackRate = speed
@@ -142,18 +165,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       el.play().catch(() => {})
       return
     }
-    // Read the full phrase via speechSynthesis (matches audioUrl behavior)
-    const textToRead = scenario.phrase
-    if (textToRead && window.speechSynthesis) {
-      window.speechSynthesis.cancel()
-      const u = new SpeechSynthesisUtterance(textToRead)
-      u.lang = 'en-US'; u.rate = speed * 0.85
-      const voices = window.speechSynthesis.getVoices()
-      const voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel')))
-        || voices.find(v => v.lang.startsWith('en-US'))
-      if (voice) u.voice = voice
-      window.speechSynthesis.speak(u)
-    }
+    playSentenceAudio(scenario.phrase)
   }
 
   function toggleSpeed() {
