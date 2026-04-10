@@ -17,6 +17,11 @@ function splitSentences(text) {
   return parts.map(s => s.replace(/\u00B7/g, '.').trim()).filter(Boolean)
 }
 
+// Use explicit sentences override when available, otherwise auto-split
+function getSentences(sc) {
+  return sc?.sentences?.length ? sc.sentences : splitSentences(sc?.phrase)
+}
+
 export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onActivity, muted, startAtScenario = 0, missedScenarioIndices = [] }) {
   const scenarios = data?.scenarios || []
   const [current, setCurrent] = useState(startAtScenario)
@@ -37,7 +42,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         scenarios.forEach((s, i) => {
           // Check full phrase key OR any individual sentence key
           if (scores[s.phrase]) { set.add(i); return }
-          const sents = splitSentences(s.phrase)
+          const sents = getSentences(s)
           if (sents.length > 1 && sents.some(sent => scores[sent])) set.add(i)
         })
       } catch { }
@@ -67,8 +72,9 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
   }
 
   const scenario = scenarios[current] || {}
-  const sentences = splitSentences(scenario.phrase)
-  const translations = splitSentences(scenario.translation)
+  // Use explicit sentences grouping if provided, otherwise auto-split
+  const sentences = scenario.sentences?.length ? scenario.sentences : splitSentences(scenario.phrase)
+  const translations = scenario.sentenceTranslations?.length ? scenario.sentenceTranslations : splitSentences(scenario.translation)
   const hasMultiple = sentences.length > 1
 
   // Helper: get first sentence index without a saved score for the current scenario
@@ -77,7 +83,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
     try {
       const scores = JSON.parse(localStorage.getItem(`lesson_pronun_scores_${lessonId}`) || '{}')
       const sc = scenarios[scenarioIdx] || {}
-      const sents = splitSentences(sc.phrase)
+      const sents = getSentences(sc)
       if (sents.length <= 1) return 0
       const firstMissing = sents.findIndex(s => !scores[s])
       return firstMissing === -1 ? 0 : firstMissing
@@ -94,7 +100,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
     try {
       const scores = JSON.parse(localStorage.getItem(`lesson_pronun_scores_${lessonId}`) || '{}')
       const sc = scenarios[startAtScenario] || {}
-      const sents = splitSentences(sc.phrase)
+      const sents = getSentences(sc)
       return new Set(sents.reduce((acc, s, i) => { if (scores[s]) acc.push(i); return acc }, []))
     } catch { return new Set() }
   })
@@ -107,7 +113,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       try {
         const scores = JSON.parse(localStorage.getItem(`lesson_pronun_scores_${lessonId}`) || '{}')
         const sc = scenarios[current] || {}
-        const sents = splitSentences(sc.phrase)
+        const sents = getSentences(sc)
         setPracticedSentences(new Set(sents.reduce((acc, s, i) => { if (scores[s]) acc.push(i); return acc }, [])))
       } catch { setPracticedSentences(new Set()) }
     } else {
