@@ -139,22 +139,39 @@ export default function Progress() {
       {/* Progress by route */}
       <h3 style={{ marginTop: 'var(--space-6)', marginBottom: 'var(--space-3)' }}>Por ruta</h3>
       <div className="progress-routes">
-        {stats?.routes.map(route => (
-          <Card key={route.id}>
-            <CardBody>
-              <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-2)' }}>
-                <h4>{route.title}</h4>
-                <Badge variant={route.percent === 100 ? 'green' : route.percent > 0 ? 'blue' : 'gray'}>
-                  {route.percent}%
-                </Badge>
-              </div>
-              <ProgressBar value={route.completedLessons} max={route.totalLessons || 1} />
-              <p className="text-xs text-muted" style={{ marginTop: 'var(--space-2)' }}>
-                {route.completedLessons} de {route.totalLessons} lecciones
-              </p>
-            </CardBody>
-          </Card>
-        ))}
+        {stats?.routes.map(route => {
+          const emoji = route.id === 'route-1' ? '💼' : route.id === 'route-2' ? '🎤' : '📞'
+          const statusLabel = route.percent >= 100
+            ? '✅ Completada'
+            : route.percent > 0
+            ? '📖 En progreso'
+            : '🔒 Sin empezar'
+          return (
+            <Card key={route.id}>
+              <CardBody>
+                <div className="flex justify-between items-center" style={{ marginBottom: 4 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 22 }}>{emoji}</span>
+                    <h4 style={{ margin: 0 }}>{route.title}</h4>
+                  </div>
+                  <Badge variant={route.percent === 100 ? 'green' : route.percent > 0 ? 'blue' : 'gray'}>
+                    {route.percent}%
+                  </Badge>
+                </div>
+                {route.description && (
+                  <p className="text-xs text-muted" style={{ margin: '0 0 8px', paddingLeft: 30 }}>{route.description}</p>
+                )}
+                <ProgressBar value={route.completedLessons} max={route.totalLessons || 1} />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 }}>
+                  <span className="text-xs text-muted">{route.completedLessons} de {route.totalLessons} lecciones</span>
+                  <span className="text-xs" style={{ color: route.percent >= 100 ? 'var(--color-success)' : route.percent > 0 ? 'var(--color-primary)' : 'var(--color-text-muted)' }}>
+                    {statusLabel}
+                  </span>
+                </div>
+              </CardBody>
+            </Card>
+          )
+        })}
       </div>
 
       {/* Streak / motivation */}
