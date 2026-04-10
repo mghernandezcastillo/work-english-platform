@@ -10,6 +10,25 @@ import ClickablePhrase from '../../components/learning/ClickablePhrase'
 import { PronunciationButton } from '../../components/common/PronunciationButton'
 import './SimulationView.css'
 
+// Parse "Role (Name)" into { name, role, avatar }
+const ROLE_AVATARS = {
+  hr: '👩‍💼', recruiter: '🧑‍💼', interviewer: '👩‍💻', manager: '👨‍💻',
+  customer: '👤', trainer: '👩‍🏫', receptionist: '💁‍♀️', 'team lead': '👨‍💼',
+  supervisor: '👨‍💼', default: '🗣️'
+}
+function parseSpeaker(speaker) {
+  if (!speaker) return { name: 'Otra persona', role: '', avatar: '🗣️' }
+  const match = speaker.match(/^(.+?)\s*\((.+?)\)$/)
+  if (match) {
+    const role = match[1].trim()
+    const name = match[2].trim()
+    const key = role.toLowerCase()
+    const avatar = ROLE_AVATARS[key] || ROLE_AVATARS.default
+    return { name, role: role.toUpperCase(), avatar }
+  }
+  return { name: speaker, role: '', avatar: '🗣️' }
+}
+
 export default function SimulationView() {
   const { simId } = useParams()
   const { profile } = useAuth()
@@ -208,21 +227,35 @@ export default function SimulationView() {
 
       {/* Other person speaks */}
       {showTyping ? (
+        (() => { const sp = parseSpeaker(turn?.speaker); return (
         <div className="sim-typing-bubble">
-          <div className="sim-typing-speaker">👤 {turn?.speaker || 'Otra persona'}</div>
+          <div className="sim-avatar-row">
+            <div className="sim-avatar-circle">{sp.avatar}</div>
+            <div><div className="sim-avatar-name">{sp.name}</div>{sp.role && <div className="sim-avatar-role">{sp.role}</div>}</div>
+          </div>
           <div className="sim-typing-dots">
             <span /><span /><span />
           </div>
         </div>
+        ) })()
       ) : turn?.prompt && (
+        (() => { const sp = parseSpeaker(turn.speaker); return (
         <Card className="sim-prompt-card">
           <CardBody>
-            <div className="sim-speaker">👤 {turn.speaker || 'Otra persona'}:</div>
+            <div className="sim-avatar-row">
+              <div className="sim-avatar-circle">{sp.avatar}</div>
+              <div>
+                <div className="sim-avatar-name">{sp.name}</div>
+                {sp.role && <div className="sim-avatar-role">{sp.role}</div>}
+              </div>
+              <div className="sim-avatar-online" />
+            </div>
             <p className="sim-prompt-text">"<ClickablePhrase text={turn.prompt} />"</p>
             {turn.promptEs && <p className="text-sm text-muted" style={{ marginTop: 4 }}>({turn.promptEs})</p>}
             {turn.audioUrl && <AudioPlayer src={turn.audioUrl} label="Escuchar" />}
           </CardBody>
         </Card>
+        ) })()
       )}
 
       {/* Your options */}
