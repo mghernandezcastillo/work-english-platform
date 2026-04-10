@@ -278,10 +278,13 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       <div className="practice-prompt-card">
         <div className="practice-prompt-label">Te preguntan:</div>
         <p className="practice-prompt-text">"<ClickablePhrase text={scenario.prompt || scenario.context} />"</p>
+        {scenario.prompt && scenario.context && (
+          <p className="practice-prompt-es">{scenario.context}</p>
+        )}
       </div>
 
       {/* Response card — split into individual sentences when multiple */}
-      <div className="practice-response-card">
+      <div className={`practice-response-card ${hasMultiple && sentences.length >= 3 ? 'practice-response-collapsible' : ''}`}>
         <div className="practice-response-label">Tú respondes:</div>
 
         {hasMultiple ? (
