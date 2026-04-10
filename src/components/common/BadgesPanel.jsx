@@ -8,6 +8,7 @@ export function BadgesPanel() {
   const [definitions, setDefinitions] = useState([])
   const [earned, setEarned] = useState(new Set())
   const [loading, setLoading] = useState(true)
+  const [tooltip, setTooltip] = useState(null) // { id, name, description }
 
   useEffect(() => {
     if (!profile?.id) return
@@ -24,6 +25,16 @@ export function BadgesPanel() {
     setLoading(false)
   }
 
+  function handleBadgeClick(def, isEarned) {
+    if (isEarned) {
+      setTooltip({ id: def.id, text: `✅ ${def.name} — +${def.xp_reward} XP`, earned: true })
+    } else {
+      setTooltip({ id: def.id, text: `🔒 ${def.description}`, earned: false })
+    }
+    // Auto-dismiss after 3s
+    setTimeout(() => setTooltip(prev => prev?.id === def.id ? null : prev), 3000)
+  }
+
   if (loading) return null
 
   const earnedCount = [...earned].filter(id => definitions.find(d => d.id === id)).length
@@ -34,6 +45,15 @@ export function BadgesPanel() {
         <span className="badges-title">🏅 Logros</span>
         <span className="badges-count">{earnedCount}/{definitions.length}</span>
       </div>
+
+      {/* Tooltip */}
+      {tooltip && (
+        <div className={`badge-tooltip ${tooltip.earned ? 'badge-tooltip-earned' : 'badge-tooltip-locked'}`}
+             onClick={() => setTooltip(null)}>
+          {tooltip.text}
+        </div>
+      )}
+
       <div className="badges-grid">
         {definitions.map(def => {
           const isEarned = earned.has(def.id)
@@ -41,7 +61,7 @@ export function BadgesPanel() {
             <div
               key={def.id}
               className={`badge-item ${isEarned ? 'badge-earned' : 'badge-locked'}`}
-              title={isEarned ? def.name : `🔒 ${def.description}`}
+              onClick={() => handleBadgeClick(def, isEarned)}
             >
               <span className="badge-emoji">{isEarned ? def.emoji : '🔒'}</span>
               <span className="badge-name">{def.name}</span>
@@ -55,3 +75,4 @@ export function BadgesPanel() {
     </div>
   )
 }
+

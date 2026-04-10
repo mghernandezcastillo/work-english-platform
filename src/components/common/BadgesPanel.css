@@ -65,6 +65,35 @@
   background: var(--color-surface-alt);
   border-color: var(--color-border);
   opacity: 0.5;
+  cursor: pointer;
+}
+.badge-locked:active {
+  transform: scale(0.95);
+}
+
+/* ── Badge tooltip (inline, click-to-reveal) ── */
+.badge-tooltip {
+  font-size: 13px;
+  line-height: 1.4;
+  padding: 10px 14px;
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-2);
+  cursor: pointer;
+  animation: badgeTipIn 0.25s ease;
+}
+.badge-tooltip-locked {
+  background: rgba(245,158,11,0.1);
+  border: 1px solid rgba(245,158,11,0.3);
+  color: #fbbf24;
+}
+.badge-tooltip-earned {
+  background: rgba(16,185,129,0.1);
+  border: 1px solid rgba(16,185,129,0.3);
+  color: #34d399;
+}
+@keyframes badgeTipIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .badge-emoji {
