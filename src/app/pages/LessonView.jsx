@@ -116,6 +116,27 @@ export default function LessonView() {
     }
   }
 
+  // Preload ALL lesson audio as soon as lesson data is available (runs from step 1)
+  useEffect(() => {
+    if (!lesson?.content) return
+    const urls = new Set()
+    // Phrases step audios
+    const phrases = lesson.content.phrases?.phrases || []
+    phrases.forEach(p => { if (p.audioUrl) urls.add(p.audioUrl) })
+    // Practice step audios (scenario + per-sentence)
+    const scenarios = lesson.content.practice?.scenarios || []
+    scenarios.forEach(s => {
+      if (s.audioUrl) urls.add(s.audioUrl)
+      if (s.sentenceAudioUrls) s.sentenceAudioUrls.forEach(u => urls.add(u))
+    })
+    // Pre-create Audio objects — browser caches the files
+    urls.forEach(url => {
+      const a = new Audio()
+      a.preload = 'auto'
+      a.src = url
+    })
+  }, [lesson])
+
   async function markComplete() {
     if (!profile || !lesson) return false
     try {
