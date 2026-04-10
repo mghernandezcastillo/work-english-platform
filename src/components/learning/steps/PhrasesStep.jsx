@@ -12,6 +12,17 @@ export default function PhrasesStep({ data, onCanAdvance, onActivity, muted, les
   const [speedIdx, setSpeedIdx] = useState(0)
   const speed = SPEEDS[speedIdx]
   const audioRef = useRef(null)
+  // Preload all phrase audios into memory on mount for instant playback
+  const audioCacheRef = useRef({})
+  useEffect(() => {
+    phrases.forEach(p => {
+      if (p.audioUrl && !audioCacheRef.current[p.audioUrl]) {
+        const a = new Audio(p.audioUrl)
+        a.preload = 'auto'
+        audioCacheRef.current[p.audioUrl] = a
+      }
+    })
+  }, [])
 
   // Initialize visited:
   // — phrases that already have a saved score count as visited (done)

@@ -90,7 +90,7 @@ export default function AudioPlayer({ src, label }) {
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={handleEnded}
-        preload="metadata"
+        preload="auto"
       />
       <button
         className={`audio-play-btn ${playing ? 'audio-playing' : ''}`}

@@ -117,8 +117,36 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
   // Get ElevenLabs audio URL for current active sentence (if available)
   const sentenceAudioUrls = scenario.sentenceAudioUrls || []
   const sentAudioRef = useRef(null)
+  // Cache of pre-loaded Audio objects keyed by URL → instant playback
+  const audioCacheRef = useRef({})
 
-  // Play a sentence: prefer ElevenLabs audio, fallback to speechSynthesis
+  // Preload all sentence audios for a scenario into memory cache
+  function preloadScenarioAudios(scenarioIdx) {
+    const sc = scenarios[scenarioIdx]
+    if (!sc) return
+    const urls = [...(sc.sentenceAudioUrls || []), sc.audioUrl].filter(Boolean)
+    urls.forEach(url => {
+      if (!audioCacheRef.current[url]) {
+        const a = new Audio(url)
+        a.preload = 'auto'
+        audioCacheRef.current[url] = a
+      }
+    })
+  }
+
+  // On mount: preload current + next scenario
+  useEffect(() => {
+    preloadScenarioAudios(current)
+    preloadScenarioAudios(current + 1)
+  }, [])
+
+  // When scenario changes: preload new current + next
+  useEffect(() => {
+    preloadScenarioAudios(current)
+    preloadScenarioAudios(current + 1)
+  }, [current])
+
+  // Play a sentence: use cached (pre-loaded) Audio → zero network delay
   function playSentence(sentIdx) {
     if (muted) return
     window.speechSynthesis?.cancel()
@@ -126,7 +154,8 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
 
     const elUrl = sentenceAudioUrls[sentIdx]
     if (elUrl) {
-      const a = new Audio(elUrl)
+      const a = audioCacheRef.current[elUrl] || new Audio(elUrl)
+      a.currentTime = 0
       a.playbackRate = speed
       a.play().catch(() => {})
       sentAudioRef.current = a
@@ -143,6 +172,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       window.speechSynthesis.speak(u)
     }
   }
+
 
   // Auto-play audio on scenario/sentence change — cancel previous first to avoid overlap
   useEffect(() => {
