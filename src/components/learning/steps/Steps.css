@@ -367,8 +367,12 @@
   border-radius: 12px;
   border-left: 3px solid var(--el-primary);
   padding: 14px 16px;
-  flex-shrink: 0;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
+.practice-response-card::-webkit-scrollbar { display: none; }
 .practice-response-label {
   font-size: 11px;
   font-weight: 700;
@@ -417,47 +421,55 @@
 .practice-sentences {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   margin-top: 4px;
 }
 .practice-sentence {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  padding: 10px 12px;
+  padding: 6px 10px;
   border-radius: 10px;
   cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s, opacity 0.2s, transform 0.15s;
+  transition: background 0.2s, box-shadow 0.2s, opacity 0.2s, transform 0.15s, max-height 0.3s ease, padding 0.2s;
   border: 1px solid transparent;
-  /* Inactive: clearly dimmed */
-  opacity: 0.38;
+  /* Inactive: compact single-line, dimmed */
+  opacity: 0.45;
   transform: scale(0.98);
+  max-height: 44px;
+  overflow: hidden;
 }
 .practice-sentence:hover {
-  opacity: 0.6;
+  opacity: 0.65;
 }
-/* Active sentence: vivid, full opacity, slightly larger */
+/* Active sentence: expanded, vivid, full opacity */
 .practice-sentence.active {
   opacity: 1;
   transform: scale(1);
   background: rgba(16,185,129,0.14);
   border-color: rgba(16,185,129,0.55);
   box-shadow: 0 0 0 3px rgba(16,185,129,0.12);
+  max-height: 300px;
+  padding: 10px 12px;
+}
+/* Practiced sentences: slightly more visible than inactive */
+.practice-sentence.practiced {
+  opacity: 0.55;
 }
 .practice-sentence-num {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--el-surface-highest);
   color: var(--el-text-muted);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-top: 2px;
-  transition: background 0.2s, color 0.2s;
+  margin-top: 1px;
+  transition: background 0.2s, color 0.2s, width 0.2s, height 0.2s;
 }
 /* Active: solid green circle with dark number */
 .practice-sentence.active .practice-sentence-num {
@@ -472,21 +484,29 @@
   min-width: 0;
 }
 .practice-sentence-en {
-  font-size: clamp(16px, 4.2vw, 18px);
+  font-size: clamp(14px, 3.5vw, 16px);
   font-weight: 600;
-  color: var(--el-text-muted); /* muted when inactive (sentence is at 38% opacity) */
-  line-height: 1.4;
-  margin: 0 0 3px;
+  color: var(--el-text-muted);
+  line-height: 1.35;
+  margin: 0 0 2px;
+  /* Inactive: truncate to one line */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-/* Active sentence text: full white/bright */
+/* Active sentence text: full white, wrap normally */
 .practice-sentence.active .practice-sentence-en {
   color: var(--el-text);
+  font-size: clamp(16px, 4.2vw, 18px);
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
 }
 .practice-sentence-es {
-  font-size: clamp(13px, 3.3vw, 14px);
+  font-size: clamp(12px, 3vw, 13px);
   color: var(--el-text-muted);
   font-style: italic;
-  line-height: 1.35;
+  line-height: 1.3;
   margin: 0;
 }
 .practice-sentence-hint {
