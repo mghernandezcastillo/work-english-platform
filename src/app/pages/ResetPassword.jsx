@@ -117,7 +117,9 @@ export default function ResetPassword() {
       await updatePassword(password)
       showToast('¡Contraseña actualizada!', 'success')
       // Small delay so user sees the success message
-      setTimeout(() => navigate('/dashboard'), 1200)
+      // Full page reload (not SPA navigate) so the browser fires beforeinstallprompt
+      // on the dashboard — this is what shows the PWA install banner
+      setTimeout(() => { window.location.href = '/dashboard' }, 1200)
     } catch (err) {
       console.error('Password update error:', err)
       showToast(err.message || 'Error al actualizar. Intenta de nuevo.', 'error')
