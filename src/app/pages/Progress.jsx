@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { Card, CardBody } from '../../components/common/Card'
@@ -8,6 +9,7 @@ import './Progress.css'
 
 export default function Progress() {
   const { profile } = useAuth()
+  const navigate = useNavigate()
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
   const [heatmapDays, setHeatmapDays] = useState({})
@@ -147,7 +149,7 @@ export default function Progress() {
             ? '📖 En progreso'
             : '🔒 Sin empezar'
           return (
-            <Card key={route.id}>
+            <Card key={route.id} style={{ cursor: 'pointer' }} onClick={() => navigate(`/ruta/${route.id}`)}>
               <CardBody>
                 <div className="flex justify-between items-center" style={{ marginBottom: 4 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -164,8 +166,8 @@ export default function Progress() {
                 <ProgressBar value={route.completedLessons} max={route.totalLessons || 1} />
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 }}>
                   <span className="text-xs text-muted">{route.completedLessons} de {route.totalLessons} lecciones</span>
-                  <span className="text-xs" style={{ color: route.percent >= 100 ? 'var(--color-success)' : route.percent > 0 ? 'var(--color-primary)' : 'var(--color-text-muted)' }}>
-                    {statusLabel}
+                  <span className="text-xs" style={{ color: route.percent >= 100 ? 'var(--color-success)' : route.percent > 0 ? 'var(--color-primary)' : 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    {statusLabel} <span style={{ fontSize: 16, opacity: 0.5 }}>›</span>
                   </span>
                 </div>
               </CardBody>
