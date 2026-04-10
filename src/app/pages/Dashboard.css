@@ -88,10 +88,39 @@
 /* ── Header ─────────────────────────────── */
 .mc-header {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: flex-start;
   gap: var(--space-3);
   margin-bottom: var(--space-5);
+}
+
+/* User avatar in header */
+.mc-user-avatar {
+  position: relative;
+  flex-shrink: 0;
+}
+.mc-user-avatar-img {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  object-fit: cover;
+  border: 2px solid rgba(99,102,241,0.3);
+  background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(16,185,129,0.10));
+}
+.mc-user-avatar-online {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #10B981;
+  border: 3px solid var(--color-bg);
+  box-shadow: 0 0 8px rgba(16,185,129,0.5);
+}
+.mc-greeting {
+  flex: 1;
+  min-width: 0;
 }
 .mc-hello {
   font-size: var(--text-2xl);

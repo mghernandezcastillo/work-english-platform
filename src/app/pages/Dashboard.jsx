@@ -8,6 +8,19 @@ import { FirstMissionBanner } from '../../components/common/FirstMissionBanner'
 import { BadgesPanel } from '../../components/common/BadgesPanel'
 import './Dashboard.css'
 
+const AVATAR_BASE = 'https://mtobgwfknefjlpoxznqx.supabase.co/storage/v1/object/public/images/avatars'
+const USER_AVATAR_FEMALE = `${AVATAR_BASE}/user-female.png`
+const USER_AVATAR_MALE = `${AVATAR_BASE}/user-male.png`
+
+// Simple gender heuristic based on Spanish first names
+const MALE_NAMES = new Set(['carlos','miguel','jose','juan','luis','pedro','david','jorge','andres','diego','fernando','sergio','ricardo','rafael','alejandro','daniel','pablo','oscar','mario','victor','eduardo','roberto','francisco','manuel','hector','gabriel','ivan','antonio','martin','adrian','santiago','nicolas'])
+function guessGender(firstName) {
+  const n = (firstName || '').toLowerCase().trim()
+  if (MALE_NAMES.has(n)) return 'male'
+  if (n.endsWith('o') || n.endsWith('el') || n.endsWith('on') || n.endsWith('us')) return 'male'
+  return 'female'
+}
+
 const routeMeta = {
   'route-1': { emoji: '💼', color: '#10B981', glow: 'rgba(16,185,129,0.25)' },
   'route-2': { emoji: '🎯', color: '#3B82F6', glow: 'rgba(59,130,246,0.25)' },
@@ -203,6 +216,7 @@ export default function Dashboard() {
   const completedLessons = Object.values(progress).reduce((sum, p) => sum + p.completed, 0)
   const pct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
   const firstName = profile?.full_name?.split(' ')[0] || 'Estudiante'
+  const userAvatar = guessGender(firstName) === 'male' ? USER_AVATAR_MALE : USER_AVATAR_FEMALE
 
   // Daily goal — count lessons completed today
   const todayStr = new Date().toDateString()
@@ -243,6 +257,10 @@ export default function Dashboard() {
 
       {/* ── Header ── */}
       <div className="mc-header">
+        <div className="mc-user-avatar">
+          <img src={userAvatar} alt={firstName} className="mc-user-avatar-img" />
+          <div className="mc-user-avatar-online" />
+        </div>
         <div className="mc-greeting">
           <h1 className="mc-hello">Hola, {firstName} 👋</h1>
           <p className="mc-subtitle">¿Listo para tu misión de hoy?</p>
