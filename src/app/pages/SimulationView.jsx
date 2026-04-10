@@ -10,23 +10,31 @@ import ClickablePhrase from '../../components/learning/ClickablePhrase'
 import { PronunciationButton } from '../../components/common/PronunciationButton'
 import './SimulationView.css'
 
-// Parse "Role (Name)" into { name, role, avatar }
-const ROLE_AVATARS = {
-  hr: '👩‍💼', recruiter: '🧑‍💼', interviewer: '👩‍💻', manager: '👨‍💻',
-  customer: '👤', trainer: '👩‍🏫', receptionist: '💁‍♀️', 'team lead': '👨‍💼',
-  supervisor: '👨‍💼', default: '🗣️'
+// Character avatar images (3D rendered, stored in Supabase)
+const AVATAR_BASE = 'https://mtobgwfknefjlpoxznqx.supabase.co/storage/v1/object/public/images/avatars'
+const AVATAR_IMAGES = {
+  patricia: `${AVATAR_BASE}/patricia.png`,
+  emily: `${AVATAR_BASE}/emily.png`,
+  david: `${AVATAR_BASE}/david.png`,
+  ana: `${AVATAR_BASE}/ana.png`,
+  karen: `${AVATAR_BASE}/karen.png`,
+  tom: `${AVATAR_BASE}/tom.png`,
+  laura: `${AVATAR_BASE}/laura.png`,
+  lisa: `${AVATAR_BASE}/lisa.png`,
+  diana: `${AVATAR_BASE}/diana.png`,
+  rachel: `${AVATAR_BASE}/rachel.png`,
 }
+
 function parseSpeaker(speaker) {
-  if (!speaker) return { name: 'Otra persona', role: '', avatar: '🗣️' }
+  if (!speaker) return { name: 'Otra persona', role: '', avatarUrl: null }
   const match = speaker.match(/^(.+?)\s*\((.+?)\)$/)
   if (match) {
     const role = match[1].trim()
     const name = match[2].trim()
-    const key = role.toLowerCase()
-    const avatar = ROLE_AVATARS[key] || ROLE_AVATARS.default
-    return { name, role: role.toUpperCase(), avatar }
+    const key = name.toLowerCase()
+    return { name, role: role.toUpperCase(), avatarUrl: AVATAR_IMAGES[key] || null }
   }
-  return { name: speaker, role: '', avatar: '🗣️' }
+  return { name: speaker, role: '', avatarUrl: null }
 }
 
 export default function SimulationView() {
@@ -230,7 +238,7 @@ export default function SimulationView() {
         (() => { const sp = parseSpeaker(turn?.speaker); return (
         <div className="sim-typing-bubble">
           <div className="sim-avatar-row">
-            <div className="sim-avatar-circle">{sp.avatar}</div>
+            <div className="sim-avatar-circle">{sp.avatarUrl ? <img src={sp.avatarUrl} alt={sp.name} className="sim-avatar-img" /> : <span>🗣️</span>}</div>
             <div><div className="sim-avatar-name">{sp.name}</div>{sp.role && <div className="sim-avatar-role">{sp.role}</div>}</div>
           </div>
           <div className="sim-typing-dots">
@@ -243,7 +251,7 @@ export default function SimulationView() {
         <Card className="sim-prompt-card">
           <CardBody>
             <div className="sim-avatar-row">
-              <div className="sim-avatar-circle">{sp.avatar}</div>
+              <div className="sim-avatar-circle">{sp.avatarUrl ? <img src={sp.avatarUrl} alt={sp.name} className="sim-avatar-img" /> : <span>🗣️</span>}</div>
               <div>
                 <div className="sim-avatar-name">{sp.name}</div>
                 {sp.role && <div className="sim-avatar-role">{sp.role}</div>}
