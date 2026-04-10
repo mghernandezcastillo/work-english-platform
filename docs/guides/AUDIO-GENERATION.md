@@ -57,19 +57,23 @@ El 1 de cada mes ElevenLabs resetea la cuota a 10,000 chars por cuenta.
 
 | # | Email | API Key | Cuota mensual |
 |---|---|---|---|
-| 1 | (original) | `sk_fe54ecb7a1ad52e8a41923cf22d110dbfdd55da3acf0dfc9` | 10,000 chars |
-| 2 | imperiumintro@gmail.com | `sk_2f6a3ebe6c10b29aca1945218e23662393748f2854919baf` | 10,000 chars |
+| 1 | mghernandezcastillo@gmail.com | `8f7220dd635680066a130e2a110917239e98549f810c8ea132ed46d76925e5b9` | 10,000 chars |
+| 2 | michercasmoto@gmail.com | `e3b29b520ee2c1a65d5544b3f7ec1312e4b96ff4314c3393ff9d575b1207bb1f` | 10,000 chars |
+| 3 | marcela.drs2012@gmail.com | `c7aa6549fed01b2b674d8c9a6c658c5965de617c18c2fe0c784a259dc5a72705` | 10,000 chars |
+| 4 | imperiumintro@gmail.com | `sk_2f6a3ebe6c10b29aca1945218e23662393748f2854919baf` | 10,000 chars |
+| 5 | Englishforworkapp@gmail.com | `sk_1fb6825b549db314deb6ec7db9eb76173cfb4e36919460b4` | 10,000 chars |
+
+> ⚠️ La key original `sk_fe54ecb7...` era de una de las cuentas arriba. Usar las keys con prefijo `sk_` (cuentas 4 y 5) — las primeras 3 podrían ser formato antiguo.
 
 ### Scripts disponibles
 
 ```powershell
 # --- Frases principales + practice scenarios completos ---
-$env:ELEVENLABS_API_KEY="sk_fe54ecb7a1ad52e8a41923cf22d110dbfdd55da3acf0dfc9"
+$env:ELEVENLABS_API_KEY="sk_1fb6825b549db314deb6ec7db9eb76173cfb4e36919460b4"
 $env:SUPABASE_SERVICE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10b2Jnd2ZrbmVmamxwb3h6bnF4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDcyMTM5NCwiZXhwIjoyMDkwMjk3Mzk0fQ.VLZEvsAWPPzSHQ6PELBuFFUeaj8rtGPZ6ZWUJNoQolQ"
 node scripts/generate-audio.js
 
 # --- Audios por frase individual (multi-sentence scenarios) ---
-$env:ELEVENLABS_API_KEY="sk_2f6a3ebe6c10b29aca1945218e23662393748f2854919baf"
 node scripts/generate-sentence-audio.js
 
 # --- Simulaciones ---
