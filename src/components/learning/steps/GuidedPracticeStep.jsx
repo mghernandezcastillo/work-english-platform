@@ -24,6 +24,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
   const [speedIdx, setSpeedIdx] = useState(0)
   const speed = SPEEDS[speedIdx]
   const audioRef = useRef(null)
+  const wrapperRef = useRef(null)
 
   // Initialize visited:
   // — scenarios that already have a saved score count as visited (done)
@@ -247,9 +248,19 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         const nextIdx = sentences.findIndex((_, i) => i > activeSentence && !next.has(i))
         if (nextIdx !== -1) {
           setTimeout(() => setActiveSentence(nextIdx), 600)
+        } else {
+          // All sentences practiced — auto-scroll to bottom so nav/Siguiente is visible
+          setTimeout(() => {
+            wrapperRef.current?.scrollTo({ top: wrapperRef.current.scrollHeight, behavior: 'smooth' })
+          }, 700)
         }
         return next
       })
+    } else {
+      // Single sentence scenario — scroll to bottom after practice
+      setTimeout(() => {
+        wrapperRef.current?.scrollTo({ top: wrapperRef.current.scrollHeight, behavior: 'smooth' })
+      }, 700)
     }
   }
 
@@ -260,7 +271,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
   const pronunTarget = hasMultiple ? sentences[activeSentence] : scenario.phrase
 
   return (
-    <div className="step-wrapper-scroll animate-fadeIn">
+    <div className="step-wrapper-scroll animate-fadeIn" ref={wrapperRef}>
       {scenario.audioUrl && (
         <audio key={`audio-${current}`} ref={audioRef} src={scenario.audioUrl} preload="auto" style={{ display: 'none' }} />
       )}
