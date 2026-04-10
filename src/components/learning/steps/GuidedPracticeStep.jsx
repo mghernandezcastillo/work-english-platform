@@ -242,25 +242,21 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
     // Mark sentence as practiced and auto-advance to next unpracticed sentence after 600ms
     if (hasMultiple) {
       setPracticedSentences(prev => {
+        if (prev.has(activeSentence)) return prev // already practiced — no scroll
         const next = new Set(prev)
         next.add(activeSentence)
         // Find next unpracticed sentence after current
         const nextIdx = sentences.findIndex((_, i) => i > activeSentence && !next.has(i))
         if (nextIdx !== -1) {
           setTimeout(() => setActiveSentence(nextIdx), 600)
-        } else {
-          // All sentences practiced — auto-scroll to bottom so nav/Siguiente is visible
+        } else if (next.size === sentences.length) {
+          // Just completed the LAST remaining sentence — auto-scroll
           setTimeout(() => {
             wrapperRef.current?.scrollTo({ top: wrapperRef.current.scrollHeight, behavior: 'smooth' })
           }, 200)
         }
         return next
       })
-    } else {
-      // Single sentence scenario — scroll to bottom after practice
-      setTimeout(() => {
-        wrapperRef.current?.scrollTo({ top: wrapperRef.current.scrollHeight, behavior: 'smooth' })
-      }, 700)
     }
   }
 
