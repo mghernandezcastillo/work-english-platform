@@ -114,14 +114,44 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
     }
   }, [current])
 
+  // Get ElevenLabs audio URL for current active sentence (if available)
+  const sentenceAudioUrls = scenario.sentenceAudioUrls || []
+  const sentAudioRef = useRef(null)
+
+  // Play a sentence: prefer ElevenLabs audio, fallback to speechSynthesis
+  function playSentence(sentIdx) {
+    if (muted) return
+    window.speechSynthesis?.cancel()
+    if (sentAudioRef.current) { sentAudioRef.current.pause(); sentAudioRef.current = null }
+
+    const elUrl = sentenceAudioUrls[sentIdx]
+    if (elUrl) {
+      const a = new Audio(elUrl)
+      a.playbackRate = speed
+      a.play().catch(() => {})
+      sentAudioRef.current = a
+    } else {
+      // Fallback: speechSynthesis
+      const text = sentences[sentIdx]
+      if (!text || !window.speechSynthesis) return
+      const u = new SpeechSynthesisUtterance(text)
+      u.lang = 'en-US'; u.rate = speed * 0.85
+      const voices = window.speechSynthesis.getVoices()
+      const voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel')))
+        || voices.find(v => v.lang.startsWith('en-US'))
+      if (voice) u.voice = voice
+      window.speechSynthesis.speak(u)
+    }
+  }
+
   // Auto-play audio on scenario/sentence change — cancel previous first to avoid overlap
   useEffect(() => {
     if (!scenarios.length || muted) return
-    // Cancel any ongoing speech before starting new
     window.speechSynthesis?.cancel()
+    if (sentAudioRef.current) { sentAudioRef.current.pause(); sentAudioRef.current = null }
+
     if (hasMultiple) {
-      // Multi-sentence: read only the active sentence via speechSynthesis
-      playSentenceAudio(sentences[activeSentence])
+      playSentence(activeSentence)
     } else {
       const el = audioRef.current
       if (el) {
@@ -129,33 +159,20 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         el.currentTime = 0
         el.play().catch(() => {})
       } else {
-        playSentenceAudio(scenario.phrase)
+        playSentence(0)
       }
     }
     return () => {
       window.speechSynthesis?.cancel()
+      if (sentAudioRef.current) { sentAudioRef.current.pause(); sentAudioRef.current = null }
       if (audioRef.current) { audioRef.current.pause(); audioRef.current.currentTime = 0 }
     }
   }, [current, activeSentence, scenarios.length, muted])
 
-  // Read a single sentence/text via speechSynthesis
-  function playSentenceAudio(text) {
-    if (!text || !window.speechSynthesis) return
-    window.speechSynthesis.cancel()
-    const u = new SpeechSynthesisUtterance(text)
-    u.lang = 'en-US'; u.rate = speed * 0.85
-    const voices = window.speechSynthesis.getVoices()
-    const voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel')))
-      || voices.find(v => v.lang.startsWith('en-US'))
-    if (voice) u.voice = voice
-    window.speechSynthesis.speak(u)
-  }
-
   function playAudio() {
     if (muted) return
     if (hasMultiple) {
-      // Multi-sentence: only read the active sentence
-      playSentenceAudio(sentences[activeSentence])
+      playSentence(activeSentence)
       return
     }
     const el = audioRef.current
@@ -165,7 +182,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       el.play().catch(() => {})
       return
     }
-    playSentenceAudio(scenario.phrase)
+    playSentence(0)
   }
 
   function toggleSpeed() {
