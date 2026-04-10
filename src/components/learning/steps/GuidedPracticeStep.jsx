@@ -252,7 +252,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
           // All sentences practiced — auto-scroll to bottom so nav/Siguiente is visible
           setTimeout(() => {
             wrapperRef.current?.scrollTo({ top: wrapperRef.current.scrollHeight, behavior: 'smooth' })
-          }, 700)
+          }, 200)
         }
         return next
       })
