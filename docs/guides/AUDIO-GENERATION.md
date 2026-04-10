@@ -51,21 +51,28 @@ Lecciones `les-3-3-3` y `les-3-3-4` — se quedaron sin cuota:
 
 ### 📅 Plan para próxima sesión de audios
 
-El 1 de cada mes ElevenLabs resetea la cuota a 10,000 chars.
+El 1 de cada mes ElevenLabs resetea la cuota a 10,000 chars por cuenta.
 
-**Próxima ejecución:** ~2026-05-01 (cuando resetee la cuota)
-- Script de lecciones: `scripts/generate-audio.js` (idempotente)
-- Script de simulaciones: `scripts/update-rich-simulations.js` (idempotente)
-- Generará: 12 frases pendientes + 32 practice scenarios = **~9,047 chars**
-- Cuota restante en API key `sk_fe54ecb7...`: **~7,698 chars** (corre el 1° de mayo con cuota fresh)
+### 🔑 API Keys disponibles
+
+| # | Email | API Key | Cuota mensual |
+|---|---|---|---|
+| 1 | (original) | `sk_fe54ecb7a1ad52e8a41923cf22d110dbfdd55da3acf0dfc9` | 10,000 chars |
+| 2 | imperiumintro@gmail.com | `sk_2f6a3ebe6c10b29aca1945218e23662393748f2854919baf` | 10,000 chars |
+
+### Scripts disponibles
 
 ```powershell
-# Ejecutar el 1° de mayo (cuota se resetea):
+# --- Frases principales + practice scenarios completos ---
 $env:ELEVENLABS_API_KEY="sk_fe54ecb7a1ad52e8a41923cf22d110dbfdd55da3acf0dfc9"
 $env:SUPABASE_SERVICE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10b2Jnd2ZrbmVmamxwb3h6bnF4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDcyMTM5NCwiZXhwIjoyMDkwMjk3Mzk0fQ.VLZEvsAWPPzSHQ6PELBuFFUeaj8rtGPZ6ZWUJNoQolQ"
-# Lecciones (frases + practice)
 node scripts/generate-audio.js
-# Simulaciones (ya completadas, pero se pueden re-ejecutar si hay nuevas)
+
+# --- Audios por frase individual (multi-sentence scenarios) ---
+$env:ELEVENLABS_API_KEY="sk_2f6a3ebe6c10b29aca1945218e23662393748f2854919baf"
+node scripts/generate-sentence-audio.js
+
+# --- Simulaciones ---
 # node scripts/update-rich-simulations.js
 ```
 
