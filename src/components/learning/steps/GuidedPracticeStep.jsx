@@ -70,15 +70,48 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
   const translations = splitSentences(scenario.translation)
   const hasMultiple = sentences.length > 1
 
+  // Helper: get first sentence index without a saved score for the current scenario
+  function firstUnpracticedSentence(scenarioIdx) {
+    if (!lessonId) return 0
+    try {
+      const scores = JSON.parse(localStorage.getItem(`lesson_pronun_scores_${lessonId}`) || '{}')
+      const sc = scenarios[scenarioIdx] || {}
+      const sents = splitSentences(sc.phrase)
+      if (sents.length <= 1) return 0
+      const firstMissing = sents.findIndex(s => !scores[s])
+      return firstMissing === -1 ? 0 : firstMissing
+    } catch { return 0 }
+  }
+
   // Track which sentence is currently selected for pronunciation
-  const [activeSentence, setActiveSentence] = useState(0)
+  // Start at first unpracticed sentence so repair mode resumes correctly
+  const [activeSentence, setActiveSentence] = useState(() => firstUnpracticedSentence(startAtScenario))
   // Track which sentences have already been practiced in this scenario
-  const [practicedSentences, setPracticedSentences] = useState(new Set())
+  const [practicedSentences, setPracticedSentences] = useState(() => {
+    // Pre-populate with sentences already scored in localStorage
+    if (!lessonId) return new Set()
+    try {
+      const scores = JSON.parse(localStorage.getItem(`lesson_pronun_scores_${lessonId}`) || '{}')
+      const sc = scenarios[startAtScenario] || {}
+      const sents = splitSentences(sc.phrase)
+      return new Set(sents.reduce((acc, s, i) => { if (scores[s]) acc.push(i); return acc }, []))
+    } catch { return new Set() }
+  })
 
   // Reset active sentence and practiced set when scenario changes
   useEffect(() => {
-    setActiveSentence(0)
-    setPracticedSentences(new Set())
+    setActiveSentence(firstUnpracticedSentence(current))
+    // Restore practiced sentences from localStorage for new scenario
+    if (lessonId) {
+      try {
+        const scores = JSON.parse(localStorage.getItem(`lesson_pronun_scores_${lessonId}`) || '{}')
+        const sc = scenarios[current] || {}
+        const sents = splitSentences(sc.phrase)
+        setPracticedSentences(new Set(sents.reduce((acc, s, i) => { if (scores[s]) acc.push(i); return acc }, [])))
+      } catch { setPracticedSentences(new Set()) }
+    } else {
+      setPracticedSentences(new Set())
+    }
   }, [current])
 
   // Auto-play audio on scenario change — cancel previous first to avoid overlap
@@ -136,14 +169,17 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       const key = `lesson_pronun_scores_${lessonId}`
       const existing = JSON.parse(localStorage.getItem(key) || '{}')
       existing[phrase] = Math.max(existing[phrase] ?? 0, score)
-      // Also save under full scenario phrase so step 7 (getIncompleteItems) can find it
+      // Only mark the full scenario phrase as complete when ALL individual sentences have scores
       if (hasMultiple && scenario.phrase && scenario.phrase !== phrase) {
-        existing[scenario.phrase] = Math.max(existing[scenario.phrase] ?? 0, score)
+        const allDone = sentences.every(s => s === phrase || existing[s])
+        if (allDone) {
+          existing[scenario.phrase] = Math.max(existing[scenario.phrase] ?? 0, score)
+        }
       }
       localStorage.setItem(key, JSON.stringify(existing))
     } catch { }
 
-    // Mark sentence as practiced and auto-advance to next unpracticed sentence after 1.5s
+    // Mark sentence as practiced and auto-advance to next unpracticed sentence after 600ms
     if (hasMultiple) {
       setPracticedSentences(prev => {
         const next = new Set(prev)
