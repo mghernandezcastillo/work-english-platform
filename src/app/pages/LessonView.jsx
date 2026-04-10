@@ -59,6 +59,8 @@ export default function LessonView() {
   const [practiceMissedIndices, setPracticeMissedIndices] = useState([])
   const [phrasesStartAt, setPhrasesStartAt] = useState(0)
   const [phrasesMissedIndices, setPhrasesMissedIndices] = useState([])
+  // When true, "Siguiente" jumps directly back to step 7 instead of going sequentially
+  const [returnToStep7, setReturnToStep7] = useState(false)
 
   /* ── Comprehensive activity tracking ──
      Each key represents a completable exercise within the lesson.
@@ -243,6 +245,8 @@ export default function LessonView() {
       setPhrasesStartAt(options.startAt ?? 0)
       setPhrasesMissedIndices(options.missedIndices ?? [])
     }
+    // Set flag so "Siguiente" returns directly to step 7
+    setReturnToStep7(true)
     goToStep(stepIdx)
   }
 
@@ -330,8 +334,13 @@ export default function LessonView() {
     if (!canAdvance) return
     const isLast = currentStep === STEPS.length - 1
     if (isLast) {
-      // ReinforcementStep gates via onCanAdvance — if we get here, all done
       handleLessonComplete()
+    } else if (returnToStep7) {
+      // After completing a repair task, jump straight back to step 7
+      setReturnToStep7(false)
+      setCurrentStep(STEPS.length - 1)
+      setCanAdvance(!STEPS[STEPS.length - 1].startsLocked)
+      localStorage.setItem(`lesson_step_${lessonId}`, STEPS.length - 1)
     } else {
       goToStep(currentStep + 1)
     }
@@ -367,7 +376,7 @@ export default function LessonView() {
   const stepData = content[step.dataKey || step.key] || {}
   const isLast = currentStep === STEPS.length - 1
   const progressPercent = Math.round(((currentStep + 1) / STEPS.length) * 100)
-  const btnLabel = isLast ? 'Ver mis lecciones →' : 'Siguiente →'
+  const btnLabel = isLast ? 'Ver mis lecciones →' : returnToStep7 ? 'Volver al resumen →' : 'Siguiente →'
 
   return (
     <>
