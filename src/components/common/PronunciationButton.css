@@ -121,8 +121,15 @@
   font-size: var(--text-sm);
   color: #f87171;
   display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 6px;
+}
+.pronun-error-actions {
+  display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 .pronun-retry {
   background: none;
@@ -132,6 +139,93 @@
   padding: 2px 10px;
   font-size: 11px;
   cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.pronun-retry:hover { background: rgba(239,68,68,0.1); }
+.pronun-retry--alt {
+  border-color: #818cf8;
+  color: #818cf8;
+}
+.pronun-retry--alt:hover { background: rgba(99,102,241,0.1); }
+
+/* ── PWA Microphone selector ── */
+.pronun-mic-selector {
+  position: relative;
+  align-self: flex-start;
+}
+.pronun-mic-selector-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 8px;
+  background: rgba(99,102,241,0.06);
+  border: 1px solid rgba(99,102,241,0.2);
+  border-radius: var(--radius-full);
+  color: #818cf8;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  max-width: 240px;
+}
+.pronun-mic-selector-btn:hover {
+  background: rgba(99,102,241,0.12);
+  border-color: rgba(99,102,241,0.35);
+}
+.pronun-mic-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 160px;
+}
+.pronun-mic-arrow { font-size: 9px; flex-shrink: 0; }
+
+.pronun-mic-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 50;
+  min-width: 220px;
+  max-width: 300px;
+  background: #1e2340;
+  border: 1px solid rgba(99,102,241,0.25);
+  border-radius: 10px;
+  padding: 6px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.pronun-mic-dropdown-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 8px 6px;
+}
+.pronun-mic-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pronun-mic-option:hover { background: rgba(99,102,241,0.15); }
+.pronun-mic-option--active {
+  background: rgba(99,102,241,0.18);
+  color: #a5b4fc;
+  font-weight: 600;
 }
 
 /* Result card */
