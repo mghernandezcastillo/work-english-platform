@@ -166,9 +166,9 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
     setState(newState)
   }, [])
 
-  // Load available microphones on mount (PWA mode only)
+  // Load available microphones on mount (desktop, non-iOS)
   useEffect(() => {
-    if (!isPWA() || isIOS()) return
+    if (isIOS()) return
     listMicrophones().then(list => {
       setMics(list)
       // If saved device is no longer available, reset to default
@@ -389,7 +389,7 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
           <span>⚠️ {error}</span>
           <div className="pronun-error-actions">
             <button className="pronun-retry" onClick={reset}>Reintentar</button>
-            {isPWA() && !isIOS() && mics.length > 1 && (
+            {!isIOS() && mics.length > 1 && (
               <button className="pronun-retry pronun-retry--alt" onClick={() => { reset(); setShowMicPicker(true) }}>
                 🎙️ Cambiar micrófono
               </button>
