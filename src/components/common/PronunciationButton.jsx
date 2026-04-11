@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import './PronunciationButton.css'
 
 /**
@@ -37,16 +37,87 @@ function detectBrowserSupport() {
 }
 
 /**
+ * Solicita permiso de micrófono explícitamente antes de usar SpeechRecognition.
+ * Esto es CRÍTICO para PWAs en modo standalone (Windows, iOS) donde el permiso
+ * de micrófono puede no estar concedido automáticamente.
+ */
+async function ensureMicrophonePermission() {
+  try {
+    // First check if permission API is available
+    if (navigator.permissions) {
+      try {
+        const permStatus = await navigator.permissions.query({ name: 'microphone' })
+        if (permStatus.state === 'granted') return { ok: true }
+        // If denied explicitly, don't even try getUserMedia
+        if (permStatus.state === 'denied') {
+          return {
+            ok: false,
+            error: 'denied',
+            message: 'Permiso de micrófono denegado. Actívalo en la configuración de tu navegador.'
+          }
+        }
+      } catch {
+        // permissions.query not supported for microphone (e.g., iOS) — continue to getUserMedia
+      }
+    }
+
+    // Request microphone access — this triggers the permission prompt
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    // Immediately stop the stream — we just needed the permission grant
+    stream.getTracks().forEach(track => track.stop())
+    return { ok: true }
+  } catch (err) {
+    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+      return {
+        ok: false,
+        error: 'denied',
+        message: 'Permiso de micrófono denegado. Actívalo en la configuración de tu navegador.'
+      }
+    }
+    if (err.name === 'NotFoundError') {
+      return {
+        ok: false,
+        error: 'no-device',
+        message: 'No se encontró un micrófono. Conecta uno e inténtalo de nuevo.'
+      }
+    }
+    // On iOS, getUserMedia may fail but SpeechRecognition may still work
+    // (it handles its own permission flow). So we return ok: true as fallback.
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent)
+    if (isIOS) return { ok: true }
+
+    return {
+      ok: false,
+      error: 'unknown',
+      message: 'No se pudo acceder al micrófono. Verifica los permisos del sistema.'
+    }
+  }
+}
+
+/**
  * PronunciationButton — Graba al usuario y muestra score de pronunciación.
  * Usa Web Speech API. Funciona en: Chrome, Edge, Safari, iOS Safari 15+.
  * En browsers no soportados (Firefox) muestra guía clara.
+ *
+ * Fix log:
+ * - Solicita getUserMedia ANTES de SpeechRecognition para PWAs standalone
+ * - Usa ref para el state en onend (evita stale closure)
+ * - Maneja errores 'aborted' y 'audio-capture' comunes en iOS
  */
 export function PronunciationButton({ targetText, language = 'en-US', onScore, compact = false, onBeforeRecord }) {
   const browserInfo = detectBrowserSupport()
-  const [state, setState] = useState('idle') // idle | listening | processing | result
+  const [state, setState] = useState('idle') // idle | requesting | listening | processing | result
   const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
   const recognitionRef = useRef(null)
+  const stateRef = useRef('idle') // Mirror state to avoid stale closures in callbacks
+  const gotResultRef = useRef(false) // Track if we got a result before onend fires
+
+  // Keep stateRef in sync
+  const updateState = useCallback((newState) => {
+    stateRef.current = newState
+    setState(newState)
+  }, [])
 
   // Browser no soportado → mostrar aviso con alternativas
   if (!browserInfo.supported) {
@@ -127,7 +198,24 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
     return { emoji: '🔄', text: '¡Buen intento! Más despacio', color: '#EF4444' }
   }
 
-  function startListening() {
+  async function startListening() {
+    // ── Step 1: Request mic permission BEFORE creating SpeechRecognition ──
+    // This is critical for PWA standalone mode on Windows and iOS
+    updateState('requesting')
+    setResult(null)
+    setError(null)
+
+    const micPermission = await ensureMicrophonePermission()
+    if (!micPermission.ok) {
+      setError(micPermission.message)
+      updateState('idle')
+      return
+    }
+
+    // Stop any playing audio before mic opens
+    onBeforeRecord?.()
+
+    // ── Step 2: Create and start SpeechRecognition ──
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     const recognition = new SpeechRecognition()
     recognition.lang = language
@@ -135,53 +223,73 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
     recognition.interimResults = false   // iOS no soporta interim
     recognition.maxAlternatives = 1
     recognitionRef.current = recognition
+    gotResultRef.current = false
 
-    recognition.onstart = () => setState('listening')
+    recognition.onstart = () => {
+      updateState('listening')
+    }
 
     recognition.onresult = (event) => {
-      setState('processing')
+      gotResultRef.current = true
+      updateState('processing')
       const transcript = event.results[0][0].transcript
       const score = getScore(targetText, transcript)
       const feedback = getFeedback(score)
       const missed = getMissedWords(targetText, transcript)
       setResult({ score, transcript, feedback, missed })
-      setState('result')
+      updateState('result')
       if (onScore) onScore(score)
     }
 
     recognition.onerror = (event) => {
-      if (event.error === 'no-speech') {
-        setError('No se detectó voz. ¿Está tu micrófono activado?')
-      } else if (event.error === 'not-allowed') {
+      const errCode = event.error
+      // Don't show error if we already have a result (iOS sometimes fires error after result)
+      if (gotResultRef.current) return
+
+      if (errCode === 'no-speech') {
+        setError('No se detectó voz. Habla más fuerte y cerca del micrófono.')
+      } else if (errCode === 'not-allowed' || errCode === 'service-not-allowed') {
         setError('Permiso de micrófono denegado. Actívalo en la configuración de tu navegador.')
-      } else if (event.error === 'network') {
+      } else if (errCode === 'network') {
         setError('Error de red. Verifica tu conexión a internet.')
+      } else if (errCode === 'aborted') {
+        // Common on iOS Chrome — the recognition was interrupted
+        setError('La grabación fue interrumpida. Intenta de nuevo.')
+      } else if (errCode === 'audio-capture') {
+        // Microphone hardware issue or system-level block
+        setError('No se pudo acceder al micrófono. Verifica los permisos del sistema.')
       } else {
         setError('No se pudo grabar. Intenta de nuevo.')
       }
-      setState('idle')
+      updateState('idle')
     }
 
     recognition.onend = () => {
-      // En iOS a veces dispara onend antes del resultado — lo manejamos con state
-      if (state === 'listening') setState('idle')
+      // Use ref instead of state to avoid stale closure bug
+      // On iOS, onend sometimes fires before onresult — only reset if no result came
+      if (!gotResultRef.current && stateRef.current === 'listening') {
+        updateState('idle')
+      }
     }
 
-    setResult(null)
-    setError(null)
-    onBeforeRecord?.()   // stop any playing audio before mic opens
-    recognition.start()
+    try {
+      recognition.start()
+    } catch (err) {
+      // Handle "recognition already started" or other start errors
+      setError('No se pudo iniciar la grabación. Intenta de nuevo.')
+      updateState('idle')
+    }
   }
 
   function stopListening() {
     recognitionRef.current?.stop()
-    setState('idle')
+    updateState('idle')
   }
 
   function reset() {
     setResult(null)
     setError(null)
-    setState('idle')
+    updateState('idle')
   }
 
   // Speak a single word so the user can hear correct pronunciation
@@ -212,9 +320,11 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
         <button
           className={`pronun-btn pronun-btn--${state}`}
           onClick={state === 'listening' ? stopListening : startListening}
+          disabled={state === 'requesting' || state === 'processing'}
           aria-label={state === 'listening' ? 'Detener grabación' : 'Practicar pronunciación'}
         >
           {state === 'idle' && <><span className="pronun-icon">🎤</span> Practicar pronunciación</>}
+          {state === 'requesting' && <><span className="pronun-icon">⏳</span> Activando micrófono…</>}
           {state === 'listening' && (
             <><span className="pronun-icon pronun-pulse">🔴</span> Escuchando… (toca para parar)</>
           )}
