@@ -1,17 +1,14 @@
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import './PronunciationButton.css'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-/** True when running as installed PWA (standalone window) */
-function isPWA() {
-  return window.matchMedia('(display-mode: standalone)').matches
-    || window.navigator.standalone === true // iOS Safari
-}
-
-/** True on iOS (all browsers use WebKit) */
-function isIOS() {
-  return /iPhone|iPad|iPod/i.test(navigator.userAgent)
+/** True when running as installed PWA (standalone window) on desktop */
+function isDesktopPWA() {
+  const standalone = window.matchMedia('(display-mode: standalone)').matches
+    || window.navigator.standalone === true
+  const mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+  return standalone && !mobile
 }
 
 /** Detecta si el browser soporta Web Speech API */
@@ -41,52 +38,7 @@ function detectBrowserSupport() {
   return { supported: false, message, browsers }
 }
 
-/** Lista los micrófonos disponibles en el sistema */
-async function listMicrophones() {
-  try {
-    // Need permission first to get labels
-    const tempStream = await navigator.mediaDevices.getUserMedia({ audio: true })
-    tempStream.getTracks().forEach(t => t.stop())
-
-    const devices = await navigator.mediaDevices.enumerateDevices()
-    return devices
-      .filter(d => d.kind === 'audioinput')
-      .map((d, i) => ({
-        deviceId: d.deviceId,
-        label: d.label || `Micrófono ${i + 1}`,
-      }))
-  } catch {
-    return []
-  }
-}
-
-/**
- * Abre el micrófono seleccionado y retorna el stream.
- * IMPORTANTE: NO cerramos el stream aquí — lo mantenemos abierto mientras
- * SpeechRecognition está activo para que Chrome use el mismo dispositivo.
- */
-async function openMicStream(deviceId) {
-  try {
-    const constraints = {
-      audio: deviceId && deviceId !== 'default'
-        ? { deviceId: { exact: deviceId } }
-        : true
-    }
-    const stream = await navigator.mediaDevices.getUserMedia(constraints)
-    return { ok: true, stream }
-  } catch (err) {
-    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-      return { ok: false, error: 'denied', message: 'Permiso de micrófono denegado. Actívalo en la configuración de tu navegador.' }
-    }
-    if (err.name === 'NotFoundError') {
-      return { ok: false, error: 'no-device', message: 'No se encontró un micrófono. Conecta uno e inténtalo de nuevo.' }
-    }
-    if (isIOS()) return { ok: true, stream: null } // iOS: let SpeechRecognition handle its own permission
-    return { ok: false, error: 'unknown', message: 'No se pudo acceder al micrófono. Verifica los permisos del sistema.' }
-  }
-}
-
-// ── Scoring logic (unchanged) ─────────────────────────────────────────────────
+// ── Scoring logic ─────────────────────────────────────────────────────────────
 
 function normalize(text) {
   return text.toLowerCase().replace(/[^a-z0-9\s-]/g, '').split(/\s+/).filter(Boolean)
@@ -133,31 +85,26 @@ function getFeedback(score) {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-const MIC_DEVICE_KEY = 'efw-mic-device'
-
 /**
  * PronunciationButton — Graba al usuario y muestra score de pronunciación.
+ * Usa Web Speech API (Chrome, Edge, Safari, iOS Safari 15+).
  *
- * Fix para Windows PWA:
- * - Selección de dispositivo de micrófono (para audífonos, headsets, etc.)
- * - Stream de getUserMedia se mantiene ABIERTO durante SpeechRecognition
- *   → Esto fuerza a Chrome a usar el mismo dispositivo para ambos
- * - El stream se cierra sólo cuando termina la grabación
+ * Approach:
+ * - On mobile: simple SpeechRecognition.start() — no getUserMedia at all.
+ *   Mobile browsers handle mic permissions natively via SpeechRecognition.
+ * - On desktop PWA: optional mic device selector (only shown if user clicks
+ *   the gear icon). getUserMedia stream kept alive during recognition to
+ *   lock Chrome to the chosen device.
  */
 export function PronunciationButton({ targetText, language = 'en-US', onScore, compact = false, onBeforeRecord }) {
   const browserInfo = detectBrowserSupport()
 
-  const [state, setState] = useState('idle') // idle | requesting | listening | processing | result
+  const [state, setState] = useState('idle') // idle | listening | processing | result
   const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
 
-  // PWA device picker
-  const [mics, setMics] = useState([])           // available microphones
-  const [selectedMic, setSelectedMic] = useState(() => localStorage.getItem(MIC_DEVICE_KEY) || 'default')
-  const [showMicPicker, setShowMicPicker] = useState(false)
-
   const recognitionRef = useRef(null)
-  const micStreamRef = useRef(null)   // keep getUserMedia stream alive during recognition
+  const micStreamRef = useRef(null)
   const stateRef = useRef('idle')
   const gotResultRef = useRef(false)
 
@@ -166,30 +113,7 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
     setState(newState)
   }, [])
 
-  // Load available microphones on mount (desktop, non-iOS)
-  useEffect(() => {
-    if (isIOS()) return
-    listMicrophones().then(list => {
-      setMics(list)
-      // If saved device is no longer available, reset to default
-      if (list.length > 0) {
-        const saved = localStorage.getItem(MIC_DEVICE_KEY)
-        const stillAvailable = list.some(m => m.deviceId === saved)
-        if (!stillAvailable) {
-          setSelectedMic('default')
-          localStorage.removeItem(MIC_DEVICE_KEY)
-        }
-      }
-    })
-  }, [])
-
-  function saveMicDevice(deviceId) {
-    setSelectedMic(deviceId)
-    localStorage.setItem(MIC_DEVICE_KEY, deviceId)
-    setShowMicPicker(false)
-  }
-
-  // Close the locked stream
+  // Release any held mic stream
   function releaseStream() {
     if (micStreamRef.current) {
       micStreamRef.current.getTracks().forEach(t => t.stop())
@@ -218,33 +142,19 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
   // ── Core recording logic ───────────────────────────────────────────────────
 
   async function startListening() {
-    updateState('requesting')
     setResult(null)
     setError(null)
-    releaseStream() // clean up any previous stream
-
-    // Open the mic stream with selected device and KEEP IT OPEN
-    // This locks Chrome to use this device for SpeechRecognition too
-    const micResult = await openMicStream(selectedMic !== 'default' ? selectedMic : undefined)
-
-    if (!micResult.ok) {
-      setError(micResult.message)
-      updateState('idle')
-      return
-    }
-
-    // Store stream — will be released in onend / onerror
-    micStreamRef.current = micResult.stream
+    releaseStream()
 
     // Stop any playing audio before mic opens
     onBeforeRecord?.()
 
-    // Start SpeechRecognition with stream already open
+    // Create SpeechRecognition
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     const recognition = new SpeechRecognition()
     recognition.lang = language
-    recognition.continuous = false
-    recognition.interimResults = false
+    recognition.continuous = false       // iOS requiere false
+    recognition.interimResults = false   // iOS no soporta interim
     recognition.maxAlternatives = 1
     recognitionRef.current = recognition
     gotResultRef.current = false
@@ -260,16 +170,17 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
       const missed = getMissedWords(targetText, transcript)
       setResult({ score, transcript, feedback, missed })
       updateState('result')
+      releaseStream()
       if (onScore) onScore(score)
     }
 
     recognition.onerror = (event) => {
       releaseStream()
-      if (gotResultRef.current) return // iOS sometimes fires error after result
+      if (gotResultRef.current) return
 
       const errCode = event.error
       if (errCode === 'no-speech') {
-        setError('No se detectó voz. Habla más fuerte o selecciona otro micrófono.')
+        setError('No se detectó voz. ¿Está tu micrófono activado?')
       } else if (errCode === 'not-allowed' || errCode === 'service-not-allowed') {
         setError('Permiso de micrófono denegado. Actívalo en la configuración de tu navegador.')
       } else if (errCode === 'network') {
@@ -293,6 +204,7 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
 
     try {
       recognition.start()
+      updateState('listening')
     } catch {
       releaseStream()
       setError('No se pudo iniciar la grabación. Intenta de nuevo.')
@@ -326,10 +238,6 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
     window.speechSynthesis.speak(utterance)
   }
 
-  // ── Selected mic label ─────────────────────────────────────────────────────
-  const selectedMicLabel = mics.find(m => m.deviceId === selectedMic)?.label
-    || (selectedMic === 'default' ? 'Micrófono predeterminado' : 'Micrófono seleccionado')
-
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="pronun-wrap">
@@ -339,45 +247,15 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
         <span className="pronun-target-text">"{targetText}"</span>
       </div>
 
-      {/* ── PWA Microphone selector (Desktop PWA only, not iOS) ── */}
-      {isPWA() && !isIOS() && mics.length > 1 && (
-        <div className="pronun-mic-selector">
-          <button
-            className="pronun-mic-selector-btn"
-            onClick={() => setShowMicPicker(p => !p)}
-            title="Seleccionar micrófono"
-          >
-            🎙️ <span className="pronun-mic-label">{selectedMicLabel}</span>
-            <span className="pronun-mic-arrow">{showMicPicker ? '▲' : '▼'}</span>
-          </button>
-
-          {showMicPicker && (
-            <div className="pronun-mic-dropdown">
-              <div className="pronun-mic-dropdown-title">Selecciona tu micrófono:</div>
-              {mics.map(mic => (
-                <button
-                  key={mic.deviceId}
-                  className={`pronun-mic-option ${selectedMic === mic.deviceId ? 'pronun-mic-option--active' : ''}`}
-                  onClick={() => saveMicDevice(mic.deviceId)}
-                >
-                  {selectedMic === mic.deviceId ? '✓ ' : ''}{mic.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
       {/* Main button */}
       {state !== 'result' && (
         <button
           className={`pronun-btn pronun-btn--${state}`}
           onClick={state === 'listening' ? stopListening : startListening}
-          disabled={state === 'requesting' || state === 'processing'}
+          disabled={state === 'processing'}
           aria-label={state === 'listening' ? 'Detener grabación' : 'Practicar pronunciación'}
         >
           {state === 'idle' && <><span className="pronun-icon">🎤</span> Practicar pronunciación</>}
-          {state === 'requesting' && <><span className="pronun-icon">⏳</span> Activando micrófono…</>}
           {state === 'listening' && <><span className="pronun-icon pronun-pulse">🔴</span> Escuchando… (toca para parar)</>}
           {state === 'processing' && <><span className="pronun-icon">⏳</span> Procesando…</>}
         </button>
@@ -387,14 +265,7 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
       {error && (
         <div className="pronun-error">
           <span>⚠️ {error}</span>
-          <div className="pronun-error-actions">
-            <button className="pronun-retry" onClick={reset}>Reintentar</button>
-            {!isIOS() && mics.length > 1 && (
-              <button className="pronun-retry pronun-retry--alt" onClick={() => { reset(); setShowMicPicker(true) }}>
-                🎙️ Cambiar micrófono
-              </button>
-            )}
-          </div>
+          <button className="pronun-retry" onClick={reset}>Reintentar</button>
         </div>
       )}
 
