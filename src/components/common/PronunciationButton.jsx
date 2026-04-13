@@ -272,16 +272,35 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
       {/* Result */}
       {state === 'result' && result && (
         compact ? (
-          <div className="pronun-result-compact">
-            <span className="pronun-result-compact-score" style={{ color: result.feedback.color }}>
-              {result.feedback.emoji} {result.score}%
-            </span>
-            <span className="pronun-result-compact-text" style={{ color: result.feedback.color }}>
-              {result.feedback.text}
-            </span>
-            <button className="pronun-result-compact-retry" onClick={startListening}>
-              🔄 Intentar de nuevo
-            </button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div className="pronun-result-compact">
+              <span className="pronun-result-compact-score" style={{ color: result.feedback.color }}>
+                {result.feedback.emoji} {result.score}%
+              </span>
+              <span className="pronun-result-compact-text" style={{ color: result.feedback.color }}>
+                {result.feedback.text}
+              </span>
+              <button className="pronun-result-compact-retry" onClick={startListening}>
+                🔄 Intentar de nuevo
+              </button>
+            </div>
+            {result.missed?.length > 0 && (
+              <div className="pronun-missed">
+                <span className="pronun-missed-lbl">💡 Practica estas palabras:</span>
+                <div className="pronun-missed-words">
+                  {result.missed.map((w, i) => (
+                    <button
+                      key={i}
+                      className="pronun-missed-word"
+                      onClick={() => speakWord(w)}
+                      title={`Escuchar "${w}"`}
+                    >
+                      <span className="pronun-missed-speaker">🔊</span> {w}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="pronun-result">
