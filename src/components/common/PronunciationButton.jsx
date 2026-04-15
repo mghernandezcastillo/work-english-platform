@@ -83,6 +83,13 @@ function getFeedback(score) {
   return { emoji: '🔄', text: '¡Buen intento! Más despacio', color: '#EF4444' }
 }
 
+// ── Helpers: iOS detection ────────────────────────────────────────────────────
+
+const IS_IOS = /iPhone|iPad|iPod/i.test(navigator.userAgent)
+
+/** Small delay helper */
+function wait(ms) { return new Promise(r => setTimeout(r, ms)) }
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 /**
@@ -95,6 +102,11 @@ function getFeedback(score) {
  * - On desktop PWA: optional mic device selector (only shown if user clicks
  *   the gear icon). getUserMedia stream kept alive during recognition to
  *   lock Chrome to the chosen device.
+ *
+ * iOS fix:
+ * - iOS frequently fires 'aborted' when SpeechRecognition starts right after
+ *   audio playback stops (audio focus conflict). We add a 350ms delay on iOS
+ *   and auto-retry once on 'aborted'.
  */
 export function PronunciationButton({ targetText, language = 'en-US', onScore, compact = false, onBeforeRecord }) {
   const browserInfo = detectBrowserSupport()
@@ -107,6 +119,7 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
   const micStreamRef = useRef(null)
   const stateRef = useRef('idle')
   const gotResultRef = useRef(false)
+  const abortRetryRef = useRef(false) // Track if we already retried after aborted
 
   const updateState = useCallback((newState) => {
     stateRef.current = newState
@@ -139,25 +152,15 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
     )
   }
 
-  // ── Core recording logic ───────────────────────────────────────────────────
+  // ── Core: create and start a SpeechRecognition instance ─────────────────────
 
-  async function startListening() {
-    setResult(null)
-    setError(null)
-    releaseStream()
-
-    // Stop any playing audio before mic opens
-    onBeforeRecord?.()
-
-    // Create SpeechRecognition
+  function createRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     const recognition = new SpeechRecognition()
     recognition.lang = language
     recognition.continuous = false       // iOS requiere false
     recognition.interimResults = false   // iOS no soporta interim
     recognition.maxAlternatives = 1
-    recognitionRef.current = recognition
-    gotResultRef.current = false
 
     recognition.onstart = () => updateState('listening')
 
@@ -179,6 +182,19 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
       if (gotResultRef.current) return
 
       const errCode = event.error
+
+      // iOS auto-retry: on first 'aborted', silently retry once after a delay
+      if (errCode === 'aborted' && !abortRetryRef.current) {
+        abortRetryRef.current = true
+        // Retry after a longer pause — iOS needs time to release audio focus
+        setTimeout(() => {
+          if (stateRef.current === 'listening' || stateRef.current === 'idle') {
+            doStartRecognition()
+          }
+        }, 400)
+        return
+      }
+
       if (errCode === 'no-speech') {
         setError('No se detectó voz. ¿Está tu micrófono activado?')
       } else if (errCode === 'not-allowed' || errCode === 'service-not-allowed') {
@@ -202,7 +218,14 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
       }
     }
 
+    return recognition
+  }
+
+  /** Actually start the recognition instance (used for initial + retry) */
+  function doStartRecognition() {
     try {
+      const recognition = createRecognition()
+      recognitionRef.current = recognition
       recognition.start()
       updateState('listening')
     } catch {
@@ -210,6 +233,29 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
       setError('No se pudo iniciar la grabación. Intenta de nuevo.')
       updateState('idle')
     }
+  }
+
+  // ── Public: startListening ────────────────────────────────────────────────
+
+  async function startListening() {
+    setResult(null)
+    setError(null)
+    releaseStream()
+    abortRetryRef.current = false
+    gotResultRef.current = false
+
+    // Stop any playing audio AND speechSynthesis before mic opens
+    window.speechSynthesis?.cancel()
+    onBeforeRecord?.()
+
+    if (IS_IOS) {
+      // iOS needs time between stopping audio and starting recognition
+      // Without this delay, iOS immediately fires 'aborted'
+      updateState('processing') // Show "Procesando…" while waiting
+      await wait(350)
+    }
+
+    doStartRecognition()
   }
 
   function stopListening() {

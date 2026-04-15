@@ -133,6 +133,8 @@ export default function PhrasesStep({ data, onCanAdvance, onActivity, muted, les
             targetText={phrase.en}
             onScore={(s) => savePhraseScore(phrase.en, s)}
             onBeforeRecord={() => {
+              // Stop ALL audio sources to avoid iOS audio focus conflict
+              window.speechSynthesis?.cancel()
               const el = audioRef.current
               if (el) { el.pause(); el.currentTime = 0 }
             }}

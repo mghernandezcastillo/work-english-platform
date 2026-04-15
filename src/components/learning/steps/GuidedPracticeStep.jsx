@@ -353,9 +353,11 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
             targetText={pronunTarget}
             onScore={(s) => savePronunScore(pronunTarget, s)}
             onBeforeRecord={() => {
+              // Stop ALL audio sources to avoid iOS audio focus conflict
+              window.speechSynthesis?.cancel()
               const el = audioRef.current
               if (el) { el.pause(); el.currentTime = 0 }
-              else window.speechSynthesis?.cancel()
+              if (sentAudioRef.current) { sentAudioRef.current.pause(); sentAudioRef.current = null }
             }}
           />
         </div>
