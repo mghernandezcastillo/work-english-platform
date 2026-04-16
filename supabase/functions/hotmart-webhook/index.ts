@@ -11,7 +11,7 @@ const CORS = {
   'Access-Control-Allow-Headers': 'content-type, x-hotmart-hottok',
 }
 
-const APP_URL = 'https://work-english-platform.vercel.app'
+const APP_URL = 'https://englishforworkapp.com'
 const SENDER = { name: 'English for Work', email: 'englishforworkapp@gmail.com' }
 
 function ok(body: object) {
