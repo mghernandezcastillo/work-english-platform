@@ -12,7 +12,7 @@ const CORS = {
 }
 
 const APP_URL = 'https://englishforworkapp.com'
-const SENDER = { name: 'English for Work', email: 'englishforworkapp@gmail.com' }
+const SENDER = { name: 'English for Work', email: 'soporte@englishforworkapp.com' }
 
 function ok(body: object) {
   return new Response(JSON.stringify(body), {
@@ -109,7 +109,7 @@ async function sendWelcomeEmail(email: string, name: string, passwordUrl: string
               Recibiste este email porque compraste English for Work.<br>
               <a href="${APP_URL}" style="color:#6366f1;text-decoration:none">Ir a la plataforma</a>
               &nbsp;·&nbsp;
-              <a href="mailto:englishforworkapp@gmail.com" style="color:#6366f1;text-decoration:none">¿Necesitas ayuda?</a>
+              <a href="mailto:soporte@englishforworkapp.com" style="color:#6366f1;text-decoration:none">¿Necesitas ayuda?</a>
             </p>
           </td>
         </tr>

@@ -6,7 +6,7 @@ const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const BREVO_API_KEY = Deno.env.get("BREVO_API_KEY")!;
 const APP_URL = "https://englishforworkapp.com";
 // Sender en Brevo — cambiar a hola@englishforworkapp.com una vez el dominio esté verificado en Brevo
-const SENDER = { name: "English for Work", email: "englishforworkapp@gmail.com" };
+const SENDER = { name: "English for Work", email: "soporte@englishforworkapp.com" };
 
 async function sendBrevoEmail(to: string, name: string, subject: string, html: string) {
   const res = await fetch("https://api.brevo.com/v3/smtp/email", {
