@@ -1036,3 +1036,71 @@
   background: rgba(16,185,129,0.15);
   color: #10B981;
 }
+
+/* ── Scenario score chips (Ahora habla tú navigation) ── */
+.scenario-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  padding: 8px 0 4px;
+  flex-shrink: 0;
+}
+.scenario-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 4px 8px;
+  border-radius: 10px;
+  border: none;
+  font-family: 'Manrope', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, filter 0.15s, box-shadow 0.15s;
+  line-height: 1;
+  gap: 2px;
+}
+.scenario-chip:active { transform: scale(0.94); }
+.scenario-chip-score {
+  font-size: 9px;
+  font-weight: 600;
+  opacity: 0.85;
+  line-height: 1;
+}
+/* Active = current scenario */
+.scenario-chip--active {
+  background: var(--el-primary);
+  color: #002919;
+  box-shadow: 0 0 0 3px rgba(16,185,129,0.25);
+}
+/* Not yet visited */
+.scenario-chip--unvisited {
+  background: var(--el-surface-highest);
+  color: var(--el-text-muted);
+  opacity: 0.5;
+}
+/* Visited but no score recorded */
+.scenario-chip--visited {
+  background: var(--el-surface-high);
+  color: var(--el-text-muted);
+}
+/* Score < 70% — red */
+.scenario-chip--low {
+  background: rgba(239,68,68,0.15);
+  color: #fc8181;
+  box-shadow: 0 0 0 1px rgba(239,68,68,0.35);
+}
+/* Score 70–89% — amber */
+.scenario-chip--mid {
+  background: rgba(245,158,11,0.15);
+  color: #F59E0B;
+}
+/* Score ≥ 90% — green */
+.scenario-chip--high {
+  background: rgba(16,185,129,0.15);
+  color: #10B981;
+}

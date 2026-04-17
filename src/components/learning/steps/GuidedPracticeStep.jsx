@@ -31,24 +31,38 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
   const audioRef = useRef(null)
   const wrapperRef = useRef(null)
 
-  // Initialize visited:
-  // — scenarios that already have a saved score count as visited (done)
-  // — startAtScenario is always included
+  // Initialize visited + per-scenario best scores from localStorage
+  function loadScores() {
+    if (!lessonId) return {}
+    try { return JSON.parse(localStorage.getItem(`lesson_pronun_scores_${lessonId}`) || '{}') } catch { return {} }
+  }
+
+  function calcScenarioScores(rawScores) {
+    const map = {}
+    scenarios.forEach((sc, i) => {
+      const sents = getSentences(sc)
+      const sentScores = sents.map(s => rawScores[s]).filter(v => v !== undefined)
+      if (sentScores.length > 0) {
+        map[i] = Math.round(sentScores.reduce((a, b) => a + b, 0) / sentScores.length)
+      } else if (rawScores[sc.phrase] !== undefined) {
+        map[i] = rawScores[sc.phrase]
+      }
+    })
+    return map
+  }
+
   const [visited, setVisited] = useState(() => {
     const set = new Set([startAtScenario])
-    if (lessonId) {
-      try {
-        const scores = JSON.parse(localStorage.getItem(`lesson_pronun_scores_${lessonId}`) || '{}')
-        scenarios.forEach((s, i) => {
-          // Check full phrase key OR any individual sentence key
-          if (scores[s.phrase]) { set.add(i); return }
-          const sents = getSentences(s)
-          if (sents.length > 1 && sents.some(sent => scores[sent])) set.add(i)
-        })
-      } catch { }
-    }
+    const raw = loadScores()
+    scenarios.forEach((s, i) => {
+      if (raw[s.phrase]) { set.add(i); return }
+      const sents = getSentences(s)
+      if (sents.length > 1 && sents.some(sent => raw[sent])) set.add(i)
+    })
     return set
   })
+
+  const [scenarioScores, setScenarioScores] = useState(() => calcScenarioScores(loadScores()))
 
   // Sync to startAtScenario if it changes (e.g. coming back from step 7 to a specific missed scenario)
   useEffect(() => {
@@ -246,6 +260,8 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         }
       }
       localStorage.setItem(key, JSON.stringify(existing))
+      // Refresh per-scenario score chips
+      setScenarioScores(calcScenarioScores(existing))
     } catch { }
 
     // Mark sentence as practiced; only auto-advance if score >= 70%
@@ -402,18 +418,27 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         </div>
       )}
 
-      {/* Pagination dots — hidden in repair mode */}
-      {missedScenarioIndices.length === 0 && (
-        <div className="step-page-dots" style={{ marginTop: 'auto', paddingTop: 8 }}>
-          {scenarios.map((_, i) => {
-            const cls = [
-              'step-page-dot',
-              i === current ? 'active' : visited.has(i) ? 'done' : '',
-            ].filter(Boolean).join(' ')
-            return <button key={i} className={cls} onClick={() => goTo(i)} />
-          })}
-        </div>
-      )}
+      {/* Scenario score chips — always visible, color-coded by pronunciation score */}
+      <div className="scenario-chips-row">
+        {scenarios.map((_, i) => {
+          const sc = scenarioScores[i]
+          const isActive = i === current
+          const isVisited = visited.has(i)
+          let chipCls = 'scenario-chip'
+          if (isActive) chipCls += ' scenario-chip--active'
+          else if (!isVisited) chipCls += ' scenario-chip--unvisited'
+          else if (sc === undefined) chipCls += ' scenario-chip--visited'
+          else if (sc < 70) chipCls += ' scenario-chip--low'
+          else if (sc < 90) chipCls += ' scenario-chip--mid'
+          else chipCls += ' scenario-chip--high'
+          return (
+            <button key={i} className={chipCls} onClick={() => goTo(i)} title={sc !== undefined ? `${sc}%` : `Situación ${i + 1}`}>
+              {i + 1}
+              {sc !== undefined && !isActive && <span className="scenario-chip-score">{sc}%</span>}
+            </button>
+          )
+        })}
+      </div>
       {/* Nav — repair mode: only between missed indices; normal mode: all scenarios */}
       {missedScenarioIndices.length > 0 ? (() => {
         const missedPos = missedScenarioIndices.indexOf(current)
