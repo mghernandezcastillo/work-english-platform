@@ -273,18 +273,27 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         next.add(activeSentence)
         // Only auto-advance on good scores (>= 70%)
         if (score >= 70) {
-          const nextIdx = sentences.findIndex((_, i) => i > activeSentence && !next.has(i))
-          if (nextIdx !== -1) {
-            setTimeout(() => { setActiveSentence(nextIdx); setLastSentenceScore(null) }, 800)
+          const nextSentIdx = sentences.findIndex((_, i) => i > activeSentence && !next.has(i))
+          if (nextSentIdx !== -1) {
+            // More sentences left in this scenario → advance sentence
+            setTimeout(() => { setActiveSentence(nextSentIdx); setLastSentenceScore(null) }, 800)
           } else if (next.size === sentences.length) {
-            setTimeout(() => {
-              wrapperRef.current?.scrollTo({ top: wrapperRef.current.scrollHeight, behavior: 'smooth' })
-            }, 200)
+            // All sentences done → advance to next scenario
+            const nextScenario = current + 1
+            if (nextScenario < scenarios.length) {
+              setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null) }, 1000)
+            }
           }
         }
         // On low scores (< 70%) we stay on the current sentence — user can retry or manually advance
         return next
       })
+    } else if (score >= 70) {
+      // Single-sentence scenario: auto-advance to next scenario
+      const nextScenario = current + 1
+      if (nextScenario < scenarios.length) {
+        setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null) }, 900)
+      }
     }
   }
 
