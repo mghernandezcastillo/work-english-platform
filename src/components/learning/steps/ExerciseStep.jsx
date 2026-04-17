@@ -18,6 +18,19 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance, onActivit
   const [hintLevel, setHintLevel] = useState(0)
   const inputRef = useRef(null)
 
+  // Shuffle options once per question so the correct answer has no positional bias
+  function shuffle(arr) {
+    const a = [...arr]
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]]
+    }
+    return a
+  }
+  const [shuffledOptions, setShuffledOptions] = useState(() =>
+    exercises[0]?.options ? shuffle(exercises[0].options) : []
+  )
+
   const current = exercises[currentIndex]
 
   // If already completed, enable advance immediately
@@ -75,7 +88,9 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance, onActivit
         checkAndAwardBadges(profile.id, { perfect_exercises: 1, lessonsCompleted: 0, streakDays: 0, totalXP: profile.xp ?? 0 }).catch(() => {})
       }
     } else {
-      setCurrentIndex(i => i + 1)
+      const nextIndex = currentIndex + 1
+      setCurrentIndex(nextIndex)
+      setShuffledOptions(exercises[nextIndex]?.options ? shuffle(exercises[nextIndex].options) : [])
       setSelectedAnswer(null)
       setShowResult(false)
       setHintLevel(0)
@@ -150,7 +165,7 @@ export default function ExerciseStep({ data, onComplete, onCanAdvance, onActivit
       {/* Multiple choice */}
       {current.type === 'choose' && (
         <div className="exercise-options-list" style={{ flex: 1, minHeight: 0, overflowY: 'hidden' }}>
-          {current.options.map((opt, i) => {
+          {shuffledOptions.map((opt, i) => {
             let cls = 'exercise-option-btn'
             if (showResult) {
               if (opt === current.correct) cls += ' correct'
