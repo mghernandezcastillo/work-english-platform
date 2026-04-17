@@ -272,17 +272,13 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         next.add(activeSentence)
         return next
       })
-      // Auto-advance independently of whether it was already practiced
       if (score >= 70) {
-        // Compute current practiced set snapshot for finding next unpracticed
-        const currentPracticed = new Set(practicedSentences)
-        currentPracticed.add(activeSentence)
-        const nextSentIdx = sentences.findIndex((_, i) => i > activeSentence && !currentPracticed.has(i))
+        const nextSentIdx = activeSentence + 1 < sentences.length ? activeSentence + 1 : -1
         if (nextSentIdx !== -1) {
-          // More sentences left in this scenario → advance sentence
+          // Advance to the next sentence in sequence
           setTimeout(() => { setActiveSentence(nextSentIdx); setLastSentenceScore(null) }, 800)
         } else {
-          // All sentences done → advance to next scenario
+          // Last sentence done → advance to next scenario
           const nextScenario = current + 1
           if (nextScenario < scenarios.length) {
             setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null) }, 1000)
