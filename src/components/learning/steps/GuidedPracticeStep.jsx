@@ -104,10 +104,13 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       return new Set(sents.reduce((acc, s, i) => { if (scores[s]) acc.push(i); return acc }, []))
     } catch { return new Set() }
   })
+  // Track last score for the active sentence — controls auto-advance behavior
+  const [lastSentenceScore, setLastSentenceScore] = useState(null)
 
   // Reset active sentence and practiced set when scenario changes
   useEffect(() => {
     setActiveSentence(firstUnpracticedSentence(current))
+    setLastSentenceScore(null)
     // Restore practiced sentences from localStorage for new scenario
     if (lessonId) {
       try {
@@ -245,22 +248,25 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       localStorage.setItem(key, JSON.stringify(existing))
     } catch { }
 
-    // Mark sentence as practiced and auto-advance to next unpracticed sentence after 600ms
+    // Mark sentence as practiced; only auto-advance if score >= 70%
+    setLastSentenceScore(score)
     if (hasMultiple) {
       setPracticedSentences(prev => {
         if (prev.has(activeSentence)) return prev // already practiced — no scroll
         const next = new Set(prev)
         next.add(activeSentence)
-        // Find next unpracticed sentence after current
-        const nextIdx = sentences.findIndex((_, i) => i > activeSentence && !next.has(i))
-        if (nextIdx !== -1) {
-          setTimeout(() => setActiveSentence(nextIdx), 600)
-        } else if (next.size === sentences.length) {
-          // Just completed the LAST remaining sentence — auto-scroll
-          setTimeout(() => {
-            wrapperRef.current?.scrollTo({ top: wrapperRef.current.scrollHeight, behavior: 'smooth' })
-          }, 200)
+        // Only auto-advance on good scores (>= 70%)
+        if (score >= 70) {
+          const nextIdx = sentences.findIndex((_, i) => i > activeSentence && !next.has(i))
+          if (nextIdx !== -1) {
+            setTimeout(() => { setActiveSentence(nextIdx); setLastSentenceScore(null) }, 800)
+          } else if (next.size === sentences.length) {
+            setTimeout(() => {
+              wrapperRef.current?.scrollTo({ top: wrapperRef.current.scrollHeight, behavior: 'smooth' })
+            }, 200)
+          }
         }
+        // On low scores (< 70%) we stay on the current sentence — user can retry or manually advance
         return next
       })
     }
@@ -360,6 +366,28 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
               if (sentAudioRef.current) { sentAudioRef.current.pause(); sentAudioRef.current = null }
             }}
           />
+          {/* Show explicit nav pills after a low score so user can retry or advance */}
+          {hasMultiple && lastSentenceScore !== null && lastSentenceScore < 70 && (
+            <div className="pronun-post-actions">
+              <button
+                className="pronun-post-btn pronun-post-retry"
+                onClick={() => { setLastSentenceScore(null) }}
+              >
+                🔄 Repetir
+              </button>
+              <button
+                className="pronun-post-btn pronun-post-next"
+                onClick={() => {
+                  setLastSentenceScore(null)
+                  const nextIdx = sentences.findIndex((_, i) => i > activeSentence && !practicedSentences.has(i))
+                  if (nextIdx !== -1) setActiveSentence(nextIdx)
+                  else if (activeSentence < sentences.length - 1) setActiveSentence(activeSentence + 1)
+                }}
+              >
+                Siguiente ›
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
