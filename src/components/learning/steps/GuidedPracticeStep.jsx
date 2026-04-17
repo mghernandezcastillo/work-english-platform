@@ -10,11 +10,16 @@ import './Steps.css'
  */
 function splitSentences(text) {
   if (!text) return []
-  // Protect decimals like "3.5" from being treated as sentence-ending periods
-  const safe = text.replace(/(\d)\.(\d)/g, '$1\u00B7$2')
+  // Protect decimals like "3.5" and common abbreviations like Mr., Mrs., Dr., etc.
+  const ABBREVS = /\b(Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St|vs|etc|Inc|Ltd|Corp|No|Fig|Dept|Approx|approx|e\.g|i\.e)\./g
+  const safe = text
+    .replace(/(\d)\.(\d)/g, '$1\u00B7$2')          // protect decimals
+    .replace(ABBREVS, (_, abbr) => `${abbr}\u00B6`) // protect abbreviations
   const parts = safe.match(/[^.!?]*[.!?]+/g)
   if (!parts || parts.length <= 1) return [text.trim()]
-  return parts.map(s => s.replace(/\u00B7/g, '.').trim()).filter(Boolean)
+  return parts
+    .map(s => s.replace(/\u00B7/g, '.').replace(/\u00B6/g, '.').trim())
+    .filter(Boolean)
 }
 
 // Use explicit sentences override when available, otherwise auto-split
