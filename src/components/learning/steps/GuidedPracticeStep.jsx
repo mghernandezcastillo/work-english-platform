@@ -418,25 +418,20 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         </div>
       )}
 
-      {/* Scenario score chips — always visible, color-coded by pronunciation score */}
-      <div className="scenario-chips-row">
+      {/* Scenario score strip — thin colored bar, one segment per scenario */}
+      <div className="scenario-score-strip">
         {scenarios.map((_, i) => {
           const sc = scenarioScores[i]
           const isActive = i === current
           const isVisited = visited.has(i)
-          let chipCls = 'scenario-chip'
-          if (isActive) chipCls += ' scenario-chip--active'
-          else if (!isVisited) chipCls += ' scenario-chip--unvisited'
-          else if (sc === undefined) chipCls += ' scenario-chip--visited'
-          else if (sc < 70) chipCls += ' scenario-chip--low'
-          else if (sc < 90) chipCls += ' scenario-chip--mid'
-          else chipCls += ' scenario-chip--high'
-          return (
-            <button key={i} className={chipCls} onClick={() => goTo(i)} title={sc !== undefined ? `${sc}%` : `Situación ${i + 1}`}>
-              {i + 1}
-              {sc !== undefined && !isActive && <span className="scenario-chip-score">{sc}%</span>}
-            </button>
-          )
+          let segCls = 'scenario-score-seg'
+          if (isActive) segCls += ' seg--active'
+          else if (!isVisited) segCls += ' seg--unvisited'
+          else if (sc === undefined) segCls += ' seg--visited'
+          else if (sc < 70) segCls += ' seg--low'
+          else if (sc < 90) segCls += ' seg--mid'
+          else segCls += ' seg--high'
+          return <button key={i} className={segCls} onClick={() => goTo(i)} title={sc !== undefined ? `Situación ${i+1}: ${sc}%` : `Situación ${i+1}`} />
         })}
       </div>
       {/* Nav — repair mode: only between missed indices; normal mode: all scenarios */}
