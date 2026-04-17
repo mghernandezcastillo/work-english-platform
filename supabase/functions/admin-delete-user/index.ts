@@ -47,6 +47,7 @@ Deno.serve(async (req: Request) => {
     )
 
     // Borrar datos primero
+    await adminClient.from('drip_email_log').delete().eq('user_id', userId)
     await adminClient.from('user_progress').delete().eq('user_id', userId)
     await adminClient.from('profiles').delete().eq('id', userId)
 

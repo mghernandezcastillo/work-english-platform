@@ -199,19 +199,23 @@ Deno.serve(async (req: Request) => {
     }
 
     try {
-      // a. ¿Ya existe el usuario?
-      const { data: existingUsers } = await admin.auth.admin.listUsers()
-      const existingUser = existingUsers?.users?.find(
-        (u: any) => u.email?.toLowerCase() === buyerEmail
-      )
+      // a. ¿Ya existe el usuario? — buscar por email en profiles (confiable sin límites de paginación)
+      const { data: existingProfile } = await admin
+        .from('profiles')
+        .select('id, access_type')
+        .eq('email', buyerEmail)
+        .maybeSingle()
 
       let userId: string
       let isNewUser = false
 
-      if (existingUser) {
-        // b. Ya existe → solo actualizar acceso
-        userId = existingUser.id
-        console.log(`[hotmart-webhook] Usuario existente: ${userId}`)
+      if (existingProfile) {
+        // b. Ya existe → actualizar acceso
+        // Si no tenía acceso paid, tratarlo como nuevo (enviar email de bienvenida)
+        userId = existingProfile.id
+        const hadPaidAccess = existingProfile.access_type === 'paid'
+        if (!hadPaidAccess) isNewUser = true
+        console.log(`[hotmart-webhook] Usuario existente: ${userId} | hadPaid: ${hadPaidAccess} | sendEmail: ${isNewUser}`)
       } else {
         // c. No existe → crear cuenta nueva
         isNewUser = true

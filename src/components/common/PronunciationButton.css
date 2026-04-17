@@ -319,3 +319,30 @@
 .pronun-result-compact-retry:hover {
   background: rgba(99,102,241,0.24);
 }
+
+/* ── Desktop "Listo" stop button ── */
+.pronun-done-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 24px;
+  border: 2px solid #10B981;
+  background: rgba(16,185,129,0.12);
+  color: #10B981;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  align-self: flex-start;
+  animation: pronun-pulse 1s ease-in-out infinite;
+}
+.pronun-done-btn:hover {
+  background: rgba(16,185,129,0.22);
+  transform: translateY(-1px);
+}
+.pronun-done-btn:active {
+  transform: scale(0.97);
+  animation: none;
+}

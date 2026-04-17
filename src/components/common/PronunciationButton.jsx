@@ -86,6 +86,7 @@ function getFeedback(score) {
 // ── Helpers: iOS detection ────────────────────────────────────────────────────
 
 const IS_IOS = /iPhone|iPad|iPod/i.test(navigator.userAgent)
+const IS_MOBILE = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
 
 /** Small delay helper */
 function wait(ms) { return new Promise(r => setTimeout(r, ms)) }
@@ -119,7 +120,8 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
   const micStreamRef = useRef(null)
   const stateRef = useRef('idle')
   const gotResultRef = useRef(false)
-  const abortRetryRef = useRef(false) // Track if we already retried after aborted
+  const abortRetryRef = useRef(false)
+  const recordingStartRef = useRef(null) // track when recording started (desktop min-duration guard)
 
   const updateState = useCallback((newState) => {
     stateRef.current = newState
@@ -158,13 +160,32 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     const recognition = new SpeechRecognition()
     recognition.lang = language
-    recognition.continuous = false       // iOS requiere false
-    recognition.interimResults = false   // iOS no soporta interim
+    // Desktop: continuous=true so Chrome doesn't cut off mid-sentence
+    // Mobile/iOS: continuous=false (required by iOS, mobile handles silence OK)
+    recognition.continuous = !IS_MOBILE
+    recognition.interimResults = false
     recognition.maxAlternatives = 1
 
-    recognition.onstart = () => updateState('listening')
+    recognition.onstart = () => {
+      recordingStartRef.current = Date.now()
+      updateState('listening')
+    }
 
     recognition.onresult = (event) => {
+      // On desktop (continuous mode), accumulate all results
+      if (!IS_MOBILE) {
+        // Collect all final results so far
+        let accumulated = ''
+        for (let i = 0; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            accumulated += (accumulated ? ' ' : '') + event.results[i][0].transcript
+          }
+        }
+        // Store accumulated but don't score yet — wait for user to press Listo
+        recognitionRef.current._accumulated = accumulated
+        return
+      }
+      // Mobile: score immediately as before
       gotResultRef.current = true
       updateState('processing')
       const transcript = event.results[0][0].transcript
@@ -186,7 +207,6 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
       // iOS auto-retry: on first 'aborted', silently retry once after a delay
       if (errCode === 'aborted' && !abortRetryRef.current) {
         abortRetryRef.current = true
-        // Retry after a longer pause — iOS needs time to release audio focus
         setTimeout(() => {
           if (stateRef.current === 'listening' || stateRef.current === 'idle') {
             doStartRecognition()
@@ -213,9 +233,26 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
 
     recognition.onend = () => {
       releaseStream()
-      if (!gotResultRef.current && stateRef.current === 'listening') {
-        updateState('idle')
+      if (IS_MOBILE) {
+        if (!gotResultRef.current && stateRef.current === 'listening') updateState('idle')
+        return
       }
+      // Desktop: onend fires after recognition.stop() — score now
+      const transcript = recognitionRef.current?._accumulated || ''
+      const elapsed = Date.now() - (recordingStartRef.current || 0)
+      if (!transcript || elapsed < 1500) {
+        // Too short or empty — likely a mis-tap, stay idle
+        if (stateRef.current === 'listening') updateState('idle')
+        return
+      }
+      gotResultRef.current = true
+      updateState('processing')
+      const score = getScore(targetText, transcript)
+      const feedback = getFeedback(score)
+      const missed = getMissedWords(targetText, transcript)
+      setResult({ score, transcript, feedback, missed })
+      updateState('result')
+      if (onScore) onScore(score)
     }
 
     return recognition
@@ -259,9 +296,15 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
   }
 
   function stopListening() {
-    recognitionRef.current?.stop()
-    releaseStream()
-    updateState('idle')
+    if (IS_MOBILE) {
+      recognitionRef.current?.stop()
+      releaseStream()
+      updateState('idle')
+    } else {
+      // Desktop: stop() → triggers onend → scores accumulated transcript
+      updateState('processing')
+      recognitionRef.current?.stop()
+    }
   }
 
   function reset() {
@@ -297,13 +340,25 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
       {state !== 'result' && (
         <button
           className={`pronun-btn pronun-btn--${state}`}
-          onClick={state === 'listening' ? stopListening : startListening}
-          disabled={state === 'processing'}
-          aria-label={state === 'listening' ? 'Detener grabación' : 'Practicar pronunciación'}
+          onClick={state === 'listening' ? (IS_MOBILE ? stopListening : undefined) : startListening}
+          disabled={state === 'processing' || (state === 'listening' && !IS_MOBILE)}
+          aria-label={state === 'listening' ? 'Escuchando' : 'Practicar pronunciación'}
         >
           {state === 'idle' && <><span className="pronun-icon">🎤</span> Practicar pronunciación</>}
-          {state === 'listening' && <><span className="pronun-icon pronun-pulse">🔴</span> Escuchando… (toca para parar)</>}
+          {state === 'listening' && !IS_MOBILE && <><span className="pronun-icon pronun-pulse">🔴</span> Grabando… habla la frase completa</>}
+          {state === 'listening' && IS_MOBILE && <><span className="pronun-icon pronun-pulse">🔴</span> Escuchando… (toca para parar)</>}
           {state === 'processing' && <><span className="pronun-icon">⏳</span> Procesando…</>}
+        </button>
+      )}
+
+      {/* Desktop-only: explicit "Listo" button to stop continuous recording */}
+      {state === 'listening' && !IS_MOBILE && (
+        <button
+          className="pronun-done-btn"
+          onClick={stopListening}
+          aria-label="Terminar grabación"
+        >
+          ✓ Listo, calificar
         </button>
       )}
 
