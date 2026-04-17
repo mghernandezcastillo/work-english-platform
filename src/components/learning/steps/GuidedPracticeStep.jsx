@@ -264,30 +264,32 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       setScenarioScores(calcScenarioScores(existing))
     } catch { }
 
-    // Mark sentence as practiced; only auto-advance if score >= 70%
+    // Mark sentence as practiced (always update the set)
     setLastSentenceScore(score)
     if (hasMultiple) {
       setPracticedSentences(prev => {
-        if (prev.has(activeSentence)) return prev // already practiced — no scroll
         const next = new Set(prev)
         next.add(activeSentence)
-        // Only auto-advance on good scores (>= 70%)
-        if (score >= 70) {
-          const nextSentIdx = sentences.findIndex((_, i) => i > activeSentence && !next.has(i))
-          if (nextSentIdx !== -1) {
-            // More sentences left in this scenario → advance sentence
-            setTimeout(() => { setActiveSentence(nextSentIdx); setLastSentenceScore(null) }, 800)
-          } else if (next.size === sentences.length) {
-            // All sentences done → advance to next scenario
-            const nextScenario = current + 1
-            if (nextScenario < scenarios.length) {
-              setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null) }, 1000)
-            }
-          }
-        }
-        // On low scores (< 70%) we stay on the current sentence — user can retry or manually advance
         return next
       })
+      // Auto-advance independently of whether it was already practiced
+      if (score >= 70) {
+        // Compute current practiced set snapshot for finding next unpracticed
+        const currentPracticed = new Set(practicedSentences)
+        currentPracticed.add(activeSentence)
+        const nextSentIdx = sentences.findIndex((_, i) => i > activeSentence && !currentPracticed.has(i))
+        if (nextSentIdx !== -1) {
+          // More sentences left in this scenario → advance sentence
+          setTimeout(() => { setActiveSentence(nextSentIdx); setLastSentenceScore(null) }, 800)
+        } else {
+          // All sentences done → advance to next scenario
+          const nextScenario = current + 1
+          if (nextScenario < scenarios.length) {
+            setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null) }, 1000)
+          }
+        }
+      }
+      // Low score: stay — user sees Repetir/Siguiente pills
     } else if (score >= 70) {
       // Single-sentence scenario: auto-advance to next scenario
       const nextScenario = current + 1
@@ -348,10 +350,18 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
                     isPracticed ? 'practiced' : '',
                     nextUp ? 'next-up' : '',
                   ].filter(Boolean).join(' ')}
-                  onClick={() => setActiveSentence(i)}
+                  onClick={(e) => {
+                    // When inactive, activate the sentence and swallow the event
+                    // so ClickablePhrase word-clicks don't fire
+                    if (i !== activeSentence) {
+                      e.stopPropagation()
+                      setActiveSentence(i)
+                    }
+                  }}
                 >
                   <span className="practice-sentence-num">{i + 1}</span>
-                  <div className="practice-sentence-body">
+                  {/* pointer-events disabled on body when not active → prevents word-click on tap-to-select */}
+                  <div className="practice-sentence-body" style={{ pointerEvents: i === activeSentence ? 'auto' : 'none' }}>
                     <p className="practice-sentence-en"><ClickablePhrase text={sentence} /></p>
                     {translations[i] && (
                       <p className="practice-sentence-es">{translations[i]}</p>
