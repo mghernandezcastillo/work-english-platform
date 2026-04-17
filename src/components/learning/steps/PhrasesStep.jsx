@@ -179,15 +179,10 @@ export default function PhrasesStep({ data, onCanAdvance, onActivity, muted, les
           </>
         )
       })() : (
-      <div className="step-inline-nav">
+        <div className="step-inline-nav">
           <button className="step-inline-btn" onClick={() => current > 0 && goTo(current - 1)} disabled={current === 0}>‹</button>
-          <button
-            className={`phrases-next-cta${current < phrases.length - 1 ? ' pulse' : ''}`}
-            onClick={() => current < phrases.length - 1 && goTo(current + 1)}
-            disabled={current === phrases.length - 1}
-          >
-            {current < phrases.length - 1 ? 'Siguiente frase →' : '¡Todas escuchadas!'}
-          </button>
+          <span className="step-inline-label">{current + 1} de {phrases.length}</span>
+          <button className="step-inline-btn pulse" onClick={() => current < phrases.length - 1 && goTo(current + 1)} disabled={current === phrases.length - 1}>›</button>
         </div>
       )}
     </div>

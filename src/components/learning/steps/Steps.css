@@ -910,30 +910,6 @@
   text-align: center;
 }
 
-/* CTA pill for "Siguiente frase →" in PhrasesStep */
-.phrases-next-cta {
-  flex: 1;
-  padding: 10px 18px;
-  border-radius: 24px;
-  background: var(--el-surface-high);
-  border: none;
-  color: var(--el-primary);
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: 'Manrope', system-ui, sans-serif;
-  transition: background 0.18s, transform 0.1s;
-  white-space: nowrap;
-}
-.phrases-next-cta:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-.phrases-next-cta:not(:disabled):active { transform: scale(0.97); }
-.phrases-next-cta.pulse:not(:disabled) {
-  animation: btn-pulse 1.6s ease-in-out infinite;
-}
-
 /* ── Speed control (listen button group) ── */
 /* Wraps 🔊 + speed badge so they stay together without breaking surrounding layout */
 .listen-speed-group {
