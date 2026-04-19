@@ -96,6 +96,7 @@ function VoiceWaveform({ analyserRef, active }) {
   const canvasRef = useRef(null)
   const rafRef = useRef(null)
   const barsRef = useRef(Array(BAR_COUNT).fill(0.08))
+  const phaseRef = useRef(Array.from({ length: BAR_COUNT }, (_, i) => i * 1.37))
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -109,12 +110,13 @@ function VoiceWaveform({ analyserRef, active }) {
     function draw() {
       ctx.clearRect(0, 0, W, H)
 
+      const t = Date.now() * 0.001
+
       let dataArr = null
       if (analyserRef.current && active) {
         const analyser = analyserRef.current
         const buf = new Uint8Array(analyser.frequencyBinCount)
         analyser.getByteFrequencyData(buf)
-        // Sample BAR_COUNT evenly from lower 60% of spectrum (voice range)
         const usable = Math.floor(buf.length * 0.6)
         dataArr = Array.from({ length: BAR_COUNT }, (_, i) => {
           const idx = Math.floor((i / BAR_COUNT) * usable)
@@ -123,12 +125,25 @@ function VoiceWaveform({ analyserRef, active }) {
       }
 
       for (let i = 0; i < BAR_COUNT; i++) {
-        const target = dataArr
-          ? Math.max(0.06, dataArr[i])
-          : 0.06 + 0.04 * Math.sin(Date.now() * 0.003 + i * 0.4) // idle breathe
+        let target
+        if (dataArr) {
+          target = Math.max(0.06, dataArr[i])
+        } else if (active) {
+          // Speech simulation: layered waves + center-spectrum bias
+          const centerBias = 1 - Math.abs((i / (BAR_COUNT - 1)) - 0.5) * 1.2
+          phaseRef.current[i] += 0.07 + Math.random() * 0.04
+          const p = phaseRef.current[i]
+          const wave =
+            0.35 * Math.sin(p * 3.1 + t * 4.5) +
+            0.25 * Math.sin(p * 1.7 + t * 7.3) +
+            0.15 * Math.sin(p * 5.9 + t * 2.8) +
+            0.10 * (Math.random() - 0.5)
+          target = Math.max(0.08, Math.min(0.92, 0.42 + wave * centerBias))
+        } else {
+          target = 0.06 + 0.04 * Math.sin(t * 2.5 + i * 0.4)
+        }
 
-        // Smooth lerp
-        barsRef.current[i] += (target - barsRef.current[i]) * (active ? 0.35 : 0.08)
+        barsRef.current[i] += (target - barsRef.current[i]) * (active ? 0.38 : 0.08)
         const val = barsRef.current[i]
 
         const barH = Math.max(3, val * H * 0.92)
