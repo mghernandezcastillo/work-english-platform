@@ -125,6 +125,14 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
   })
   // Track last score for the active sentence — controls auto-advance behavior
   const [lastSentenceScore, setLastSentenceScore] = useState(null)
+  const [blockMsg, setBlockMsg] = useState('')
+  const blockMsgTimerRef = useRef(null)
+
+  function showBlockMsg(msg) {
+    setBlockMsg(msg)
+    clearTimeout(blockMsgTimerRef.current)
+    blockMsgTimerRef.current = setTimeout(() => setBlockMsg(''), 3000)
+  }
 
   // Reset active sentence and practiced set when scenario changes
   useEffect(() => {
@@ -468,12 +476,42 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
             <button className="step-inline-btn" onClick={() => nextMissed !== undefined && goTo(nextMissed)} disabled={nextMissed === undefined}>›</button>
           </div>
         )
-      })() : (
-        <div className="step-inline-nav" style={{ paddingBottom: 4 }}>
-          <button className="step-inline-btn" onClick={() => current > 0 && goTo(current - 1)} disabled={current === 0}>‹</button>
-          <span className="step-inline-label">{current + 1} de {scenarios.length}</span>
-          <button className="step-inline-btn pulse" onClick={() => current < scenarios.length - 1 && goTo(current + 1)} disabled={current === scenarios.length - 1}>›</button>
-        </div>
+      })() : (() => {
+        // Check if current scenario is complete before allowing next-scenario nav
+        const currentDone = hasMultiple
+          ? practicedSentences.size >= sentences.length
+          : (() => {
+              if (!lessonId) return false
+              try {
+                const scores = JSON.parse(localStorage.getItem(`lesson_pronun_scores_${lessonId}`) || '{}')
+                return !!scores[scenario.phrase]
+              } catch { return false }
+            })()
+
+        return (
+          <div className="step-inline-nav" style={{ paddingBottom: 4 }}>
+            <button className="step-inline-btn" onClick={() => current > 0 && goTo(current - 1)} disabled={current === 0}>‹</button>
+            <span className="step-inline-label">{current + 1} de {scenarios.length}</span>
+            <button
+              className="step-inline-btn pulse"
+              onClick={() => {
+                if (!currentDone) {
+                  showBlockMsg(
+                    hasMultiple
+                      ? `Practica ${sentences.length - practicedSentences.size} frase${sentences.length - practicedSentences.size > 1 ? 's' : ''} más antes de continuar`
+                      : 'Practica la pronunciación antes de continuar'
+                  )
+                  return
+                }
+                if (current < scenarios.length - 1) goTo(current + 1)
+              }}
+              disabled={current === scenarios.length - 1}
+            >›</button>
+          </div>
+        )
+      })()}
+      {blockMsg && (
+        <div className="step-block-msg" role="alert">{blockMsg}</div>
       )}
     </div>
   )

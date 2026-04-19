@@ -1065,3 +1065,22 @@
 .seg--low       { box-shadow: inset 0 -6px 0 0 #ef4444; }
 .seg--mid       { box-shadow: inset 0 -6px 0 0 #F59E0B; }
 .seg--high      { box-shadow: inset 0 -6px 0 0 #10B981; }
+
+/* ── Block message (shown when user tries to skip incomplete scenario) ── */
+.step-block-msg {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #F59E0B;
+  background: rgba(245,158,11,0.1);
+  border: 1px solid rgba(245,158,11,0.25);
+  border-radius: 20px;
+  padding: 6px 14px;
+  margin-top: 4px;
+  flex-shrink: 0;
+  animation: block-msg-in 0.2s ease;
+}
+@keyframes block-msg-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
