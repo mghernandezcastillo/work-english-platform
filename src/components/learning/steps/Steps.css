@@ -1037,6 +1037,67 @@
   color: #10B981;
 }
 
+/* ── Auto-advance toast (shown for 2.8s before transitioning) ── */
+.advance-toast {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 7px 12px 0;
+  animation: advance-toast-in 0.25s ease;
+}
+@keyframes advance-toast-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.advance-toast-icon {
+  font-size: 9px;
+  color: var(--el-primary);
+  opacity: 0.7;
+  animation: advance-icon-pulse 0.7s ease-in-out infinite alternate;
+}
+@keyframes advance-icon-pulse {
+  from { opacity: 0.4; }
+  to   { opacity: 1; }
+}
+.advance-toast-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--el-text-muted);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.advance-toast-bar-wrap {
+  width: 100%;
+  height: 3px;
+  background: var(--el-surface-highest);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 5px;
+  /* make bar-wrap a block spanning full width — put it on its own row */
+  grid-column: 1 / -1;
+  flex-basis: 100%;
+}
+/* Reflow: icon + label on same row, bar on next */
+.advance-toast {
+  flex-wrap: wrap;
+  padding-bottom: 4px;
+}
+.advance-toast-bar {
+  height: 100%;
+  width: 100%;
+  background: var(--el-primary);
+  border-radius: 2px;
+  transform-origin: left center;
+  animation: advance-bar 2.8s linear forwards;
+}
+@keyframes advance-bar {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
 /* ── Scenario score strip (Ahora habla tú) ── */
 /* A thin clickable color-coded bar below the hint, one segment per scenario */
 .scenario-score-strip {

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { PronunciationButton } from '../../common/PronunciationButton'
 import ClickablePhrase from '../ClickablePhrase'
 import './Steps.css'
@@ -125,6 +125,8 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
   })
   // Track last score for the active sentence — controls auto-advance behavior
   const [lastSentenceScore, setLastSentenceScore] = useState(null)
+  // Label shown while auto-advancing to next sentence/scenario
+  const [advancingLabel, setAdvancingLabel] = useState(null)
   const [blockMsg, setBlockMsg] = useState('')
   const blockMsgTimerRef = useRef(null)
 
@@ -288,22 +290,22 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       if (score >= 70) {
         const nextSentIdx = activeSentence + 1 < sentences.length ? activeSentence + 1 : -1
         if (nextSentIdx !== -1) {
-          // Advance to the next sentence in sequence
-          setTimeout(() => { setActiveSentence(nextSentIdx); setLastSentenceScore(null) }, 2800)
+          setAdvancingLabel(`Siguiente frase (${nextSentIdx + 1} de ${sentences.length})`)
+          setTimeout(() => { setActiveSentence(nextSentIdx); setLastSentenceScore(null); setAdvancingLabel(null) }, 2800)
         } else {
-          // Last sentence done → advance to next scenario
           const nextScenario = current + 1
           if (nextScenario < scenarios.length) {
-            setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null) }, 2800)
+            setAdvancingLabel(`Siguiente situación (${nextScenario + 1} de ${scenarios.length})`)
+            setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null); setAdvancingLabel(null) }, 2800)
           }
         }
       }
       // Low score: stay — user sees Repetir/Siguiente pills
     } else if (score >= 70) {
-      // Single-sentence scenario: auto-advance to next scenario
       const nextScenario = current + 1
       if (nextScenario < scenarios.length) {
-        setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null) }, 2800)
+        setAdvancingLabel(`Siguiente situación (${nextScenario + 1} de ${scenarios.length})`)
+        setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null); setAdvancingLabel(null) }, 2800)
       }
     }
   }
@@ -410,7 +412,17 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
               if (sentAudioRef.current) { sentAudioRef.current.pause(); sentAudioRef.current = null }
             }}
           />
-          {/* Show explicit nav pills after a low score so user can retry or advance */}
+          {/* Auto-advance toast — shown when score ≥ 70 while waiting for transition */}
+          {advancingLabel && (
+            <div key={advancingLabel} className="advance-toast">
+              <span className="advance-toast-icon">▶</span>
+              <span className="advance-toast-label">{advancingLabel}</span>
+              <div className="advance-toast-bar-wrap">
+                <div className="advance-toast-bar" />
+              </div>
+            </div>
+          )}
+          {/* Low-score pills — only when there's no auto-advance */}
           {hasMultiple && lastSentenceScore !== null && lastSentenceScore < 70 && (
             <div className="pronun-post-actions">
               <button
