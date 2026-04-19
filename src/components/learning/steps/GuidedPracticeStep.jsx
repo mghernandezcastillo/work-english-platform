@@ -125,10 +125,11 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
   })
   // Track last score for the active sentence — controls manual-advance behavior
   const [lastSentenceScore, setLastSentenceScore] = useState(null)
-  // True while showing score result → blocks › scenario navigation
+  // True while showing score result → briefly blocks › scenario navigation (auto-clears after 2s)
   const [scorePending, setScorePending] = useState(false)
   const [blockMsg, setBlockMsg] = useState('')
   const blockMsgTimerRef = useRef(null)
+  const scorePendingTimerRef = useRef(null)
 
   function showBlockMsg(msg) {
     setBlockMsg(msg)
@@ -282,6 +283,9 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
     // Mark sentence as practiced (always update the set)
     setLastSentenceScore(score)
     setScorePending(true)
+    // Auto-release score-pending block after 2s
+    clearTimeout(scorePendingTimerRef.current)
+    scorePendingTimerRef.current = setTimeout(() => setScorePending(false), 2000)
     if (hasMultiple) {
       setPracticedSentences(prev => {
         const next = new Set(prev)
@@ -289,7 +293,6 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         return next
       })
     }
-    // No auto-advance: user taps Repetir or Siguiente pill
   }
 
   if (!scenarios.length) return (
@@ -394,41 +397,33 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
               if (sentAudioRef.current) { sentAudioRef.current.pause(); sentAudioRef.current = null }
             }}
           />
-          {/* Nav pills always shown after any score — user decides to retry or advance */}
+          {/* Inline action strip after scoring — only within-scenario navigation */}
           {lastSentenceScore !== null && (
             <div className="pronun-post-actions">
               <button
                 className="pronun-post-btn pronun-post-retry"
-                onClick={() => { setLastSentenceScore(null); setScorePending(false) }}
+                onClick={() => {
+                  setLastSentenceScore(null)
+                  clearTimeout(scorePendingTimerRef.current)
+                  setScorePending(false)
+                }}
               >
                 🔄 Repetir
               </button>
-              {(() => {
-                // Next unpracticed sentence after current; for single-sentence → next scenario
-                const nextSentIdx = hasMultiple
-                  ? sentences.findIndex((_, i) => i > activeSentence && !practicedSentences.has(i))
-                  : -1
-                const nextScenarioAvail = current < scenarios.length - 1
-                const label = nextSentIdx !== -1
-                  ? `Frase ${nextSentIdx + 1} ›`
-                  : nextScenarioAvail
-                    ? 'Situación siguiente ›'
-                    : null
-                if (!label) return null
+              {hasMultiple && (() => {
+                const nextSentIdx = sentences.findIndex((_, i) => i > activeSentence && !practicedSentences.has(i))
+                if (nextSentIdx === -1) return null
                 return (
                   <button
                     className="pronun-post-btn pronun-post-next"
                     onClick={() => {
                       setLastSentenceScore(null)
+                      clearTimeout(scorePendingTimerRef.current)
                       setScorePending(false)
-                      if (nextSentIdx !== -1) {
-                        setActiveSentence(nextSentIdx)
-                      } else if (nextScenarioAvail) {
-                        goTo(current + 1)
-                      }
+                      setActiveSentence(nextSentIdx)
                     }}
                   >
-                    {label}
+                    Frase {nextSentIdx + 1} →
                   </button>
                 )
               })()}
@@ -437,14 +432,17 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         </div>
       </div>
 
-      {/* Hint: in repair mode tell user to click Siguiente; else show sentence selector */}
+      {/* Hint: in repair mode tell user to click Siguiente; else show remaining sentences */}
       {missedScenarioIndices.length > 0 ? (
         <div className="practice-sentence-hint" style={{ color: 'var(--el-accent)' }}>
           ✅ Practica la pronunciación y luego toca <strong>Siguiente →</strong> para continuar
         </div>
       ) : hasMultiple && (
         <div className="practice-sentence-hint">
-          Frase {activeSentence + 1} de {sentences.length} · Toca una frase para seleccionarla
+          {practicedSentences.size === sentences.length
+            ? '✅ Todas las frases practicadas'
+            : `Frase ${activeSentence + 1} de ${sentences.length} · ${sentences.length - practicedSentences.size} pendiente${sentences.length - practicedSentences.size > 1 ? 's' : ''}`
+          }
         </div>
       )}
 
@@ -489,6 +487,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
                 return !!scores[scenario.phrase]
               } catch { return false }
             })()
+        // scorePending is a brief 2s block; currentDone requires all sentences practiced
         const nextBlocked = scorePending || !currentDone
 
         return (
@@ -500,11 +499,9 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
               onClick={() => {
                 if (nextBlocked) {
                   showBlockMsg(
-                    scorePending
-                      ? 'Primero elige Repetir o Siguiente frase'
-                      : hasMultiple
-                        ? `Practica ${sentences.length - practicedSentences.size} frase${sentences.length - practicedSentences.size > 1 ? 's' : ''} más antes de continuar`
-                        : 'Practica la pronunciación antes de continuar'
+                    hasMultiple
+                      ? `Practica ${sentences.length - practicedSentences.size} frase${sentences.length - practicedSentences.size > 1 ? 's' : ''} más antes de continuar`
+                      : 'Practica la pronunciación antes de continuar'
                   )
                   return
                 }
