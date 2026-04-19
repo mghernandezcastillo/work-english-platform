@@ -281,12 +281,12 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         const nextSentIdx = activeSentence + 1 < sentences.length ? activeSentence + 1 : -1
         if (nextSentIdx !== -1) {
           // Advance to the next sentence in sequence
-          setTimeout(() => { setActiveSentence(nextSentIdx); setLastSentenceScore(null) }, 800)
+          setTimeout(() => { setActiveSentence(nextSentIdx); setLastSentenceScore(null) }, 2800)
         } else {
           // Last sentence done → advance to next scenario
           const nextScenario = current + 1
           if (nextScenario < scenarios.length) {
-            setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null) }, 1000)
+            setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null) }, 2800)
           }
         }
       }
@@ -295,7 +295,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       // Single-sentence scenario: auto-advance to next scenario
       const nextScenario = current + 1
       if (nextScenario < scenarios.length) {
-        setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null) }, 900)
+        setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null) }, 2800)
       }
     }
   }
