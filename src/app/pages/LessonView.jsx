@@ -87,19 +87,32 @@ export default function LessonView() {
   useEffect(() => { loadLesson() }, [lessonId])
 
   async function loadLesson() {
-    const cached = sessionStorage.getItem(`lesson_cache_${lessonId}`)
-    if (cached) {
-      try {
-        const parsed = JSON.parse(cached)
-        setLesson(parsed)
-        const saved = parseInt(localStorage.getItem(`lesson_step_${lessonId}`))
-        setCurrentStep(Number.isFinite(saved) && saved > 0 ? saved : 0)
-        setLoading(false)
-        return
-      } catch { /* cache corrupted */ }
-    }
     setLoading(true)
     try {
+      // Always fetch fresh from DB, but check if cache is still valid first (updated_at match)
+      const cached = sessionStorage.getItem(`lesson_cache_${lessonId}`)
+      let parsedCache = null
+      try { parsedCache = cached ? JSON.parse(cached) : null } catch { /* corrupted */ }
+
+      // Quick HEAD check: fetch only updated_at to validate cache freshness
+      if (parsedCache?.updated_at) {
+        const { data: meta } = await supabase
+          .from('lessons')
+          .select('updated_at')
+          .eq('id', lessonId)
+          .single()
+        if (meta?.updated_at === parsedCache.updated_at) {
+          // Cache is fresh — use it
+          setLesson(parsedCache)
+          const saved = parseInt(localStorage.getItem(`lesson_step_${lessonId}`))
+          setCurrentStep(Number.isFinite(saved) && saved > 0 ? saved : 0)
+          setLoading(false)
+          return
+        }
+        // Cache stale — bust it
+        sessionStorage.removeItem(`lesson_cache_${lessonId}`)
+      }
+
       const { data } = await supabase
         .from('lessons')
         .select('*, modules(*, routes(*))')
