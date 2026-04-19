@@ -352,13 +352,17 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
     window.speechSynthesis?.cancel()
     onBeforeRecord?.()
 
-    // Try to get mic stream for waveform visualizer
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-      micStreamRef.current = stream
-      await attachAnalyser(stream)
-    } catch {
-      // No mic stream → waveform shows idle animation only
+    // Try to get mic stream for waveform visualizer — DESKTOP ONLY.
+    // On mobile/iOS, getUserMedia competes with SpeechRecognition for the mic
+    // and causes recognition to abort or fail silently. Skip it there.
+    if (!IS_MOBILE) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+        micStreamRef.current = stream
+        await attachAnalyser(stream)
+      } catch {
+        // No stream → waveform shows idle breathe animation only
+      }
     }
 
     if (IS_IOS) {
