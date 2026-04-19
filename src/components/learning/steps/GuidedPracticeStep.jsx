@@ -123,8 +123,10 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       return new Set(sents.reduce((acc, s, i) => { if (scores[s]) acc.push(i); return acc }, []))
     } catch { return new Set() }
   })
-  // Track last score for the active sentence — controls auto-advance behavior
+  // Track last score for the active sentence — controls manual-advance behavior
   const [lastSentenceScore, setLastSentenceScore] = useState(null)
+  // True while showing score result → blocks › scenario navigation
+  const [scorePending, setScorePending] = useState(false)
   const [blockMsg, setBlockMsg] = useState('')
   const blockMsgTimerRef = useRef(null)
 
@@ -279,33 +281,15 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
 
     // Mark sentence as practiced (always update the set)
     setLastSentenceScore(score)
+    setScorePending(true)
     if (hasMultiple) {
       setPracticedSentences(prev => {
         const next = new Set(prev)
         next.add(activeSentence)
         return next
       })
-      if (score >= 70) {
-        const nextSentIdx = activeSentence + 1 < sentences.length ? activeSentence + 1 : -1
-        if (nextSentIdx !== -1) {
-          // Advance to the next sentence in sequence
-          setTimeout(() => { setActiveSentence(nextSentIdx); setLastSentenceScore(null) }, 2800)
-        } else {
-          // Last sentence done → advance to next scenario
-          const nextScenario = current + 1
-          if (nextScenario < scenarios.length) {
-            setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null) }, 2800)
-          }
-        }
-      }
-      // Low score: stay — user sees Repetir/Siguiente pills
-    } else if (score >= 70) {
-      // Single-sentence scenario: auto-advance to next scenario
-      const nextScenario = current + 1
-      if (nextScenario < scenarios.length) {
-        setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null) }, 2800)
-      }
     }
+    // No auto-advance: user taps Repetir or Siguiente pill
   }
 
   if (!scenarios.length) return (
@@ -410,26 +394,44 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
               if (sentAudioRef.current) { sentAudioRef.current.pause(); sentAudioRef.current = null }
             }}
           />
-          {/* Show explicit nav pills after a low score so user can retry or advance */}
-          {hasMultiple && lastSentenceScore !== null && lastSentenceScore < 70 && (
+          {/* Nav pills always shown after any score — user decides to retry or advance */}
+          {lastSentenceScore !== null && (
             <div className="pronun-post-actions">
               <button
                 className="pronun-post-btn pronun-post-retry"
-                onClick={() => { setLastSentenceScore(null) }}
+                onClick={() => { setLastSentenceScore(null); setScorePending(false) }}
               >
                 🔄 Repetir
               </button>
-              <button
-                className="pronun-post-btn pronun-post-next"
-                onClick={() => {
-                  setLastSentenceScore(null)
-                  const nextIdx = sentences.findIndex((_, i) => i > activeSentence && !practicedSentences.has(i))
-                  if (nextIdx !== -1) setActiveSentence(nextIdx)
-                  else if (activeSentence < sentences.length - 1) setActiveSentence(activeSentence + 1)
-                }}
-              >
-                Siguiente ›
-              </button>
+              {(() => {
+                // Next unpracticed sentence after current; for single-sentence → next scenario
+                const nextSentIdx = hasMultiple
+                  ? sentences.findIndex((_, i) => i > activeSentence && !practicedSentences.has(i))
+                  : -1
+                const nextScenarioAvail = current < scenarios.length - 1
+                const label = nextSentIdx !== -1
+                  ? `Frase ${nextSentIdx + 1} ›`
+                  : nextScenarioAvail
+                    ? 'Situación siguiente ›'
+                    : null
+                if (!label) return null
+                return (
+                  <button
+                    className="pronun-post-btn pronun-post-next"
+                    onClick={() => {
+                      setLastSentenceScore(null)
+                      setScorePending(false)
+                      if (nextSentIdx !== -1) {
+                        setActiveSentence(nextSentIdx)
+                      } else if (nextScenarioAvail) {
+                        goTo(current + 1)
+                      }
+                    }}
+                  >
+                    {label}
+                  </button>
+                )
+              })()}
             </div>
           )}
         </div>
@@ -477,7 +479,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
           </div>
         )
       })() : (() => {
-        // Check if current scenario is complete before allowing next-scenario nav
+        // Block › if score result is pending OR current scenario not fully practiced
         const currentDone = hasMultiple
           ? practicedSentences.size >= sentences.length
           : (() => {
@@ -487,19 +489,22 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
                 return !!scores[scenario.phrase]
               } catch { return false }
             })()
+        const nextBlocked = scorePending || !currentDone
 
         return (
           <div className="step-inline-nav" style={{ paddingBottom: 4 }}>
             <button className="step-inline-btn" onClick={() => current > 0 && goTo(current - 1)} disabled={current === 0}>‹</button>
             <span className="step-inline-label">{current + 1} de {scenarios.length}</span>
             <button
-              className="step-inline-btn pulse"
+              className={`step-inline-btn${!nextBlocked ? ' pulse' : ''}`}
               onClick={() => {
-                if (!currentDone) {
+                if (nextBlocked) {
                   showBlockMsg(
-                    hasMultiple
-                      ? `Practica ${sentences.length - practicedSentences.size} frase${sentences.length - practicedSentences.size > 1 ? 's' : ''} más antes de continuar`
-                      : 'Practica la pronunciación antes de continuar'
+                    scorePending
+                      ? 'Primero elige Repetir o Siguiente frase'
+                      : hasMultiple
+                        ? `Practica ${sentences.length - practicedSentences.size} frase${sentences.length - practicedSentences.size > 1 ? 's' : ''} más antes de continuar`
+                        : 'Practica la pronunciación antes de continuar'
                   )
                   return
                 }
