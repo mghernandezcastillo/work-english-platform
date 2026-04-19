@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+﻿import { useState, useEffect, useRef } from 'react'
 import { PronunciationButton } from '../../common/PronunciationButton'
 import ClickablePhrase from '../ClickablePhrase'
 import './Steps.css'
@@ -123,13 +123,10 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       return new Set(sents.reduce((acc, s, i) => { if (scores[s]) acc.push(i); return acc }, []))
     } catch { return new Set() }
   })
-  // Track last score for the active sentence — controls manual-advance behavior
+  // Track last score for the active sentence — controls auto-advance behavior
   const [lastSentenceScore, setLastSentenceScore] = useState(null)
-  // True while showing score result → briefly blocks › scenario navigation (auto-clears after 2s)
-  const [scorePending, setScorePending] = useState(false)
   const [blockMsg, setBlockMsg] = useState('')
   const blockMsgTimerRef = useRef(null)
-  const scorePendingTimerRef = useRef(null)
 
   function showBlockMsg(msg) {
     setBlockMsg(msg)
@@ -282,16 +279,32 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
 
     // Mark sentence as practiced (always update the set)
     setLastSentenceScore(score)
-    setScorePending(true)
-    // Auto-release score-pending block after 2s
-    clearTimeout(scorePendingTimerRef.current)
-    scorePendingTimerRef.current = setTimeout(() => setScorePending(false), 2000)
     if (hasMultiple) {
       setPracticedSentences(prev => {
         const next = new Set(prev)
         next.add(activeSentence)
         return next
       })
+      if (score >= 70) {
+        const nextSentIdx = activeSentence + 1 < sentences.length ? activeSentence + 1 : -1
+        if (nextSentIdx !== -1) {
+          // Advance to the next sentence in sequence
+          setTimeout(() => { setActiveSentence(nextSentIdx); setLastSentenceScore(null) }, 2800)
+        } else {
+          // Last sentence done → advance to next scenario
+          const nextScenario = current + 1
+          if (nextScenario < scenarios.length) {
+            setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null) }, 2800)
+          }
+        }
+      }
+      // Low score: stay — user sees Repetir/Siguiente pills
+    } else if (score >= 70) {
+      // Single-sentence scenario: auto-advance to next scenario
+      const nextScenario = current + 1
+      if (nextScenario < scenarios.length) {
+        setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null) }, 2800)
+      }
     }
   }
 
@@ -397,52 +410,39 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
               if (sentAudioRef.current) { sentAudioRef.current.pause(); sentAudioRef.current = null }
             }}
           />
-          {/* Inline action strip after scoring — only within-scenario navigation */}
-          {lastSentenceScore !== null && (
+          {/* Show explicit nav pills after a low score so user can retry or advance */}
+          {hasMultiple && lastSentenceScore !== null && lastSentenceScore < 70 && (
             <div className="pronun-post-actions">
               <button
                 className="pronun-post-btn pronun-post-retry"
-                onClick={() => {
-                  setLastSentenceScore(null)
-                  clearTimeout(scorePendingTimerRef.current)
-                  setScorePending(false)
-                }}
+                onClick={() => { setLastSentenceScore(null) }}
               >
                 🔄 Repetir
               </button>
-              {hasMultiple && (() => {
-                const nextSentIdx = sentences.findIndex((_, i) => i > activeSentence && !practicedSentences.has(i))
-                if (nextSentIdx === -1) return null
-                return (
-                  <button
-                    className="pronun-post-btn pronun-post-next"
-                    onClick={() => {
-                      setLastSentenceScore(null)
-                      clearTimeout(scorePendingTimerRef.current)
-                      setScorePending(false)
-                      setActiveSentence(nextSentIdx)
-                    }}
-                  >
-                    Frase {nextSentIdx + 1} →
-                  </button>
-                )
-              })()}
+              <button
+                className="pronun-post-btn pronun-post-next"
+                onClick={() => {
+                  setLastSentenceScore(null)
+                  const nextIdx = sentences.findIndex((_, i) => i > activeSentence && !practicedSentences.has(i))
+                  if (nextIdx !== -1) setActiveSentence(nextIdx)
+                  else if (activeSentence < sentences.length - 1) setActiveSentence(activeSentence + 1)
+                }}
+              >
+                Siguiente ›
+              </button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Hint: in repair mode tell user to click Siguiente; else show remaining sentences */}
+      {/* Hint: in repair mode tell user to click Siguiente; else show sentence selector */}
       {missedScenarioIndices.length > 0 ? (
         <div className="practice-sentence-hint" style={{ color: 'var(--el-accent)' }}>
           ✅ Practica la pronunciación y luego toca <strong>Siguiente →</strong> para continuar
         </div>
       ) : hasMultiple && (
         <div className="practice-sentence-hint">
-          {practicedSentences.size === sentences.length
-            ? '✅ Todas las frases practicadas'
-            : `Frase ${activeSentence + 1} de ${sentences.length} · ${sentences.length - practicedSentences.size} pendiente${sentences.length - practicedSentences.size > 1 ? 's' : ''}`
-          }
+          Frase {activeSentence + 1} de {sentences.length} · Toca una frase para seleccionarla
         </div>
       )}
 
@@ -477,7 +477,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
           </div>
         )
       })() : (() => {
-        // Block › if score result is pending OR current scenario not fully practiced
+        // Check if current scenario is complete before allowing next-scenario nav
         const currentDone = hasMultiple
           ? practicedSentences.size >= sentences.length
           : (() => {
@@ -487,17 +487,15 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
                 return !!scores[scenario.phrase]
               } catch { return false }
             })()
-        // scorePending is a brief 2s block; currentDone requires all sentences practiced
-        const nextBlocked = scorePending || !currentDone
 
         return (
           <div className="step-inline-nav" style={{ paddingBottom: 4 }}>
             <button className="step-inline-btn" onClick={() => current > 0 && goTo(current - 1)} disabled={current === 0}>‹</button>
             <span className="step-inline-label">{current + 1} de {scenarios.length}</span>
             <button
-              className={`step-inline-btn${!nextBlocked ? ' pulse' : ''}`}
+              className="step-inline-btn pulse"
               onClick={() => {
-                if (nextBlocked) {
+                if (!currentDone) {
                   showBlockMsg(
                     hasMultiple
                       ? `Practica ${sentences.length - practicedSentences.size} frase${sentences.length - practicedSentences.size > 1 ? 's' : ''} más antes de continuar`
