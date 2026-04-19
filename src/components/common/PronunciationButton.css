@@ -54,6 +54,7 @@
   padding: 2px 8px;
 }
 
+/* ── Target phrase ── */
 .pronun-target {
   display: flex;
   flex-direction: column;
@@ -76,7 +77,7 @@
   font-weight: 500;
 }
 
-/* Mic button */
+/* ── Idle mic button ── */
 .pronun-btn {
   display: flex;
   align-items: center;
@@ -98,25 +99,131 @@
   color: #a5b4fc;
   transform: translateY(-1px);
 }
-.pronun-btn--listening {
-  border-color: #EF4444;
-  color: #f87171;
-  background: rgba(239,68,68,0.08);
-}
-.pronun-btn--processing {
-  opacity: 0.7;
-  cursor: default;
-}
 .pronun-icon { font-size: 16px; }
 
-/* Pulsing recording dot */
-@keyframes pronun-pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.3); opacity: 0.7; }
+/* ── Live recording UI ── */
+.pronun-recording-ui {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: rgba(239,68,68,0.06);
+  border: 1.5px solid rgba(239,68,68,0.22);
+  border-radius: 16px;
+  animation: pronun-fadein 0.2s ease;
 }
-.pronun-pulse { animation: pronun-pulse 0.8s ease-in-out infinite; display: inline-block; }
 
-/* Error */
+.pronun-recording-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Blinking red dot */
+.pronun-rec-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #EF4444;
+  flex-shrink: 0;
+  animation: pronun-blink 1s ease-in-out infinite;
+  box-shadow: 0 0 6px rgba(239,68,68,0.7);
+}
+
+@keyframes pronun-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+.pronun-rec-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f87171;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ── Voice waveform canvas ── */
+.pronun-waveform-canvas {
+  display: block;
+  /* let it breathe a little */
+  margin: 0 auto;
+}
+
+/* ── Stop button ── */
+.pronun-stop-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 24px;
+  border: 2px solid #EF4444;
+  background: rgba(239,68,68,0.12);
+  color: #f87171;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  animation: pronun-pulse-red 1.4s ease-in-out infinite;
+  width: 100%;
+  max-width: 260px;
+}
+.pronun-stop-btn:hover {
+  background: rgba(239,68,68,0.22);
+  transform: scale(1.03);
+  animation: none;
+}
+.pronun-stop-btn:active {
+  transform: scale(0.97);
+  animation: none;
+}
+.pronun-stop-icon {
+  font-size: 14px;
+}
+
+@keyframes pronun-pulse-red {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+  50% { box-shadow: 0 0 0 7px rgba(239,68,68,0); }
+}
+
+/* ── Processing state ── */
+.pronun-processing {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(99,102,241,0.08);
+  border: 1px solid rgba(99,102,241,0.2);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: #818cf8;
+  align-self: flex-start;
+  animation: pronun-fadein 0.15s ease;
+}
+
+.pronun-processing-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(99,102,241,0.25);
+  border-top-color: #818cf8;
+  border-radius: 50%;
+  animation: pronun-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pronun-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pronun-fadein {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Error ── */
 .pronun-error {
   font-size: var(--text-sm);
   color: #f87171;
@@ -134,7 +241,7 @@
   cursor: pointer;
 }
 
-/* Result card */
+/* ── Result card ── */
 .pronun-result {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -143,7 +250,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  animation: fadeIn 0.3s ease;
+  animation: pronun-fadein 0.3s ease;
 }
 
 .pronun-score-ring {
@@ -199,7 +306,7 @@
   font-style: italic;
 }
 
-/* Missed words feedback */
+/* ── Missed words ── */
 .pronun-missed {
   display: flex;
   flex-direction: column;
@@ -242,13 +349,8 @@
   color: #ffffff;
   transform: scale(1.05);
 }
-.pronun-missed-word:active {
-  transform: scale(0.97);
-}
-.pronun-missed-speaker {
-  font-size: 12px;
-  font-style: normal;
-}
+.pronun-missed-word:active { transform: scale(0.97); }
+.pronun-missed-speaker { font-size: 12px; font-style: normal; }
 [data-theme="dark"] .pronun-missed-word {
   color: #ffffff;
   background: rgba(217, 119, 6, 0.3);
@@ -277,7 +379,7 @@
   transform: translateY(-1px);
 }
 
-/* ── Compact result row (used in Escucha y repite) ── */
+/* ── Compact result row ── */
 .pronun-result-compact {
   display: flex;
   align-items: center;
@@ -286,7 +388,7 @@
   background: var(--color-surface, rgba(25,37,64,0.75));
   border: 1px solid var(--color-border, rgba(255,255,255,0.08));
   border-radius: 50px;
-  animation: fadeIn 0.25s ease;
+  animation: pronun-fadein 0.25s ease;
   flex-wrap: wrap;
   margin-top: 2px;
 }
@@ -318,31 +420,4 @@
 }
 .pronun-result-compact-retry:hover {
   background: rgba(99,102,241,0.24);
-}
-
-/* ── Desktop "Listo" stop button ── */
-.pronun-done-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 11px 24px;
-  border: 2px solid #10B981;
-  background: rgba(16,185,129,0.12);
-  color: #10B981;
-  border-radius: var(--radius-full);
-  font-size: var(--text-sm);
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.18s ease;
-  align-self: flex-start;
-  animation: pronun-pulse 1s ease-in-out infinite;
-}
-.pronun-done-btn:hover {
-  background: rgba(16,185,129,0.22);
-  transform: translateY(-1px);
-}
-.pronun-done-btn:active {
-  transform: scale(0.97);
-  animation: none;
 }

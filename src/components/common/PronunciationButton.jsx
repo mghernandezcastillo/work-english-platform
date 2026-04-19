@@ -1,9 +1,8 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import './PronunciationButton.css'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-/** True when running as installed PWA (standalone window) on desktop */
 function isDesktopPWA() {
   const standalone = window.matchMedia('(display-mode: standalone)').matches
     || window.navigator.standalone === true
@@ -11,7 +10,6 @@ function isDesktopPWA() {
   return standalone && !mobile
 }
 
-/** Detecta si el browser soporta Web Speech API */
 function detectBrowserSupport() {
   const supported = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window
   if (supported) return { supported: true }
@@ -83,32 +81,93 @@ function getFeedback(score) {
   return { emoji: '🔄', text: '¡Buen intento! Más despacio', color: '#EF4444' }
 }
 
-// ── Helpers: iOS detection ────────────────────────────────────────────────────
+// ── iOS detection ─────────────────────────────────────────────────────────────
 
 const IS_IOS = /iPhone|iPad|iPod/i.test(navigator.userAgent)
 const IS_MOBILE = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
 
-/** Small delay helper */
 function wait(ms) { return new Promise(r => setTimeout(r, ms)) }
+
+// ── Voice Waveform Component ──────────────────────────────────────────────────
+
+const BAR_COUNT = 24
+
+function VoiceWaveform({ analyserRef, active }) {
+  const canvasRef = useRef(null)
+  const rafRef = useRef(null)
+  const barsRef = useRef(Array(BAR_COUNT).fill(0.08))
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    const W = canvas.width
+    const H = canvas.height
+    const barW = 3
+    const gap = (W - BAR_COUNT * barW) / (BAR_COUNT + 1)
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H)
+
+      let dataArr = null
+      if (analyserRef.current && active) {
+        const analyser = analyserRef.current
+        const buf = new Uint8Array(analyser.frequencyBinCount)
+        analyser.getByteFrequencyData(buf)
+        // Sample BAR_COUNT evenly from lower 60% of spectrum (voice range)
+        const usable = Math.floor(buf.length * 0.6)
+        dataArr = Array.from({ length: BAR_COUNT }, (_, i) => {
+          const idx = Math.floor((i / BAR_COUNT) * usable)
+          return buf[idx] / 255
+        })
+      }
+
+      for (let i = 0; i < BAR_COUNT; i++) {
+        const target = dataArr
+          ? Math.max(0.06, dataArr[i])
+          : 0.06 + 0.04 * Math.sin(Date.now() * 0.003 + i * 0.4) // idle breathe
+
+        // Smooth lerp
+        barsRef.current[i] += (target - barsRef.current[i]) * (active ? 0.35 : 0.08)
+        const val = barsRef.current[i]
+
+        const barH = Math.max(3, val * H * 0.92)
+        const x = gap + i * (barW + gap)
+        const y = (H - barH) / 2
+        const alpha = active ? (0.5 + val * 0.5) : 0.3
+
+        // Gradient per bar: indigo → emerald based on amplitude
+        const gradient = ctx.createLinearGradient(x, y + barH, x, y)
+        gradient.addColorStop(0, `rgba(99,102,241,${alpha})`)
+        gradient.addColorStop(0.5, `rgba(139,92,246,${alpha})`)
+        gradient.addColorStop(1, `rgba(16,185,129,${alpha * 1.2})`)
+
+        ctx.fillStyle = gradient
+        ctx.beginPath()
+        ctx.roundRect(x, y, barW, barH, 2)
+        ctx.fill()
+      }
+
+      rafRef.current = requestAnimationFrame(draw)
+    }
+
+    draw()
+    return () => cancelAnimationFrame(rafRef.current)
+  }, [active, analyserRef])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      width={180}
+      height={48}
+      className="pronun-waveform-canvas"
+      aria-hidden="true"
+    />
+  )
+}
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-/**
- * PronunciationButton — Graba al usuario y muestra score de pronunciación.
- * Usa Web Speech API (Chrome, Edge, Safari, iOS Safari 15+).
- *
- * Approach:
- * - On mobile: simple SpeechRecognition.start() — no getUserMedia at all.
- *   Mobile browsers handle mic permissions natively via SpeechRecognition.
- * - On desktop PWA: optional mic device selector (only shown if user clicks
- *   the gear icon). getUserMedia stream kept alive during recognition to
- *   lock Chrome to the chosen device.
- *
- * iOS fix:
- * - iOS frequently fires 'aborted' when SpeechRecognition starts right after
- *   audio playback stops (audio focus conflict). We add a 350ms delay on iOS
- *   and auto-retry once on 'aborted'.
- */
 export function PronunciationButton({ targetText, language = 'en-US', onScore, compact = false, onBeforeRecord }) {
   const browserInfo = detectBrowserSupport()
 
@@ -121,22 +180,43 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
   const stateRef = useRef('idle')
   const gotResultRef = useRef(false)
   const abortRetryRef = useRef(false)
-  const recordingStartRef = useRef(null) // track when recording started (desktop min-duration guard)
+  const recordingStartRef = useRef(null)
+  const analyserRef = useRef(null)
+  const audioCtxRef = useRef(null)
 
   const updateState = useCallback((newState) => {
     stateRef.current = newState
     setState(newState)
   }, [])
 
-  // Release any held mic stream
   function releaseStream() {
     if (micStreamRef.current) {
       micStreamRef.current.getTracks().forEach(t => t.stop())
       micStreamRef.current = null
     }
+    if (audioCtxRef.current) {
+      audioCtxRef.current.close().catch(() => {})
+      audioCtxRef.current = null
+    }
+    analyserRef.current = null
   }
 
-  // Browser not supported
+  // ── Waveform: attach analyser to mic stream ───────────────────────────────
+  async function attachAnalyser(stream) {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)()
+      const analyser = ctx.createAnalyser()
+      analyser.fftSize = 256
+      analyser.smoothingTimeConstant = 0.8
+      const source = ctx.createMediaStreamSource(stream)
+      source.connect(analyser)
+      audioCtxRef.current = ctx
+      analyserRef.current = analyser
+    } catch {
+      // Waveform is decorative — silently fail
+    }
+  }
+
   if (!browserInfo.supported) {
     return (
       <div className="pronun-unsupported">
@@ -154,14 +234,12 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
     )
   }
 
-  // ── Core: create and start a SpeechRecognition instance ─────────────────────
+  // ── Core recognition ──────────────────────────────────────────────────────
 
   function createRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     const recognition = new SpeechRecognition()
     recognition.lang = language
-    // Desktop: continuous=true so Chrome doesn't cut off mid-sentence
-    // Mobile/iOS: continuous=false (required by iOS, mobile handles silence OK)
     recognition.continuous = !IS_MOBILE
     recognition.interimResults = false
     recognition.maxAlternatives = 1
@@ -172,20 +250,16 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
     }
 
     recognition.onresult = (event) => {
-      // On desktop (continuous mode), accumulate all results
       if (!IS_MOBILE) {
-        // Collect all final results so far
         let accumulated = ''
         for (let i = 0; i < event.results.length; i++) {
           if (event.results[i].isFinal) {
             accumulated += (accumulated ? ' ' : '') + event.results[i][0].transcript
           }
         }
-        // Store accumulated but don't score yet — wait for user to press Listo
         recognitionRef.current._accumulated = accumulated
         return
       }
-      // Mobile: score immediately as before
       gotResultRef.current = true
       updateState('processing')
       const transcript = event.results[0][0].transcript
@@ -204,7 +278,6 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
 
       const errCode = event.error
 
-      // iOS auto-retry: on first 'aborted', silently retry once after a delay
       if (errCode === 'aborted' && !abortRetryRef.current) {
         abortRetryRef.current = true
         setTimeout(() => {
@@ -237,11 +310,9 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
         if (!gotResultRef.current && stateRef.current === 'listening') updateState('idle')
         return
       }
-      // Desktop: onend fires after recognition.stop() — score now
       const transcript = recognitionRef.current?._accumulated || ''
       const elapsed = Date.now() - (recordingStartRef.current || 0)
       if (!transcript || elapsed < 1500) {
-        // Too short or empty — likely a mis-tap, stay idle
         if (stateRef.current === 'listening') updateState('idle')
         return
       }
@@ -258,7 +329,6 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
     return recognition
   }
 
-  /** Actually start the recognition instance (used for initial + retry) */
   function doStartRecognition() {
     try {
       const recognition = createRecognition()
@@ -272,8 +342,6 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
     }
   }
 
-  // ── Public: startListening ────────────────────────────────────────────────
-
   async function startListening() {
     setResult(null)
     setError(null)
@@ -281,14 +349,20 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
     abortRetryRef.current = false
     gotResultRef.current = false
 
-    // Stop any playing audio AND speechSynthesis before mic opens
     window.speechSynthesis?.cancel()
     onBeforeRecord?.()
 
+    // Try to get mic stream for waveform visualizer
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+      micStreamRef.current = stream
+      await attachAnalyser(stream)
+    } catch {
+      // No mic stream → waveform shows idle animation only
+    }
+
     if (IS_IOS) {
-      // iOS needs time between stopping audio and starting recognition
-      // Without this delay, iOS immediately fires 'aborted'
-      updateState('processing') // Show "Procesando…" while waiting
+      updateState('processing')
       await wait(350)
     }
 
@@ -296,13 +370,16 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
   }
 
   function stopListening() {
+    updateState('processing')
     if (IS_MOBILE) {
       recognitionRef.current?.stop()
       releaseStream()
-      updateState('idle')
+      // Mobile: result comes from onresult, so after brief processing show idle if nothing
+      setTimeout(() => {
+        if (stateRef.current === 'processing') updateState('idle')
+      }, 2000)
     } else {
-      // Desktop: stop() → triggers onend → scores accumulated transcript
-      updateState('processing')
+      // Desktop: stop() → triggers onend → scores
       recognitionRef.current?.stop()
     }
   }
@@ -336,29 +413,42 @@ export function PronunciationButton({ targetText, language = 'en-US', onScore, c
         <span className="pronun-target-text">"{targetText}"</span>
       </div>
 
-      {/* Main button */}
-      {state !== 'result' && (
-        <button
-          className={`pronun-btn pronun-btn--${state}`}
-          onClick={state === 'listening' ? (IS_MOBILE ? stopListening : undefined) : startListening}
-          disabled={state === 'processing' || (state === 'listening' && !IS_MOBILE)}
-          aria-label={state === 'listening' ? 'Escuchando' : 'Practicar pronunciación'}
-        >
-          {state === 'idle' && <><span className="pronun-icon">🎤</span> Practicar pronunciación</>}
-          {state === 'listening' && !IS_MOBILE && <><span className="pronun-icon pronun-pulse">🔴</span> Grabando… habla la frase completa</>}
-          {state === 'listening' && IS_MOBILE && <><span className="pronun-icon pronun-pulse">🔴</span> Escuchando… (toca para parar)</>}
-          {state === 'processing' && <><span className="pronun-icon">⏳</span> Procesando…</>}
-        </button>
+      {/* Listening state: waveform + stop button */}
+      {state === 'listening' && (
+        <div className="pronun-recording-ui">
+          <div className="pronun-recording-header">
+            <span className="pronun-rec-dot" aria-hidden="true" />
+            <span className="pronun-rec-label">Escuchando…</span>
+          </div>
+          <VoiceWaveform analyserRef={analyserRef} active={true} />
+          <button
+            className="pronun-stop-btn"
+            onClick={stopListening}
+            aria-label="Terminar grabación"
+          >
+            <span className="pronun-stop-icon">⏹</span>
+            Listo, terminar grabación
+          </button>
+        </div>
       )}
 
-      {/* Desktop-only: explicit "Listo" button to stop continuous recording */}
-      {state === 'listening' && !IS_MOBILE && (
+      {/* Processing state */}
+      {state === 'processing' && (
+        <div className="pronun-processing">
+          <div className="pronun-processing-spinner" aria-hidden="true" />
+          <span>Procesando…</span>
+        </div>
+      )}
+
+      {/* Idle: start button */}
+      {state === 'idle' && (
         <button
-          className="pronun-done-btn"
-          onClick={stopListening}
-          aria-label="Terminar grabación"
+          className="pronun-btn pronun-btn--idle"
+          onClick={startListening}
+          aria-label="Practicar pronunciación"
         >
-          ✓ Listo, calificar
+          <span className="pronun-icon">🎤</span>
+          Practicar pronunciación
         </button>
       )}
 
