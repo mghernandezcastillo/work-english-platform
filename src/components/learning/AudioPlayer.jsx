@@ -8,7 +8,7 @@ const SPEEDS = [
   { value: 1.25, emoji: '🐇', label: 'Rápido' },
 ]
 
-export default function AudioPlayer({ src, label }) {
+export default function AudioPlayer({ src, label, autoPlay = false }) {
   const audioRef = useRef(null)
   const [playing, setPlaying] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -25,6 +25,14 @@ export default function AudioPlayer({ src, label }) {
       audioRef.current.currentTime = 0
     }
   }, [src])
+
+  // Auto-play when src is ready (if autoPlay prop is set)
+  function handleCanPlay() {
+    if (autoPlay && audioRef.current) {
+      audioRef.current.playbackRate = currentSpeed.value
+      audioRef.current.play().then(() => setPlaying(true)).catch(() => {})
+    }
+  }
 
   // Sync playback rate when speed changes
   useEffect(() => {
@@ -89,6 +97,7 @@ export default function AudioPlayer({ src, label }) {
         src={src}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
+        onCanPlayThrough={handleCanPlay}
         onEnded={handleEnded}
         preload="auto"
       />
@@ -99,7 +108,7 @@ export default function AudioPlayer({ src, label }) {
       >
         {playing ? (
           <span className="audio-wave">
-            <span /><span /><span /><span />
+            <span /><span />
           </span>
         ) : '▶'}
       </button>

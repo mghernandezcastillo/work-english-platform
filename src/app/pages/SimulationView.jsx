@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
@@ -52,20 +52,6 @@ export default function SimulationView() {
   const [showPronunOffer, setShowPronunOffer] = useState(false)
   const [showPronunPanel, setShowPronunPanel] = useState(false)
   const [hasRetried, setHasRetried] = useState(false)  // block retry after first retry
-  const audioRef = useRef(null)
-
-  // Auto-play turn audio when turn changes or simulation first loads
-  useEffect(() => {
-    const turns = simulation?.content?.turns || []
-    const url = turns[currentTurn]?.audioUrl
-    if (!url || !audioRef.current) return
-    const t = setTimeout(() => {
-      audioRef.current.src = url
-      audioRef.current.currentTime = 0
-      audioRef.current.play().catch(() => {})
-    }, 400)
-    return () => clearTimeout(t)
-  }, [currentTurn, simulation])
 
   useEffect(() => { loadSimulation() }, [simId])
 
@@ -216,8 +202,6 @@ export default function SimulationView() {
 
   return (
     <div className="sim-view animate-fadeIn">
-      {/* Hidden audio for auto-play */}
-      <audio ref={audioRef} style={{ display: 'none' }} />
       <button className="route-back" onClick={() => navigate(-1)}>← Volver</button>
 
       <h3 className="sim-title">{simulation.title}</h3>
@@ -260,7 +244,7 @@ export default function SimulationView() {
             </div>
             <p className="sim-prompt-text">"<ClickablePhrase text={turn.prompt} />"</p>
             {turn.promptEs && <p className="text-sm text-muted" style={{ marginTop: 4 }}>({turn.promptEs})</p>}
-            {turn.audioUrl && <AudioPlayer src={turn.audioUrl} label="Escuchar" />}
+            {turn.audioUrl && <AudioPlayer src={turn.audioUrl} label="Escuchar" autoPlay />}
           </CardBody>
         </Card>
         ) })()
