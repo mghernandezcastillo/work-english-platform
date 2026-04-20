@@ -6,6 +6,7 @@ import { RoutesLoader } from '../../components/common/RoutesLoader'
 import { DailyPhrase } from '../../components/common/DailyPhrase'
 import { FirstMissionBanner } from '../../components/common/FirstMissionBanner'
 import { BadgesPanel } from '../../components/common/BadgesPanel'
+import { CertificateModal } from '../../components/common/CertificateModal'
 import './Dashboard.css'
 
 const AVATAR_BASE = 'https://mtobgwfknefjlpoxznqx.supabase.co/storage/v1/object/public/images/avatars'
@@ -140,6 +141,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [showResetOverlay, setShowResetOverlay] = useState(false)
   const [nextLesson, setNextLesson] = useState(null)
+  const [showCertificate, setShowCertificate] = useState(false)
 
   // Detect "just reset" flag from Profile
   useEffect(() => {
@@ -320,7 +322,8 @@ export default function Dashboard() {
             {pct > 0 && pct < 30 && 'Vas arrancando motores 🚀'}
             {pct >= 30 && pct < 60 && 'Vas por buen camino 💪'}
             {pct >= 60 && pct < 90 && '¡Casi en la cima! 🔭'}
-            {pct >= 90 && '¡Misión casi completa! 🏆'}
+            {pct >= 90 && pct < 100 && '¡Misión casi completa! 🏆'}
+            {pct === 100 && '¡Graduado de English for Work! 🎓'}
           </p>
         </div>
       </div>
@@ -339,6 +342,32 @@ export default function Dashboard() {
           </div>
           <span className="mc-route-arrow">›</span>
         </button>
+      )}
+
+      {/* ── Graduation banner — all lessons done ── */}
+      {!loading && pct === 100 && (
+        <button
+          className="mc-graduation-banner"
+          onClick={() => setShowCertificate(true)}
+        >
+          <div className="mc-grad-icon">🎓</div>
+          <div className="mc-grad-body">
+            <span className="mc-grad-label">¡Programa completado!</span>
+            <span className="mc-grad-title">Descarga tu diploma de graduación</span>
+            <span className="mc-grad-sub">36 lecciones · 3 rutas · 100% completado</span>
+          </div>
+          <span className="mc-route-arrow">›</span>
+        </button>
+      )}
+
+      {/* ── Program certificate modal ── */}
+      {showCertificate && (
+        <CertificateModal
+          userName={profile?.full_name || 'Estudiante'}
+          routeName="Programa Completo"
+          programComplete
+          onClose={() => setShowCertificate(false)}
+        />
       )}
 
       {/* ── Routes ── */}

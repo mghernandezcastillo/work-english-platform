@@ -6,11 +6,12 @@ import './CertificateModal.css'
 /**
  * Draws a professional certificate on a Canvas and offers download + share.
  * @param {object} props
- * @param {string} props.userName   - Full name of the user
- * @param {string} props.routeName  - Name of the completed route
- * @param {Function} props.onClose  - Close handler
+ * @param {string}  props.userName        - Full name of the user
+ * @param {string}  props.routeName       - Name of the completed route
+ * @param {boolean} props.programComplete - If true, renders a full-program graduation certificate
+ * @param {Function} props.onClose        - Close handler
  */
-export function CertificateModal({ userName, routeName, onClose }) {
+export function CertificateModal({ userName, routeName, programComplete = false, onClose }) {
   const canvasRef = useRef(null)
   const [ready, setReady] = useState(false)
   const [sharing, setSharing] = useState(false)
@@ -72,13 +73,13 @@ export function CertificateModal({ userName, routeName, onClose }) {
     })
 
     // ── App name ──
-    ctx.fillStyle = '#10B981'
-    ctx.font = 'bold 18px "Inter", system-ui, sans-serif'
+    ctx.fillStyle = programComplete ? '#FFD700' : '#10B981'
+    ctx.font = `bold ${programComplete ? 20 : 18}px "Inter", system-ui, sans-serif`
     ctx.textAlign = 'center'
     ctx.fillText('ENGLISH FOR WORK', W / 2, 105)
 
     // ── Separator dots ──
-    ctx.fillStyle = 'rgba(16,185,129,0.4)'
+    ctx.fillStyle = programComplete ? 'rgba(255,215,0,0.5)' : 'rgba(16,185,129,0.4)'
     for (let i = -2; i <= 2; i++) {
       ctx.beginPath()
       ctx.arc(W / 2 + i * 14, 122, 2, 0, Math.PI * 2)
@@ -89,7 +90,10 @@ export function CertificateModal({ userName, routeName, onClose }) {
     ctx.fillStyle = 'rgba(148,163,184,0.85)'
     ctx.font = '400 15px "Inter", system-ui, sans-serif'
     ctx.textAlign = 'center'
-    ctx.fillText('CERTIFICADO DE FINALIZACIÓN', W / 2, 162)
+    ctx.fillText(
+      programComplete ? 'DIPLOMA DE GRADUACIÓN' : 'CERTIFICADO DE FINALIZACIÓN',
+      W / 2, 162
+    )
 
     // ── Username ──
     ctx.fillStyle = '#F8FAFC'
@@ -103,7 +107,7 @@ export function CertificateModal({ userName, routeName, onClose }) {
       W / 2 - nameWidth / 2, 0, W / 2 + nameWidth / 2, 0
     )
     underlineGrad.addColorStop(0, 'transparent')
-    underlineGrad.addColorStop(0.5, 'rgba(16,185,129,0.6)')
+    underlineGrad.addColorStop(0.5, programComplete ? 'rgba(255,215,0,0.6)' : 'rgba(16,185,129,0.6)')
     underlineGrad.addColorStop(1, 'transparent')
     ctx.fillStyle = underlineGrad
     ctx.fillRect(W / 2 - nameWidth / 2, 252, nameWidth, 1.5)
@@ -112,13 +116,23 @@ export function CertificateModal({ userName, routeName, onClose }) {
     ctx.fillStyle = 'rgba(148,163,184,0.9)'
     ctx.font = '400 16px "Inter", system-ui, sans-serif'
     ctx.textAlign = 'center'
-    ctx.fillText('ha completado exitosamente la ruta de aprendizaje', W / 2, 300)
+    if (programComplete) {
+      ctx.fillText('ha completado exitosamente todas las rutas del programa', W / 2, 300)
+    } else {
+      ctx.fillText('ha completado exitosamente la ruta de aprendizaje', W / 2, 300)
+    }
 
-    // ── Route name ──
-    ctx.fillStyle = '#10B981'
-    ctx.font = 'bold 26px "Inter", system-ui, sans-serif'
+    // ── Route name / Program name ──
+    ctx.fillStyle = programComplete ? '#FFD700' : '#10B981'
+    ctx.font = `bold ${programComplete ? 28 : 26}px "Inter", system-ui, sans-serif`
     ctx.textAlign = 'center'
-    ctx.fillText(routeName, W / 2, 348)
+    ctx.fillText(programComplete ? 'Programa Completo · 36 Lecciones' : routeName, W / 2, 348)
+
+    if (programComplete) {
+      ctx.fillStyle = 'rgba(255,215,0,0.7)'
+      ctx.font = '400 14px "Inter", system-ui, sans-serif'
+      ctx.fillText('Entrevistas · Profesional · Customer Service', W / 2, 378)
+    }
 
     // ── Date ──
     const dateStr = new Date().toLocaleDateString('es-CO', {
@@ -127,12 +141,12 @@ export function CertificateModal({ userName, routeName, onClose }) {
     ctx.fillStyle = 'rgba(148,163,184,0.7)'
     ctx.font = '400 14px "Inter", system-ui, sans-serif'
     ctx.textAlign = 'center'
-    ctx.fillText(dateStr, W / 2, 395)
+    ctx.fillText(dateStr, W / 2, programComplete ? 418 : 395)
 
     // ── Medal emoji ──
     ctx.font = '52px serif'
     ctx.textAlign = 'center'
-    ctx.fillText('🏆', W / 2, 472)
+    ctx.fillText(programComplete ? '🎓' : '🏆', W / 2, programComplete ? 492 : 472)
 
     // ── Footer ──
     ctx.fillStyle = 'rgba(100,116,139,0.6)'
@@ -219,12 +233,14 @@ export function CertificateModal({ userName, routeName, onClose }) {
       <div className="cert-modal" onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className="cert-modal-header">
-          <h2 className="cert-modal-title">🏆 ¡Ruta completada!</h2>
+          <h2 className="cert-modal-title">{programComplete ? '🎓 ¡Programa completado!' : '🏆 ¡Ruta completada!'}</h2>
           <button className="cert-modal-close" onClick={onClose} aria-label="Cerrar">✕</button>
         </div>
 
         <p className="cert-modal-sub">
-          Has completado <strong>{routeName}</strong>. Descarga tu certificado y compártelo.
+          {programComplete
+            ? 'Has completado todas las lecciones de English for Work. ¡Descarga tu diploma y compártelo!'
+            : <>Has completado <strong>{routeName}</strong>. Descarga tu certificado y compártelo.</>}
         </p>
 
         {/* Canvas certificate */}

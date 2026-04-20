@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { XPNotification } from '../../components/common/XPNotification'
+import { CertificateModal } from '../../components/common/CertificateModal'
 import { awardLessonXP } from '../../lib/xp'
 import ObjectiveStep from '../../components/learning/steps/ObjectiveStep'
 import PhrasesStep from '../../components/learning/steps/PhrasesStep'
@@ -52,6 +53,8 @@ export default function LessonView() {
   const [hasCompleted, setHasCompleted] = useState(false)
   const [showIncompleteModal, setShowIncompleteModal] = useState(false)
   const [incompleteItems, setIncompleteItems] = useState([])
+  const [showGraduation, setShowGraduation] = useState(false)
+  const [showCertificate, setShowCertificate] = useState(false)
   // Session-only mute — resets to false (audio ON) on every page load
   const [muted, setMuted] = useState(false)
   // Return-to context when navigating back from step 7
@@ -210,10 +213,17 @@ export default function LessonView() {
       if (profile?.id) {
         const days = await calculateCurrentStreak()
         let lessonsCount = 1
+        let totalLessonsInApp = 0
         try {
           const { data: pd } = await supabase.from('user_progress').select('id').eq('user_id', profile.id).eq('completed', true)
           lessonsCount = pd?.length ?? 1
         } catch { }
+        // Check if ALL lessons in the entire app are now complete
+        try {
+          const { count } = await supabase.from('lessons').select('id', { count: 'exact', head: true })
+          totalLessonsInApp = count || 0
+        } catch { }
+        const allComplete = totalLessonsInApp > 0 && lessonsCount >= totalLessonsInApp
         try {
           const { newBadges: badges } = await awardLessonXP(profile.id, lessonsCount, days)
           await refreshProfile().catch(() => {})
@@ -225,6 +235,12 @@ export default function LessonView() {
             }
           }
         } catch { }
+        if (allComplete) {
+          // Show grand graduation instead of streak modal
+          await new Promise(r => setTimeout(r, 1200))
+          setShowGraduation(true)
+          return
+        }
         setStreakCount(days)
       } else {
         await new Promise(r => setTimeout(r, 900))
@@ -463,6 +479,61 @@ export default function LessonView() {
           </div>
         )
       })()}
+
+      {/* ── Graduation modal (all 36 lessons complete) ── */}
+      {showGraduation && (
+        <div className="streak-overlay" onClick={() => {}}>
+          <div className="streak-modal graduation-modal" onClick={e => e.stopPropagation()}>
+            {/* Confetti rain */}
+            <div className="streak-confetti-wrap">
+              {['🎓','🏆','⭐','🎉','🎊','👏','💪','🇺🇸','🔥','🌟','💎','✨'].map((e, i) => (
+                <span key={i} className="streak-confetti-piece" style={{ left: `${4 + (i * 8) % 88}%`, animationDelay: `${i * 0.14}s`, animationDuration: '2.5s' }}>{e}</span>
+              ))}
+            </div>
+
+            <div className="grad-emoji">🎓</div>
+            <h2 className="grad-title">¡FELICITACIONES!</h2>
+            <p className="grad-subtitle">¡Completaste las 36 lecciones de<br/><strong>English for Work</strong>!</p>
+
+            <div className="grad-stats">
+              <div className="grad-stat">
+                <span className="grad-stat-num">36</span>
+                <span className="grad-stat-label">Lecciones</span>
+              </div>
+              <div className="grad-stat">
+                <span className="grad-stat-num">3</span>
+                <span className="grad-stat-label">Rutas</span>
+              </div>
+              <div className="grad-stat">
+                <span className="grad-stat-num">100%</span>
+                <span className="grad-stat-label">Completado</span>
+              </div>
+            </div>
+
+            <p className="grad-message">
+              Has demostrado dedicación y compromiso con tu crecimiento profesional.
+              Tu inglés laboral está listo para llevarte al siguiente nivel. 🚀
+            </p>
+
+            <button className="grad-cert-btn" onClick={() => { setShowGraduation(false); setShowCertificate(true) }}>
+              🎓 Descargar mi Diploma
+            </button>
+            <button className="streak-continue-btn" style={{ marginTop: 10, background: 'rgba(255,255,255,0.08)', color: '#94A3B8' }} onClick={() => { setShowGraduation(false); navigate('/dashboard') }}>
+              Ir al inicio
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Program certificate modal ── */}
+      {showCertificate && (
+        <CertificateModal
+          userName={profile?.full_name || 'Estudiante'}
+          routeName="Programa Completo"
+          programComplete
+          onClose={() => { setShowCertificate(false); navigate('/dashboard') }}
+        />
+      )}
 
       {/* ── Main shell ── */}
       <div className="lesson-shell">
