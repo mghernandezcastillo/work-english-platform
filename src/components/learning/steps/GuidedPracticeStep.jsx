@@ -127,6 +127,8 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
   const [lastSentenceScore, setLastSentenceScore] = useState(null)
   // Label shown while auto-advancing to next sentence/scenario
   const [advancingLabel, setAdvancingLabel] = useState(null)
+  const advanceTimerRef = useRef(null)  // stores pending auto-advance timeout
+  const advanceActionRef = useRef(null) // stores the fn to execute on skip
   const [blockMsg, setBlockMsg] = useState('')
   const blockMsgTimerRef = useRef(null)
 
@@ -290,13 +292,19 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
       if (score >= 70) {
         const nextSentIdx = activeSentence + 1 < sentences.length ? activeSentence + 1 : -1
         if (nextSentIdx !== -1) {
+          const action = () => { setActiveSentence(nextSentIdx); setLastSentenceScore(null); setAdvancingLabel(null) }
+          advanceActionRef.current = action
           setAdvancingLabel(`Siguiente frase (${nextSentIdx + 1} de ${sentences.length})`)
-          setTimeout(() => { setActiveSentence(nextSentIdx); setLastSentenceScore(null); setAdvancingLabel(null) }, 2800)
+          clearTimeout(advanceTimerRef.current)
+          advanceTimerRef.current = setTimeout(action, 4000)
         } else {
           const nextScenario = current + 1
           if (nextScenario < scenarios.length) {
+            const action = () => { goTo(nextScenario); setLastSentenceScore(null); setAdvancingLabel(null) }
+            advanceActionRef.current = action
             setAdvancingLabel(`Siguiente situación (${nextScenario + 1} de ${scenarios.length})`)
-            setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null); setAdvancingLabel(null) }, 2800)
+            clearTimeout(advanceTimerRef.current)
+            advanceTimerRef.current = setTimeout(action, 4000)
           }
         }
       }
@@ -304,8 +312,11 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
     } else if (score >= 70) {
       const nextScenario = current + 1
       if (nextScenario < scenarios.length) {
+        const action = () => { goTo(nextScenario); setLastSentenceScore(null); setAdvancingLabel(null) }
+        advanceActionRef.current = action
         setAdvancingLabel(`Siguiente situación (${nextScenario + 1} de ${scenarios.length})`)
-        setTimeout(() => { goTo(nextScenario); setLastSentenceScore(null); setAdvancingLabel(null) }, 2800)
+        clearTimeout(advanceTimerRef.current)
+        advanceTimerRef.current = setTimeout(action, 4000)
       }
     }
   }
@@ -417,6 +428,13 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
             <div key={advancingLabel} className="advance-toast">
               <span className="advance-toast-icon">▶</span>
               <span className="advance-toast-label">{advancingLabel}</span>
+              <button
+                className="advance-toast-skip"
+                onClick={() => {
+                  clearTimeout(advanceTimerRef.current)
+                  advanceActionRef.current?.()
+                }}
+              >Siguiente →</button>
               <div className="advance-toast-bar-wrap">
                 <div className="advance-toast-bar" />
               </div>

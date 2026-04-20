@@ -1091,12 +1091,28 @@
   background: var(--el-primary);
   border-radius: 2px;
   transform-origin: left center;
-  animation: advance-bar 2.8s linear forwards;
+  animation: advance-bar 4s linear forwards;
 }
 @keyframes advance-bar {
   from { transform: scaleX(1); }
   to   { transform: scaleX(0); }
 }
+/* Skip button inside advance-toast */
+.advance-toast-skip {
+  border: none;
+  background: rgba(16,185,129,0.18);
+  color: var(--el-primary);
+  border-radius: 16px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Manrope', system-ui, sans-serif;
+  white-space: nowrap;
+  transition: background 0.15s, transform 0.1s;
+  flex-shrink: 0;
+}
+.advance-toast-skip:active { transform: scale(0.95); background: rgba(16,185,129,0.30); }
 
 /* ── Scenario score strip (Ahora habla tú) ── */
 /* A thin clickable color-coded bar below the hint, one segment per scenario */
