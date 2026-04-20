@@ -296,7 +296,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
           advanceActionRef.current = action
           setAdvancingLabel(`Siguiente frase (${nextSentIdx + 1} de ${sentences.length})`)
           clearTimeout(advanceTimerRef.current)
-          advanceTimerRef.current = setTimeout(action, 6000)
+          advanceTimerRef.current = setTimeout(action, 12000)
         } else {
           const nextScenario = current + 1
           if (nextScenario < scenarios.length) {
@@ -304,7 +304,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
             advanceActionRef.current = action
             setAdvancingLabel(`Siguiente situación (${nextScenario + 1} de ${scenarios.length})`)
             clearTimeout(advanceTimerRef.current)
-            advanceTimerRef.current = setTimeout(action, 6000)
+            advanceTimerRef.current = setTimeout(action, 12000)
           }
         }
       }
@@ -316,7 +316,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
         advanceActionRef.current = action
         setAdvancingLabel(`Siguiente situación (${nextScenario + 1} de ${scenarios.length})`)
         clearTimeout(advanceTimerRef.current)
-        advanceTimerRef.current = setTimeout(action, 6000)
+        advanceTimerRef.current = setTimeout(action, 12000)
       }
     }
   }
