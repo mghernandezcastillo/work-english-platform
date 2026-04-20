@@ -2,24 +2,19 @@
  * English for Work — Service Worker (Selective Offline Cache)
  *
  * Strategy: SAFE & CONSERVATIVE
- * - Cache static assets (JS, CSS, fonts, icons) with stale-while-revalidate
+ * - Cache ONLY fonts and images (NOT JS/CSS — Vite content-hashes those,
+ *   the browser HTTP cache handles them perfectly without SW interference)
  * - NEVER cache Supabase API calls (app requires live data)
- * - NEVER cache /login, /dashboard or any app route (prevents stale HTML)
- * - The app shell (index.html) is always fetched fresh from the network
+ * - NEVER cache HTML routes (prevents stale app shell)
  *
- * This ensures:
- * ✓ Faster subsequent loads (cached JS/CSS served instantly)
- * ✓ No stale content bugs on deploy
- * ✓ No broken auth from cached API responses
+ * Why JS/CSS are excluded:
+ * Vite produces hashed filenames (e.g. AdCenter-a1b2c3.js). Caching them
+ * in the SW causes stale-chunk bugs when a new deploy introduces new chunk
+ * names — the SW serves the old bundle from cache. The HTTP cache + CDN
+ * handles JS/CSS immutable caching correctly without these bugs.
  */
 
-const CACHE_NAME = 'efw-static-v2'
-
-// Asset origins we will cache
-const CACHEABLE_ORIGINS = [
-  'fonts.googleapis.com',
-  'fonts.gstatic.com',
-]
+const CACHE_NAME = 'efw-static-v3'
 
 // Patterns we will NEVER cache (data, auth, API)
 const NEVER_CACHE = [
@@ -32,72 +27,60 @@ const NEVER_CACHE = [
 
 function shouldCache(url) {
   const u = new URL(url)
-  // Never cache anything from these origins/paths
   if (NEVER_CACHE.some(pattern => url.includes(pattern))) return false
+
   // Cache Google Fonts
-  if (CACHEABLE_ORIGINS.some(o => u.hostname.includes(o))) return true
-  // Cache our own static assets (JS/CSS/images/woff2) but NOT HTML
+  if (u.hostname.includes('fonts.googleapis.com') ||
+      u.hostname.includes('fonts.gstatic.com')) return true
+
+  // Cache ONLY static media from our own origin — NOT JS or CSS
   if (u.origin === self.location.origin) {
     const path = u.pathname
-    if (path.endsWith('.js') || path.endsWith('.css') ||
-        path.endsWith('.woff2') || path.endsWith('.woff') ||
+    if (path.endsWith('.woff2') || path.endsWith('.woff') ||
         path.endsWith('.png') || path.endsWith('.svg') ||
-        path.endsWith('.webp') || path.endsWith('.jpg')) {
+        path.endsWith('.webp') || path.endsWith('.jpg') ||
+        path.endsWith('.ico')) {
       return true
     }
   }
   return false
 }
 
-// Install — open cache but don't precache anything
+// Install — activate immediately
 self.addEventListener('install', event => {
   self.skipWaiting()
 })
 
-// Activate — clean up old cache versions
+// Activate — delete ALL old caches, claim clients immediately
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(
-        keys
-          .filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
-      ))
+      .then(keys => Promise.all(keys.map(key => caches.delete(key))))
       .then(() => self.clients.claim())
   )
 })
 
-// Fetch — stale-while-revalidate for allowed assets
+// Fetch — cache-first for fonts/images, network-first for everything else
 self.addEventListener('fetch', event => {
   const { request } = event
   const url = request.url
 
-  // Only handle GET requests
   if (request.method !== 'GET') return
-
-  // Skip chrome-extension and non-http
   if (!url.startsWith('http')) return
-
-  // Never intercept data/API requests
   if (NEVER_CACHE.some(pattern => url.includes(pattern))) return
 
   if (shouldCache(url)) {
     event.respondWith(
       caches.open(CACHE_NAME).then(cache =>
         cache.match(request).then(cached => {
-          const networkFetch = fetch(request)
-            .then(response => {
-              if (response.ok) {
-                cache.put(request, response.clone())
-              }
-              return response
-            })
-            .catch(() => cached) // offline fallback: serve cached
-          // Return cached immediately, update in background
+          const networkFetch = fetch(request).then(response => {
+            if (response.ok) cache.put(request, response.clone())
+            return response
+          }).catch(() => cached)
           return cached || networkFetch
         })
       )
     )
   }
-  // All other requests (HTML, API) — pass through to network
 })
+
