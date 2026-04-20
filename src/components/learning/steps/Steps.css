@@ -1097,22 +1097,31 @@
   from { transform: scaleX(1); }
   to   { transform: scaleX(0); }
 }
-/* Skip button inside advance-toast */
+/* Skip button inside advance-toast — full-width CTA */
 .advance-toast-skip {
+  width: 100%;
+  display: block;
+  margin-top: 10px;
   border: none;
-  background: rgba(16,185,129,0.18);
-  color: var(--el-primary);
-  border-radius: 16px;
-  padding: 4px 12px;
-  font-size: 11px;
-  font-weight: 700;
+  background: var(--el-primary);
+  color: #002919;
+  border-radius: 20px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 800;
   cursor: pointer;
   font-family: 'Manrope', system-ui, sans-serif;
   white-space: nowrap;
-  transition: background 0.15s, transform 0.1s;
-  flex-shrink: 0;
+  letter-spacing: 0.01em;
+  transition: filter 0.15s, transform 0.1s;
+  flex-basis: 100%;
+  animation: toast-skip-pulse 1.8s ease-in-out infinite;
 }
-.advance-toast-skip:active { transform: scale(0.95); background: rgba(16,185,129,0.30); }
+.advance-toast-skip:active { transform: scale(0.97); filter: brightness(0.9); }
+@keyframes toast-skip-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+  50%       { box-shadow: 0 0 0 6px rgba(16,185,129,0.35); }
+}
 
 /* ── Scenario score strip (Ahora habla tú) ── */
 /* A thin clickable color-coded bar below the hint, one segment per scenario */

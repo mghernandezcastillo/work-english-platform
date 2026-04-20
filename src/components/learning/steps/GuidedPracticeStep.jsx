@@ -434,7 +434,7 @@ export default function GuidedPracticeStep({ data, lessonId, onCanAdvance, onAct
                   clearTimeout(advanceTimerRef.current)
                   advanceActionRef.current?.()
                 }}
-              >Siguiente →</button>
+              >Toca aquí para continuar →</button>
               <div className="advance-toast-bar-wrap">
                 <div className="advance-toast-bar" />
               </div>
