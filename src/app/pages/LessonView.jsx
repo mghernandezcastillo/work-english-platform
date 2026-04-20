@@ -33,7 +33,7 @@ const STEPS = [
 
 export default function LessonView() {
   const { lessonId } = useParams()
-  const { profile, refreshProfile } = useAuth()
+  const { profile, refreshProfile, user } = useAuth()
   const navigate = useNavigate()
 
   // Hide AppLayout topbar + bottom-nav while in a lesson
@@ -236,6 +236,14 @@ export default function LessonView() {
           }
         } catch { }
         if (allComplete) {
+          // Fire graduation email silently — don't block the UI
+          supabase.functions.invoke('send-graduation-email', {
+            body: {
+              user_id: profile.id,
+              email: user?.email || '',
+              full_name: profile.full_name || 'Estudiante',
+            }
+          }).catch(() => {})
           // Show grand graduation instead of streak modal
           await new Promise(r => setTimeout(r, 1200))
           setShowGraduation(true)
