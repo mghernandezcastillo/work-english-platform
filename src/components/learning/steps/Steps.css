@@ -1091,7 +1091,7 @@
   background: var(--el-primary);
   border-radius: 2px;
   transform-origin: left center;
-  animation: advance-bar 4s linear forwards;
+  animation: advance-bar 6s linear forwards;
 }
 @keyframes advance-bar {
   from { transform: scaleX(1); }
