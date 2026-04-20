@@ -13,7 +13,7 @@
  * ✓ No broken auth from cached API responses
  */
 
-const CACHE_NAME = 'efw-static-v1'
+const CACHE_NAME = 'efw-static-v2'
 
 // Asset origins we will cache
 const CACHEABLE_ORIGINS = [
