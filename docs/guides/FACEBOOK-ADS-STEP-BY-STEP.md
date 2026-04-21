@@ -96,87 +96,55 @@ Colombia 22-45 empleo inglés
 
 ### 3.2 — Conversión
 
-Esta es la **primera sección visible**. Aquí defines a dónde quieres enviar a las personas.
+Esta es la **primera sección visible**. Aquí defines a dónde quieres enviar a las personas que hagan clic en tu anuncio.
 
 | Campo | Qué elegir |
 |-------|-----------|
-| **Ubicación de la conversión** | 🔘 **Destinos de mensajes** — Envía el tráfico a Messenger, Instagram y WhatsApp |
+| **Ubicación de la conversión** | 🔘 **Sitio web** — "Envía el tráfico a tu sitio web" |
 
-> ⚠️ También verás las opciones "Sitio web", "App", "Instagram o Facebook" y "Llamadas". **Elige "Destinos de mensajes"** porque nuestro flujo de ventas empieza con conversación directa.
-
-| Campo | Qué elegir |
-|-------|-----------|
-| **Objetivo de rendimiento** | `Maximizar el número de clics en el enlace` (ya viene seleccionado) |
-| **Página de Facebook** | Verifica que diga **English for Work** con el logo correcto. Si no, usa el ícono de lápiz ✏️ para cambiarla |
-
----
-
-### 3.3 — Destinos de mensajes
-
-Aquí eliges por dónde te van a escribir las personas que vean tu anuncio.
+> ⚠️ **NO elijas "Destinos de mensajes"** ni ninguna otra opción. Nuestro flujo de ventas es: **Anuncio → Landing Page → Hotmart Checkout**. Queremos que la gente llegue a la landing page `englishforworkapp.com/ingles-para-trabajo` donde ven el precio, los beneficios y el botón de compra que los lleva a Hotmart.
 
 | Campo | Qué elegir |
 |-------|-----------|
-| **Tipo de destino** | 🔘 **Destino manual** (NO el automático) |
-
-> 💡 El "Destino automático" deja que Facebook elija. Nosotros queremos controlar exactamente dónde llegan los mensajes.
-
-Debajo aparecen tres opciones con checkbox:
-
-| Plataforma | ¿Activar? | Notas |
-|-----------|-----------|-------|
-| ✅ **Messenger** | **SÍ** — Déjalo marcado | Debe decir "English for Work" debajo |
-| ☐ Instagram | ❌ Desactivar | Solo si ya tienes la cuenta de Instagram conectada, de lo contrario déjalo desactivado |
-| ☐ WhatsApp | ❌ Desactivar por ahora | Requiere una cuenta de **WhatsApp Business** (no personal). Si usas el mismo número, los chats se mueven a esa app. Solo activar si ya tienes WhatsApp Business configurado |
-
-> ⚠️ **Sobre WhatsApp:** Si ves un aviso amarillo que dice "se requiere una cuenta de WhatsApp Business", **no lo actives todavía**. Migrar tu WhatsApp personal a Business es irreversible y puede mover todos tus chats. Es mejor empezar solo con Messenger.
+| **Objetivo de rendimiento** | `Maximizar el número de clics en el enlace` (ya viene seleccionado — déjalo así) |
+| **Pixel** | Si aparece, selecciona **"English for Work"**. Si no aparece, no te preocupes — el Pixel ya está instalado en el sitio y va a funcionar |
 
 ---
 
-### 3.4 — Objetivo de costo por resultado (opcional)
-
-| Campo | Qué hacer |
-|-------|-----------|
-| **Objetivo de costo por resultado** | ❌ **Déjalo vacío** |
-
-> Dejar este campo en blanco le permite a Meta gastar todo el presupuesto y obtener el mayor número de clics posible. Si pones un valor, Facebook puede NO gastar tu presupuesto si el costo por clic supera ese número.
-
----
-
-### 3.5 — Presupuesto y calendario
+### 3.3 — Presupuesto y calendario
 
 | Campo | Valor |
 |-------|-------|
 | **Presupuesto** | Ya debe mostrar: *"Definiste un presupuesto diario de la campaña Advantage+ de $15.000"* (esto se configuró en el Paso 2) |
-| **Límites de gasto** | ❌ No agregar — déjalo como está |
+| **Límites de gasto de conjuntos de anuncios** | ❌ No agregar — déjalo como "Ningún límite agregado" |
 | **Fecha de inicio** | Se pone automáticamente (hoy). Déjala así |
-| **Fecha de finalización** | ☐ **No marcar** — deja el anuncio corriendo indefinidamente. Lo puedes pausar manualmente cuando quieras |
+| **Fecha de finalización** | ☐ **No marcar** — deja el anuncio corriendo indefinidamente. Tú lo pausas manualmente cuando quieras |
 
-> 💡 Si quieres limitar la prueba a 7 días, puedes marcar "Definir una fecha de finalización" y poner la fecha de dentro de una semana.
+> 💡 Si quieres limitar la prueba a 7 días, marca "Definir una fecha de finalización" y pon la fecha de dentro de una semana.
 
 ---
 
-### 3.6 — Controles de público
+### 3.4 — Controles de público
 
 Esta sección controla **a quién** se le muestra el anuncio.
 
 | Campo | Qué hacer |
 |-------|-----------|
-| **Lugares** | Debe decir **Colombia**. Si no, haz clic y escribe "Colombia" |
+| **Lugares** | Debe decir **Colombia**. Si no, haz clic y escribe "Colombia" y selecciónalo |
 
-> Los demás campos (edad, género, intereses) ahora se manejan con **Público Advantage+** (ver abajo).
+> Los demás campos (edad, género, intereses detallados) ahora se manejan con **Público Advantage+** (ver abajo). Facebook cambió el sistema — ya no se configura edad y género aquí.
 
 ---
 
-### 3.7 — Público Advantage+ ✨
+### 3.5 — Público Advantage+ ✨
 
-Esta es la configuración de audiencia moderna de Meta. Facebook muestra automáticamente los anuncios a las personas con más probabilidades de responder.
+Esta es la configuración de audiencia moderna de Meta. Facebook muestra automáticamente los anuncios a las personas con más probabilidades de hacer clic y visitar tu landing page.
 
 | Campo | Qué hacer |
 |-------|-----------|
-| **Sugerencia de público (opcional)** | Clic en **"⊕ Sugerencia de público"** y agrega intereses como guía para el algoritmo |
+| **Sugerencia de público (opcional)** | Clic en **"⊕ Sugerencia de público"** y agrega intereses como guía para que Facebook sepa a quién priorizar |
 
-Intereses sugeridos para escribir (agrega los que encuentres):
+Intereses sugeridos para escribir uno por uno (agrega los que encuentres):
 - `Duolingo`
 - `Aprender inglés`
 - `English language`
@@ -185,31 +153,23 @@ Intereses sugeridos para escribir (agrega los que encuentres):
 - `Call center`
 - `Trabajo remoto`
 
-> 💡 Con Advantage+ estos intereses son **sugerencias**, no filtros estrictos. Facebook puede mostrar tu anuncio a personas fuera de estos intereses si detecta que van a responder bien. Esto es **intencional y positivo**.
+> 💡 Con Advantage+ estos intereses son **sugerencias**, no filtros estrictos. Facebook puede mostrar tu anuncio a personas fuera de estos intereses si detecta que van a hacer clic. Esto es **normal y positivo** — deja que el algoritmo optimice.
 
 | Campo | Qué hacer |
 |-------|-----------|
-| **Guardar público** | Clic en **"Guardar público"** para reutilizarlo después |
+| **Guardar público** | Clic en **"Guardar público"** para reutilizarlo en futuras campañas |
 
-> A la derecha de la pantalla verás un panel que dice **"Definición del público"** con una barra. Si dice "Amplio" con la barra en verde, está correcto. Un público amplio le da a Facebook más espacio para optimizar con presupuestos bajos.
+> A la derecha de la pantalla verás un panel que dice **"Definición del público"** con una barra de color. Si dice "Amplio" con la barra en verde, **está perfecto**. Un público amplio le da a Facebook más espacio para encontrar clics baratos con presupuestos bajos como $15.000/día.
 
 ---
 
-### 3.8 — Ubicaciones (Placements)
+### 3.6 — Ubicaciones (Placements)
 
 | Campo | Qué elegir |
 |-------|-----------|
 | **Ubicaciones Advantage+** | ✅ **Dejarlo activado** (es la opción por defecto) |
 
-> Esto deja que Facebook decida dónde mostrar el anuncio (Feed, Stories, Reels, etc.). Es más eficiente que elegir manualmente, especialmente con presupuestos bajos.
-
----
-
-### 3.9 — Transparencia de anuncios
-
-| Campo | Qué hacer |
-|-------|-----------|
-| **Verificación** | Opcional. Si te aparece "Iniciar verificación", puedes hacerlo después. **No es obligatorio para publicar** |
+> Facebook decide automáticamente dónde mostrar tu anuncio (Feed, Stories, Reels, etc.) según dónde sea más barato conseguir clics. Es más eficiente que elegir manualmente, especialmente con presupuestos bajos.
 
 ---
 
