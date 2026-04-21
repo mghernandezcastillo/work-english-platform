@@ -167,26 +167,44 @@ Vas a ver estos campos:
 
 ### Segmentación detallada
 
-En el campo que dice *"Agregar datos demográficos, intereses, comportamientos"*, escribe uno por uno estos intereses y selecciónalos de la lista:
+En el campo que dice *"Agregar datos demográficos, intereses, comportamientos"*, escribe **exactamente** estos nombres y selecciónalos cuando aparezcan en la lista desplegable. Los nombres son los que usa Facebook internamente (a veces en inglés, a veces traducidos):
 
-**Intereses de idiomas:**
-- `Duolingo`
-- `Aprender inglés` o `English language`
-- `Babbel`
+#### 🟢 PRIORIDAD ALTA — Agrega estos primero (son los más relevantes para English for Work):
 
-**Intereses laborales:**
-- `Empleo` o `Búsqueda de empleo`
-- `LinkedIn`
-- `Trabajo remoto`
-- `Call center` (especialmente para la Campaña 3)
+| Escribir en el buscador | Nombre exacto que aparece | Por qué nos sirve |
+|------------------------|--------------------------|-------------------|
+| `Duolingo` | **Duolingo** | Personas que ya usan apps para aprender idiomas — nuestro público ideal |
+| `English language` | **English language** o **Inglés (idioma)** | Personas interesadas en el idioma inglés |
+| `English as a second` | **English as a second or foreign language** | Personas aprendiendo inglés como segundo idioma — exactamente nuestro nicho |
+| `Job hunting` | **Job hunting** o **Búsqueda de empleo** | Personas buscando trabajo activamente — quieren inglés para conseguir empleo |
+| `Career development` | **Career development** o **Desarrollo profesional** | Profesionales que quieren crecer laboralmente |
+| `LinkedIn` | **LinkedIn** | Personas con mentalidad profesional que buscan oportunidades |
 
-**Intereses educativos:**
-- `Educación en línea`
-- `British Council`
+#### 🟡 PRIORIDAD MEDIA — Agrega estos si los encuentras:
 
-> 💡 No todos aparecerán exactamente igual. Escribe la palabra y elige la opción más cercana. Con **5-7 intereses** es suficiente. Si no encuentras alguno, pasa al siguiente.
+| Escribir en el buscador | Nombre exacto que aparece | Por qué nos sirve |
+|------------------------|--------------------------|-------------------|
+| `IELTS` | **IELTS** o **International English Language Testing System** | Personas preparando examen de inglés — alto interés |
+| `TOEFL` | **TOEFL** | Similar a IELTS — estudiantes de inglés formales |
+| `Babbel` | **Babbel** | Otra app de idiomas — público similar a Duolingo |
+| `British Council` | **British Council** | Institución de inglés muy conocida en LATAM |
+| `Call centre` | **Call centre** o **Call center** | Para la Campaña 3 específicamente — personas en o buscando trabajo en BPOs |
 
-> 💡 Con Advantage+ activado, estos intereses son **sugerencias para el algoritmo**, no filtros estrictos. Facebook puede mostrar tu anuncio a personas fuera de estos intereses si detecta que van a hacer clic en tu landing. Esto es **normal y positivo** — deja que el algoritmo optimice.
+#### 🔵 OPCIONALES — Útiles para ampliar:
+
+| Escribir en el buscador | Nombre exacto que aparece | Notas |
+|------------------------|--------------------------|-------|
+| `Teleperformance` | **Teleperformance** | BPO grande en Colombia — para Campaña 3 |
+| `Concentrix` | **Concentrix** | Otro BPO grande en Colombia |
+| `Remote work` | **Remote work** o **Trabajo remoto** | Profesionales que buscan trabajo remoto (muchos requieren inglés) |
+| `Coursera` | **Coursera** | Plataforma educativa — personas que invierten en aprendizaje |
+| `Udemy` | **Udemy** | Similar a Coursera |
+
+> ⚠️ **IMPORTANTE:** No marques "Categoría especial de anuncios" como "Empleo". Nosotros **NO estamos ofreciendo empleo** — estamos vendiendo un curso de inglés. Si marcas "Empleo" por error, Facebook restringirá tu segmentación y no podrás filtrar por edad ni intereses.
+
+> 💡 **Truco "Sugerencias":** Después de agregar tu primer interés (ej: `Duolingo`), haz clic en el botón **"Explorar"** que aparece al lado del campo de búsqueda. Facebook te mostrará intereses relacionados que puedes agregar con un clic. Esto es muy útil para descubrir intereses que no conocías.
+
+> 💡 Con Advantage+ activado, estos intereses son **sugerencias para el algoritmo**, no filtros estrictos. Facebook puede mostrar tu anuncio a personas fuera de estos intereses si detecta que van a hacer clic en tu landing. Esto es **normal y positivo** — el algoritmo aprende de quién hace clic y optimiza solo.
 
 Por último:
 
