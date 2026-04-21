@@ -106,8 +106,10 @@ Esta es la **primera sección visible**. Aquí defines a dónde quieres enviar a
 
 | Campo | Qué elegir |
 |-------|-----------|
-| **Objetivo de rendimiento** | `Maximizar el número de clics en el enlace` (ya viene seleccionado — déjalo así) |
+| **Objetivo de rendimiento** | `Maximizar el número de visitas a la página de destino` |
 | **Pixel** | Si aparece, selecciona **"English for Work"**. Si no aparece, no te preocupes — el Pixel ya está instalado en el sitio y va a funcionar |
+
+> ⚠️ Verás dos opciones de rendimiento: "clics en el enlace" y "visitas a la página de destino". **Elige visitas a la página** — esto hace que Facebook solo cuente cuando la landing page carga completamente (el Pixel se dispara). Con "clics en el enlace" Facebook cuenta hasta clics accidentales o de personas con mala conexión que nunca ven tu oferta. Con $15.000/día, necesitamos que cada peso lleve a alguien que realmente vea la landing y el botón de Hotmart.
 
 ---
 
