@@ -161,7 +161,7 @@ export default function LandingPage() {
           <div className="hero-mockup">
             <div className="hero-mockup-phone">
               <img
-                src="/images/demo-simulation.png"
+                src="/images/hero-simulation.jpeg"
                 alt="Simulación de entrevista en English for Work"
                 loading="eager"
               />
