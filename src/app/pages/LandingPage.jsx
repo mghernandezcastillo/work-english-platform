@@ -157,6 +157,20 @@ export default function LandingPage() {
           </a>
           <p className="landing-subtext">{copy.hero.subtext}</p>
 
+          {/* Hero app mockup */}
+          <div className="hero-mockup">
+            <div className="hero-mockup-phone">
+              <img
+                src="/images/demo-simulation.png"
+                alt="Simulación de entrevista en English for Work"
+                loading="eager"
+              />
+            </div>
+            <p className="hero-mockup-caption">
+              👆 Así se ve una simulación real dentro de la app
+            </p>
+          </div>
+
           {/* Social proof strip */}
           <div className="hero-proof">
             <div className="hero-proof-item">
