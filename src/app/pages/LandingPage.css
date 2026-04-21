@@ -162,10 +162,6 @@
 .hero-mockup-phone img {
   width: 100%;
   display: block;
-  /* Push status bar (~4% of height) out of frame */
-  margin-top: -4%;
-  /* Also crop bottom nav bar */
-  margin-bottom: -8%;
 }
 .hero-mockup-caption {
   margin-top: var(--space-3);
