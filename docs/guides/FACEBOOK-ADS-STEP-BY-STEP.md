@@ -80,24 +80,103 @@ Clic en **"Siguiente"**
 
 ## PASO 3 — Configurar el conjunto de anuncios
 
-### Pantalla: "Conjunto de anuncios"
+Al hacer clic en "Siguiente" entras a la pantalla del **conjunto de anuncios**. Esta pantalla es larga — tiene varias secciones que aparecen una debajo de otra al hacer scroll. Aquí va cada sección en orden:
+
+---
+
+### 3.1 — Nombre del conjunto de anuncios
+
+En el campo de texto arriba, escribe:
+
+```
+Colombia 22-45 empleo inglés
+```
+
+---
+
+### 3.2 — Conversión
+
+Esta es la **primera sección visible**. Aquí defines a dónde quieres enviar a las personas.
 
 | Campo | Qué elegir |
 |-------|-----------|
-| **Nombre del conjunto** | `Colombia 22-45 empleo inglés` |
-| **Objetivo de rendimiento** | `Maximizar el número de clics en el enlace` |
-| **Pixeles y eventos** | Selecciona tu Pixel "English for Work" (si aparece) |
+| **Ubicación de la conversión** | 🔘 **Destinos de mensajes** — Envía el tráfico a Messenger, Instagram y WhatsApp |
 
-### Sección: Público (Audiencia)
+> ⚠️ También verás las opciones "Sitio web", "App", "Instagram o Facebook" y "Llamadas". **Elige "Destinos de mensajes"** porque nuestro flujo de ventas empieza con conversación directa.
+
+| Campo | Qué elegir |
+|-------|-----------|
+| **Objetivo de rendimiento** | `Maximizar el número de clics en el enlace` (ya viene seleccionado) |
+| **Página de Facebook** | Verifica que diga **English for Work** con el logo correcto. Si no, usa el ícono de lápiz ✏️ para cambiarla |
+
+---
+
+### 3.3 — Destinos de mensajes
+
+Aquí eliges por dónde te van a escribir las personas que vean tu anuncio.
+
+| Campo | Qué elegir |
+|-------|-----------|
+| **Tipo de destino** | 🔘 **Destino manual** (NO el automático) |
+
+> 💡 El "Destino automático" deja que Facebook elija. Nosotros queremos controlar exactamente dónde llegan los mensajes.
+
+Debajo aparecen tres opciones con checkbox:
+
+| Plataforma | ¿Activar? | Notas |
+|-----------|-----------|-------|
+| ✅ **Messenger** | **SÍ** — Déjalo marcado | Debe decir "English for Work" debajo |
+| ☐ Instagram | ❌ Desactivar | Solo si ya tienes la cuenta de Instagram conectada, de lo contrario déjalo desactivado |
+| ☐ WhatsApp | ❌ Desactivar por ahora | Requiere una cuenta de **WhatsApp Business** (no personal). Si usas el mismo número, los chats se mueven a esa app. Solo activar si ya tienes WhatsApp Business configurado |
+
+> ⚠️ **Sobre WhatsApp:** Si ves un aviso amarillo que dice "se requiere una cuenta de WhatsApp Business", **no lo actives todavía**. Migrar tu WhatsApp personal a Business es irreversible y puede mover todos tus chats. Es mejor empezar solo con Messenger.
+
+---
+
+### 3.4 — Objetivo de costo por resultado (opcional)
+
+| Campo | Qué hacer |
+|-------|-----------|
+| **Objetivo de costo por resultado** | ❌ **Déjalo vacío** |
+
+> Dejar este campo en blanco le permite a Meta gastar todo el presupuesto y obtener el mayor número de clics posible. Si pones un valor, Facebook puede NO gastar tu presupuesto si el costo por clic supera ese número.
+
+---
+
+### 3.5 — Presupuesto y calendario
 
 | Campo | Valor |
 |-------|-------|
-| **Ubicaciones** | `Colombia` (escríbelo y selecciónalo) |
-| **Edad** | `22` a `45` |
-| **Género** | Todos |
-| **Segmentación detallada** | Escribe y agrega estos intereses (los que encuentres): |
+| **Presupuesto** | Ya debe mostrar: *"Definiste un presupuesto diario de la campaña Advantage+ de $15.000"* (esto se configuró en el Paso 2) |
+| **Límites de gasto** | ❌ No agregar — déjalo como está |
+| **Fecha de inicio** | Se pone automáticamente (hoy). Déjala así |
+| **Fecha de finalización** | ☐ **No marcar** — deja el anuncio corriendo indefinidamente. Lo puedes pausar manualmente cuando quieras |
 
-Intereses a buscar (agrega todos los que te aparezcan):
+> 💡 Si quieres limitar la prueba a 7 días, puedes marcar "Definir una fecha de finalización" y poner la fecha de dentro de una semana.
+
+---
+
+### 3.6 — Controles de público
+
+Esta sección controla **a quién** se le muestra el anuncio.
+
+| Campo | Qué hacer |
+|-------|-----------|
+| **Lugares** | Debe decir **Colombia**. Si no, haz clic y escribe "Colombia" |
+
+> Los demás campos (edad, género, intereses) ahora se manejan con **Público Advantage+** (ver abajo).
+
+---
+
+### 3.7 — Público Advantage+ ✨
+
+Esta es la configuración de audiencia moderna de Meta. Facebook muestra automáticamente los anuncios a las personas con más probabilidades de responder.
+
+| Campo | Qué hacer |
+|-------|-----------|
+| **Sugerencia de público (opcional)** | Clic en **"⊕ Sugerencia de público"** y agrega intereses como guía para el algoritmo |
+
+Intereses sugeridos para escribir (agrega los que encuentres):
 - `Duolingo`
 - `Aprender inglés`
 - `English language`
@@ -106,17 +185,35 @@ Intereses a buscar (agrega todos los que te aparezcan):
 - `Call center`
 - `Trabajo remoto`
 
-> 💡 No todos van a aparecer exactamente igual. Escribe la palabra y elige la opción más cercana. Con 4-5 intereses es suficiente.
+> 💡 Con Advantage+ estos intereses son **sugerencias**, no filtros estrictos. Facebook puede mostrar tu anuncio a personas fuera de estos intereses si detecta que van a responder bien. Esto es **intencional y positivo**.
 
-### Sección: Ubicaciones (Placements)
+| Campo | Qué hacer |
+|-------|-----------|
+| **Guardar público** | Clic en **"Guardar público"** para reutilizarlo después |
 
-| Opción | Qué elegir |
-|--------|-----------|
-| **Ubicaciones** | ✅ **Ubicaciones Advantage+** (automáticas) |
+> A la derecha de la pantalla verás un panel que dice **"Definición del público"** con una barra. Si dice "Amplio" con la barra en verde, está correcto. Un público amplio le da a Facebook más espacio para optimizar con presupuestos bajos.
 
-> Deja que Facebook decida dónde mostrar el anuncio (Feed, Stories, Reels, etc.). Es más eficiente que elegir manualmente.
+---
 
-Clic en **"Siguiente"**
+### 3.8 — Ubicaciones (Placements)
+
+| Campo | Qué elegir |
+|-------|-----------|
+| **Ubicaciones Advantage+** | ✅ **Dejarlo activado** (es la opción por defecto) |
+
+> Esto deja que Facebook decida dónde mostrar el anuncio (Feed, Stories, Reels, etc.). Es más eficiente que elegir manualmente, especialmente con presupuestos bajos.
+
+---
+
+### 3.9 — Transparencia de anuncios
+
+| Campo | Qué hacer |
+|-------|-----------|
+| **Verificación** | Opcional. Si te aparece "Iniciar verificación", puedes hacerlo después. **No es obligatorio para publicar** |
+
+---
+
+✅ **¡Eso es todo para el conjunto de anuncios!** Haz clic en **"Siguiente"** para ir al Paso 4 (crear el anuncio).
 
 ---
 
