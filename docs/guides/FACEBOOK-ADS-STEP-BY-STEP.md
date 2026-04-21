@@ -240,38 +240,170 @@ Por último:
 
 ## PASO 4 — Crear el anuncio
 
-### Pantalla: "Anuncio"
+Al hacer clic en "Siguiente" entras a la pantalla del **anuncio**. Esta es la pantalla más larga — aquí configuras todo lo que la persona va a ver. Abajo va cada sección en orden.
 
-Aquí es donde copias todo desde el **AdCenter**.
+> 📌 **Antes de empezar:** Abre el **AdCenter** de la app (`/admin/anuncios`) en otra pestaña. Vas a copiar textos e imágenes desde ahí.
 
-| Campo | De dónde copiarlo |
-|-------|-------------------|
-| **Nombre del anuncio** | Del AdCenter: nombre del ad (ej: "Ad 01 — ¿Pierdes trabajos?") |
-| **Identidad** | Selecciona tu página: **English for Work** |
-| **Formato** | `Imagen o video único` (para imagen única) o `Carousel` (para el carousel) |
+---
 
-### Sección: Creatividad del anuncio
+### 4.1 — Nombre del anuncio
 
-| Campo del Ads Manager | Campo del AdCenter | Acción |
-|----------------------|-------------------|--------|
-| **Elementos multimedia** | Imagen | Clic "Agregar elementos" → Subir imagen → Sube la imagen que descargaste del AdCenter |
-| **Texto principal** | 📝 Texto principal | Clic "Copiar" en AdCenter → Pegar aquí |
-| **Título** | 🏷 Título (Headline) | Clic "Copiar" en AdCenter → Pegar aquí |
-| **Descripción** | 📄 Descripción | Clic "Copiar" en AdCenter → Pegar aquí |
-| **Botón de llamada a la acción** | 🖱 Botón CTA | Selecciona del menú: `Más información` o `Registrarse` (según lo que diga el AdCenter) |
-| **URL del sitio web** | 🔗 URL con UTM | Clic "Copiar URL" en AdCenter → Pegar aquí |
+| Campo | Qué poner |
+|-------|-----------|
+| **Nombre del anuncio** | Copia el nombre del ad desde el AdCenter. Ejemplo: `Ad 01 — ¿Pierdes trabajos?` |
 
-> ⚠️ **MUY IMPORTANTE:** La URL debe ser la completa con los parámetros UTM. No la acortes ni la modifiques. Ejemplo:
-> ```
-> https://work-english-platform.vercel.app/ingles-para-trabajo?utm_source=facebook&utm_medium=cpc&utm_campaign=dolor_frio&utm_content=pain
-> ```
+---
 
-### Sección: Seguimiento
+### 4.2 — Anuncio de colaboración
+
+| Campo | Qué hacer |
+|-------|-----------|
+| **Anuncio de colaboración** | ❌ **Déjalo desactivado**. Esto es para publicar con otra marca — no aplica para nosotros |
+
+---
+
+### 4.3 — Identidad
 
 | Campo | Qué elegir |
 |-------|-----------|
-| **Pixel** | Selecciona "English for Work" |
-| **Evento de conversión** | `ViewContent` (o déjalo como viene) |
+| **Página de Facebook** | ✅ Debe decir **English for Work**. Si no, cámbiala del menú desplegable |
+| **Perfil de Instagram** | ✅ Déjalo en **"Usar página de Facebook"** (a menos que tengas una cuenta de Instagram conectada) |
+| **Perfil de Threads** | ❌ Déjalo vacío — no lo necesitamos |
+
+---
+
+### 4.4 — Configuración del anuncio
+
+| Campo | Qué elegir |
+|-------|-----------|
+| **Configuración del anuncio** | ✅ Dejarlo en **"Crear anuncio"** (ya viene seleccionado) |
+
+> Ignora la opción "Convierte los anuncios en una experiencia de compra" — eso es para tiendas con catálogo de productos.
+
+---
+
+### 4.5 — Origen del contenido
+
+| Campo | Qué elegir |
+|-------|-----------|
+| **Origen del contenido** | 🔘 **Subida manual** |
+
+> NO elijas "Anuncios de catálogo Advantage+" — eso es para e-commerce con catálogo de productos. Nosotros vendemos un solo producto (el curso).
+
+---
+
+### 4.6 — Formato
+
+| Campo | Qué elegir |
+|-------|-----------|
+| **Formato** | 🔘 **Una sola imagen o video** (para la mayoría de nuestros anuncios) |
+
+> Solo elige **"Secuencia"** (carousel) si estás publicando el **Ad Carousel — Las 3 Rutas** de la Campaña 3.
+
+---
+
+### 4.7 — Anuncios multianunciante
+
+| Campo | Qué hacer |
+|-------|-----------|
+| **Anuncios multianunciante** | ❌ **Desmárcalo** (quitar el checkbox ✓) |
+
+> Si lo dejas activado, Facebook puede mostrar tu anuncio junto con anuncios de otros negocios en un mismo bloque. Esto distrae la atención del usuario — queremos que el anuncio se vea solo para maximizar clics a nuestra landing.
+
+---
+
+### 4.8 — Destino
+
+Esta es una sección **crítica** — aquí defines a dónde llega la persona cuando hace clic en tu anuncio.
+
+| Campo | Qué elegir |
+|-------|-----------|
+| **Destino** | 🔘 **Sitio web** — "Dirige a las personas a tu sitio web" |
+
+> ❌ **NO elijas "Experiencia instantánea"**. Eso crea una mini-página dentro de Facebook. Nosotros queremos que la persona llegue directamente a nuestra landing page en `englishforworkapp.com` donde está toda la info del curso y el botón de compra de Hotmart.
+
+| Campo | Qué poner |
+|-------|-----------|
+| **URL del sitio web** | Pega la **URL completa con UTM** del AdCenter. Ve al AdCenter, clic en **"Copiar URL"** y pega aquí |
+
+Ejemplo de la URL que debes pegar (la del Ad 01):
+```
+https://englishforworkapp.com/ingles-para-trabajo?utm_source=facebook&utm_medium=cpc&utm_campaign=dolor_frio&utm_content=pain
+```
+
+> ⚠️ **MUY IMPORTANTE:** Pega la URL completa tal cual sale del AdCenter. No la modifiques, no la acortes, no le quites los parámetros `?utm_...`. Esos parámetros nos permiten saber en Google Analytics de cuál anuncio viene cada visitante.
+
+| Campo | Qué poner |
+|-------|-----------|
+| **Enlace visible** | Escribe: `englishforworkapp.com` — esto es lo que la persona ve debajo del anuncio (es solo visual, no afecta a dónde llega) |
+
+---
+
+### 4.9 — Complementos del navegador
+
+| Campo | Qué elegir |
+|-------|-----------|
+| **Complementos del navegador** | 🔘 **Ninguno** — "No agrega ningún botón" |
+
+> No necesitamos botón de Llamada, WhatsApp ni Formulario. Nuestro flujo es directo: **clic → landing page → Hotmart**. Agregar botones extra distrae.
+
+---
+
+### 4.10 — Contenido del anuncio ⭐
+
+Esta es la sección más importante — aquí va la imagen y los textos que la persona ve.
+
+Haz clic en **"Configurar contenido ▼"** para expandir los campos.
+
+**Paso A — Subir la imagen:**
+
+1. En el AdCenter, haz clic en **"⬇ Descargar imagen"** para guardar la imagen del anuncio en tu computador
+2. En el Ads Manager, haz clic en **"Agregar elementos"** o **"Agregar imagen"**
+3. Sube la imagen que acabas de descargar
+4. Verifica que se vea bien en la vista previa a la derecha
+
+**Paso B — Pegar los textos:**
+
+Uno por uno, ve al AdCenter y usa los botones **"Copiar"** para copiar cada texto:
+
+| Campo del Ads Manager | Campo del AdCenter | Qué hacer |
+|----------------------|-------------------|-----------|
+| **Texto principal** | 📝 Texto principal | Clic "Copiar" en AdCenter → Pegar aquí. Este es el texto largo que aparece arriba de la imagen |
+| **Título** | 🏷 Título (Headline) | Clic "Copiar" en AdCenter → Pegar aquí. Es la línea en negrita debajo de la imagen |
+| **Descripción** | 📄 Descripción | Clic "Copiar" en AdCenter → Pegar aquí. Es la línea pequeña debajo del título |
+| **Llamada a la acción** | 🖱 Botón CTA | Selecciona del menú desplegable lo que diga el AdCenter: **"Más información"** o **"Registrarse"** |
+
+> 💡 Después de pegar todo, revisa la **Vista previa** a la derecha de la pantalla. Haz clic en "Vista previa avanzada" para ver cómo se verá en Feed, Stories y otros formatos.
+
+---
+
+### 4.11 — Prueba de contenido
+
+| Campo | Qué hacer |
+|-------|-----------|
+| **Configurar prueba** | ❌ **No configurar por ahora**. Esto es para probar variantes del mismo anuncio — puede ser útil después, pero al inicio publiquemos el anuncio base primero |
+
+---
+
+### 4.12 — Idiomas
+
+| Campo | Qué hacer |
+|-------|-----------|
+| **Idiomas** | ❌ **Déjalo desactivado**. Nuestro anuncio está en español para público colombiano — no necesitamos traducción automática |
+
+---
+
+### 4.13 — Seguimiento
+
+Esta sección es para rastrear qué pasa después de que alguien hace clic en tu anuncio.
+
+| Campo | Qué hacer |
+|-------|-----------|
+| **Eventos del sitio web** | Si aparece tu Pixel **"English for Work"**, selecciónalo. Si no aparece, déjalo como está — el Pixel ya está instalado en el sitio y funciona independientemente |
+| **Eventos de la app** | ❌ Déjalo sin marcar |
+| **Parámetros de URL** | ❌ **Déjalo vacío**. Los parámetros UTM ya están incluidos en la URL que pegaste arriba. No los dupliques aquí |
+| **Herramientas de informes de terceros** | ❌ Ignorar — no usamos informes de terceros |
+
 
 ---
 
