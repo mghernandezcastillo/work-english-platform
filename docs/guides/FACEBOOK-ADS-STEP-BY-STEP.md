@@ -137,50 +137,82 @@ Debajo del objetivo de rendimiento aparecen estos campos adicionales:
 
 ### 3.4 — Controles de público
 
-Esta sección controla **a quién** se le muestra el anuncio.
+Esta sección controla **dónde geográficamente** se muestra el anuncio. Aparece primero con una vista simple, pero si haces clic en **"Ocultar opciones"/"Mostrar opciones"** verás más campos:
 
 | Campo | Qué hacer |
 |-------|-----------|
-| **Lugares** | Debe decir **Colombia**. Si no, haz clic y escribe "Colombia" y selecciónalo |
+| **Lugares** | Debe decir **Colombia**. Si no, haz clic en "Editar" y escribe "Colombia" y selecciónalo |
 
-> Los demás campos (edad, género, intereses detallados) ahora se manejan con **Público Advantage+** (ver abajo). Facebook cambió el sistema — ya no se configura edad y género aquí.
+Si haces clic en **"Mostrar opciones ▼"** (o "Ocultar opciones ▲" si ya está expandido), verás estos campos adicionales:
+
+| Campo | Qué poner |
+|-------|-----------|
+| **Edad mínima** | Cámbiala a **22** (por defecto dice 18, pero nuestro público objetivo son profesionales de 22+ que ya buscan empleo) |
+| **Excluir estos públicos personalizados** | ❌ Déjalo vacío — no tenemos públicos para excluir todavía |
+| **Idiomas** | ✅ Déjalo en **"Todos los idiomas"** — no lo restrinjas |
 
 ---
 
 ### 3.5 — Público Advantage+ ✨
 
-Esta es la configuración de audiencia moderna de Meta. Facebook muestra automáticamente los anuncios a las personas con más probabilidades de hacer clic y visitar tu landing page.
+Esta sección aparece justo debajo de los controles de público. Es el sistema moderno de Meta para configurar tu audiencia. Facebook muestra los anuncios a las personas con más probabilidades de visitar tu landing page, usando tus sugerencias como guía.
+
+Vas a ver estos campos:
 
 | Campo | Qué hacer |
 |-------|-----------|
-| **Sugerencia de público (opcional)** | Clic en **"⊕ Sugerencia de público"** y agrega intereses como guía para que Facebook sepa a quién priorizar |
+| **Incluye estos públicos personalizados** | ❌ Déjalo vacío por ahora. Esto es para audiencias del Pixel o listas de emails — todavía no tenemos suficientes datos |
+| **Edad** | Cambia a **22 - 45** (haz clic en el rango y ajústalo). Nuestro público son adultos jóvenes y de mediana edad que buscan mejorar su inglés para el trabajo |
+| **Sexo** | ✅ Déjalo en **"Todos los sexos"** |
 
-Intereses sugeridos para escribir uno por uno (agrega los que encuentres):
+### Segmentación detallada
+
+En el campo que dice *"Agregar datos demográficos, intereses, comportamientos"*, escribe uno por uno estos intereses y selecciónalos de la lista:
+
+**Intereses de idiomas:**
 - `Duolingo`
-- `Aprender inglés`
-- `English language`
+- `Aprender inglés` o `English language`
+- `Babbel`
+
+**Intereses laborales:**
 - `Empleo` o `Búsqueda de empleo`
 - `LinkedIn`
-- `Call center`
 - `Trabajo remoto`
+- `Call center` (especialmente para la Campaña 3)
 
-> 💡 Con Advantage+ estos intereses son **sugerencias**, no filtros estrictos. Facebook puede mostrar tu anuncio a personas fuera de estos intereses si detecta que van a hacer clic. Esto es **normal y positivo** — deja que el algoritmo optimice.
+**Intereses educativos:**
+- `Educación en línea`
+- `British Council`
+
+> 💡 No todos aparecerán exactamente igual. Escribe la palabra y elige la opción más cercana. Con **5-7 intereses** es suficiente. Si no encuentras alguno, pasa al siguiente.
+
+> 💡 Con Advantage+ activado, estos intereses son **sugerencias para el algoritmo**, no filtros estrictos. Facebook puede mostrar tu anuncio a personas fuera de estos intereses si detecta que van a hacer clic en tu landing. Esto es **normal y positivo** — deja que el algoritmo optimice.
+
+Por último:
 
 | Campo | Qué hacer |
 |-------|-----------|
-| **Guardar público** | Clic en **"Guardar público"** para reutilizarlo en futuras campañas |
+| **Guardar público** | Clic en **"Guardar público"** → ponle nombre: `Colombia 22-45 empleo inglés` → así lo puedes reutilizar en futuras campañas sin configurar todo de nuevo |
 
-> A la derecha de la pantalla verás un panel que dice **"Definición del público"** con una barra de color. Si dice "Amplio" con la barra en verde, **está perfecto**. Un público amplio le da a Facebook más espacio para encontrar clics baratos con presupuestos bajos como $15.000/día.
+> A la derecha de la pantalla verás un panel que dice **"Definición del público"** con una barra de color. Si dice "Amplio" con la barra en verde, **está perfecto**. Un público amplio le da a Facebook más espacio para encontrar clics baratos con presupuestos de $15.000/día.
 
 ---
 
-### 3.6 — Ubicaciones (Placements)
+### 3.6 — Transparencia de anuncios
+
+| Campo | Qué hacer |
+|-------|-----------|
+| **Iniciar verificación** | ❌ **Opcional** — no es necesario para publicar. Puedes hacerlo después si quieres. Es un proceso de Meta para verificar tu identidad como anunciante. No bloquea la publicación del anuncio |
+
+---
+
+### 3.7 — Ubicaciones (Placements)
 
 | Campo | Qué elegir |
 |-------|-----------|
 | **Ubicaciones Advantage+** | ✅ **Dejarlo activado** (es la opción por defecto) |
 
-> Facebook decide automáticamente dónde mostrar tu anuncio (Feed, Stories, Reels, etc.) según dónde sea más barato conseguir clics. Es más eficiente que elegir manualmente, especialmente con presupuestos bajos.
+> Facebook decide automáticamente dónde mostrar tu anuncio (Feed, Stories, Reels, etc.) según dónde sea más barato conseguir visitas a tu landing. Es más eficiente que elegir manualmente, especialmente con presupuestos bajos.
 
 ---
 
