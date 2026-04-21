@@ -160,14 +160,19 @@ export default function LandingPage() {
           {/* Hero app mockup */}
           <div className="hero-mockup">
             <div className="hero-mockup-phone">
-              <img
-                src="/images/hero-simulation.jpeg"
-                alt="Simulación de entrevista en English for Work"
-                loading="eager"
-              />
+              <picture>
+                <source srcSet="/images/hero-simulation.webp" type="image/webp" />
+                <img
+                  src="/images/hero-simulation.jpeg"
+                  alt="Simulación de entrevista en English for Work"
+                  loading="eager"
+                  width="480"
+                  height="960"
+                />
+              </picture>
             </div>
             <p className="hero-mockup-caption">
-              👆 Así se ve una simulación real dentro de la app
+              📱 Practica entrevistas reales antes de vivirlas
             </p>
           </div>
 
