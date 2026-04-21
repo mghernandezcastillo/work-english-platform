@@ -353,27 +353,86 @@ https://englishforworkapp.com/ingles-para-trabajo?utm_source=facebook&utm_medium
 
 Esta es la sección más importante — aquí va la imagen y los textos que la persona ve.
 
-Haz clic en **"Configurar contenido ▼"** para expandir los campos.
+Haz clic en **"Configurar contenido ▼"**. Se abre un modal con **5 pestañas** a la izquierda. Ve una por una en orden:
 
-**Paso A — Subir la imagen:**
+---
 
-1. En el AdCenter, haz clic en **"⬇ Descargar imagen"** para guardar la imagen del anuncio en tu computador
-2. En el Ads Manager, haz clic en **"Agregar elementos"** o **"Agregar imagen"**
-3. Sube la imagen que acabas de descargar
-4. Verifica que se vea bien en la vista previa a la derecha
+#### Pestaña 1 — "Configuración del contenido"
 
-**Paso B — Pegar los textos:**
+Esta pantalla muestra la URL de origen (ya la pusiste antes) y las extensiones del anuncio.
 
-Uno por uno, ve al AdCenter y usa los botones **"Copiar"** para copiar cada texto:
+| Campo | Qué hacer |
+|-------|-----------|
+| **URL de origen** | ✅ Ya debe mostrar la URL de tu landing: `https://englishforworkapp.com/ingles-para-trabajo?...` — si es correcta, no la toques |
+| **Enlaces al sitio** | ❌ Déjalo **desactivado**. Los botones "Ver más", "Descubre más", etc. agregan links adicionales al anuncio. Nosotros solo queremos un destino: la landing page |
+| **Lo más destacado del sitio web** | ❌ Déjalo **desactivado** (toggle apagado). Facebook intentaría tomar automáticamente contenido de la landing, pero nuestro contenido ya está optimizado en el AdCenter |
+
+Haz clic en **"Siguiente"** (o en la pestaña **"Contenido multi..."** a la izquierda).
+
+---
+
+#### Pestaña 2 — "Contenido multimedia"
+
+Aquí subes la **imagen** del anuncio.
+
+1. **Antes:** Ve al **AdCenter** (`/admin/anuncios`) en otra pestaña
+2. Encuentra el anuncio (ej: "Ad 01 — ¿Pierdes trabajos?")
+3. Haz clic en el botón **"⬇ Descargar imagen"** para guardar la imagen en tu computador
+4. **Vuelve al Ads Manager** y haz clic en **"Agregar imagen"**
+5. Selecciona **"Subir"** → busca la imagen que descargaste → súbela
+6. La imagen aparecerá en la vista previa
+
+> 💡 Si la imagen que diseñamos es de **1080×1080 px** (cuadrada), Facebook la mostrará bien en Feed, Stories y la mayoría de ubicaciones. No necesitas recortarla.
+
+Haz clic en **"Siguiente"** (o en la pestaña **"Ajustar"** a la izquierda).
+
+---
+
+#### Pestaña 3 — "Ajustar"
+
+Aquí puedes recortar la imagen para diferentes formatos (Feed, Stories, Reels).
+
+| Qué hacer |
+|-----------|
+| ✅ **No toques nada** — Facebook ajusta automáticamente la imagen para cada formato. Solo revisa que no se corte nada importante en la vista previa. Si se ve bien → pasa a la siguiente pestaña |
+
+> Si algún formato corta texto importante de la imagen, puedes ajustar el recorte manualmente aquí. Pero normalmente las imágenes de 1080×1080 se ven bien en todos los formatos.
+
+Haz clic en **"Siguiente"** (o en la pestaña **"Texto"** a la izquierda).
+
+---
+
+#### Pestaña 4 — "Texto" ⭐
+
+Esta es la pestaña más importante — aquí pegas todos los textos del anuncio.
+
+Uno por uno, ve al **AdCenter** y usa los botones **"Copiar"** para copiar cada texto:
 
 | Campo del Ads Manager | Campo del AdCenter | Qué hacer |
 |----------------------|-------------------|-----------|
-| **Texto principal** | 📝 Texto principal | Clic "Copiar" en AdCenter → Pegar aquí. Este es el texto largo que aparece arriba de la imagen |
-| **Título** | 🏷 Título (Headline) | Clic "Copiar" en AdCenter → Pegar aquí. Es la línea en negrita debajo de la imagen |
-| **Descripción** | 📄 Descripción | Clic "Copiar" en AdCenter → Pegar aquí. Es la línea pequeña debajo del título |
-| **Llamada a la acción** | 🖱 Botón CTA | Selecciona del menú desplegable lo que diga el AdCenter: **"Más información"** o **"Registrarse"** |
+| **Texto principal** | 📝 Texto principal | Clic "Copiar" en AdCenter → Pegar aquí. Este es el texto largo que aparece **arriba de la imagen** en el feed |
+| **Título** | 🏷 Título (Headline) | Clic "Copiar" en AdCenter → Pegar aquí. Es la **línea en negrita debajo de la imagen** |
+| **Descripción** | 📄 Descripción | Clic "Copiar" en AdCenter → Pegar aquí. Es la **línea pequeña gris debajo del título** |
+| **Llamada a la acción** | 🖱 Botón CTA | Selecciona del menú desplegable: **"Más información"** (para la mayoría de nuestros anuncios) |
 
-> 💡 Después de pegar todo, revisa la **Vista previa** a la derecha de la pantalla. Haz clic en "Vista previa avanzada" para ver cómo se verá en Feed, Stories y otros formatos.
+> ⚠️ Pega cada texto **exactamente** como sale del AdCenter. No le cambies palabras, ni agregues emojis extra. Los textos ya están optimizados para nuestro público colombiano.
+
+Haz clic en **"Siguiente"** (o en la pestaña **"Mejoras"** a la izquierda).
+
+---
+
+#### Pestaña 5 — "Mejoras"
+
+Aquí Facebook ofrece optimizaciones automáticas del anuncio.
+
+| Campo | Qué hacer |
+|-------|-----------|
+| **Mejoras estándar** | ✅ Déjalo como viene — Facebook puede hacer ajustes menores al brillo o contraste de la imagen para optimizar el rendimiento |
+| **Advantage+ Creative** (si aparece) | ✅ Déjalo activado — optimiza automáticamente el anuncio para cada persona |
+
+Haz clic en **"Listo"** o **"Guardar"** para cerrar el modal y volver a la pantalla principal del anuncio.
+
+> 💡 Después de cerrar el modal, revisa la **Vista previa** a la derecha de la pantalla principal. Haz clic en **"Vista previa avanzada"** para ver cómo se verá tu anuncio en Feed, Stories, Reels y otros formatos.
 
 ---
 
