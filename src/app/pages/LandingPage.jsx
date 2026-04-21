@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../../lib/supabase'
 import { brand } from '../../lib/brand'
 import { useAppSettings } from '../../context/AppSettingsContext'
@@ -7,6 +7,68 @@ import lp1 from '../../data/landing/lp1.json'
 import './LandingPage.css'
 
 const copy = lp1.lp1
+
+/* ── Countdown Timer ── */
+function CountdownTimer() {
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+
+  useEffect(() => {
+    // Set deadline: 5 days from first visit (persisted in localStorage)
+    let deadline = localStorage.getItem('efw_offer_deadline')
+    if (!deadline) {
+      const d = new Date()
+      d.setDate(d.getDate() + 5)
+      deadline = d.toISOString()
+      localStorage.setItem('efw_offer_deadline', deadline)
+    }
+
+    const target = new Date(deadline).getTime()
+
+    const tick = () => {
+      const now = Date.now()
+      const diff = Math.max(0, target - now)
+      setTimeLeft({
+        days: Math.floor(diff / 86400000),
+        hours: Math.floor((diff % 86400000) / 3600000),
+        minutes: Math.floor((diff % 3600000) / 60000),
+        seconds: Math.floor((diff % 60000) / 1000),
+      })
+    }
+
+    tick()
+    const id = setInterval(tick, 1000)
+    return () => clearInterval(id)
+  }, [])
+
+  const pad = (n) => String(n).padStart(2, '0')
+
+  return (
+    <div className="countdown-wrap">
+      <p className="countdown-label">⏰ Este precio termina en:</p>
+      <div className="countdown-timer">
+        <div className="countdown-unit">
+          <span className="countdown-number">{pad(timeLeft.days)}</span>
+          <span className="countdown-text">días</span>
+        </div>
+        <span className="countdown-sep">:</span>
+        <div className="countdown-unit">
+          <span className="countdown-number">{pad(timeLeft.hours)}</span>
+          <span className="countdown-text">horas</span>
+        </div>
+        <span className="countdown-sep">:</span>
+        <div className="countdown-unit">
+          <span className="countdown-number">{pad(timeLeft.minutes)}</span>
+          <span className="countdown-text">min</span>
+        </div>
+        <span className="countdown-sep">:</span>
+        <div className="countdown-unit">
+          <span className="countdown-number">{pad(timeLeft.seconds)}</span>
+          <span className="countdown-text">seg</span>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function StickyCtaBar() {
   const [visible, setVisible] = useState(false)
@@ -207,15 +269,69 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── TESTIMONIALS (moved before price for better flow) ── */}
+      {testimonials.length > 0 && (
+        <section className="landing-section landing-testimonials">
+          <div className="landing-container">
+            <h2 className="landing-h2 text-center">Lo que dicen nuestros estudiantes</h2>
+            <div className="testimonials-grid">
+              {testimonials.map((t, i) => {
+                const initials = t.display_name
+                  .split(' ')
+                  .map(w => w[0])
+                  .join('')
+                  .toUpperCase()
+                  .slice(0, 2)
+                const avatarColors = ['#6366f1','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899']
+                return (
+                  <div key={i} className="testimonial-card">
+                    <div className="testimonial-header">
+                      <div
+                        className="testimonial-avatar"
+                        style={{ background: avatarColors[i % avatarColors.length] }}
+                      >
+                        {initials}
+                      </div>
+                      <div>
+                        <div className="testimonial-author-name">{t.display_name}</div>
+                        {t.city && <div className="testimonial-city">{t.city}</div>}
+                        <div className="testimonial-stars">{stars(t.rating)}</div>
+                      </div>
+                    </div>
+                    <p className="testimonial-text">"{t.text}"</p>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── MID-PAGE CTA (after testimonials, before price) ── */}
+      <section className="landing-section landing-midcta">
+        <div className="landing-container text-center">
+          <p className="midcta-text">Ellos ya están practicando. <strong>¿Y tú?</strong></p>
+          <a
+            href={ctaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-cta btn-cta-hero"
+            onClick={() => pixel.initiateCheckout(47000, 'COP')}
+          >
+            Quiero empezar hoy →
+          </a>
+        </div>
+      </section>
+
       {/* ── PRICE + CTA ── */}
       <section className="landing-section landing-price">
         <div className="landing-container">
           <div className="price-card">
             <div className="price-badge">🔥 Precio de lanzamiento</div>
+            <CountdownTimer />
             <div className="price-original">{copy.price.original}</div>
             <div className="price-current">{copy.price.current}</div>
             <p className="text-sm text-muted">{copy.price.note}</p>
-            <p className="price-subject-change">Precio sujeto a cambios</p>
             <a
               href={ctaUrl}
               target="_blank"
@@ -234,27 +350,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-      {/* ── TESTIMONIALS ── */}
-      {testimonials.length > 0 && (
-        <section className="landing-section landing-testimonials">
-          <div className="landing-container">
-            <h2 className="landing-h2 text-center">Lo que dicen nuestros estudiantes</h2>
-            <div className="testimonials-grid">
-              {testimonials.map((t, i) => (
-                <div key={i} className="testimonial-card">
-                  <div className="testimonial-stars">{stars(t.rating)}</div>
-                  <p className="testimonial-text">"{t.text}"</p>
-                  <div className="testimonial-author">
-                    <strong>{t.display_name}</strong>
-                    {t.city && <span className="text-muted"> · {t.city}</span>}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* ── GUARANTEE ── */}
       <section className="landing-section landing-guarantee">
