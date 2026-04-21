@@ -149,11 +149,11 @@
   align-items: center;
 }
 .hero-mockup-phone {
-  max-width: 260px;
-  width: 70%;
-  aspect-ratio: 1 / 1.2;
+  max-width: 220px;
+  width: 60%;
+  aspect-ratio: 9 / 14;
   overflow: hidden;
-  border-radius: 28px;
+  border-radius: 24px;
   box-shadow:
     0 20px 60px rgba(99, 102, 241, 0.3),
     0 0 80px rgba(99, 102, 241, 0.15),
@@ -161,11 +161,12 @@
   animation: hero-float 4s ease-in-out infinite;
 }
 .hero-mockup-phone img {
-  width: 100%;
+  width: 135%;
   height: 100%;
   object-fit: cover;
-  object-position: top center;
+  object-position: 48% 10%;
   display: block;
+  margin-left: -17.5%;
 }
 .hero-mockup-caption {
   margin-top: var(--space-3);
