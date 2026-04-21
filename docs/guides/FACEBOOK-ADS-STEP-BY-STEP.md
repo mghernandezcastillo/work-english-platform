@@ -111,6 +111,15 @@ Esta es la **primera sección visible**. Aquí defines a dónde quieres enviar a
 
 > ⚠️ Verás dos opciones de rendimiento: "clics en el enlace" y "visitas a la página de destino". **Elige visitas a la página** — esto hace que Facebook solo cuente cuando la landing page carga completamente (el Pixel se dispara). Con "clics en el enlace" Facebook cuenta hasta clics accidentales o de personas con mala conexión que nunca ven tu oferta. Con $15.000/día, necesitamos que cada peso lleve a alguien que realmente vea la landing y el botón de Hotmart.
 
+Debajo del objetivo de rendimiento aparecen estos campos adicionales:
+
+| Campo | Qué hacer |
+|-------|-----------|
+| **Objetivo de costo por resultado** | ❌ **Déjalo vacío** (el campo que dice "X.XXX"). Meta intentará gastar todo el presupuesto para conseguir el mayor número de visitas posible. Si pones un número, Facebook puede dejar de gastar tu presupuesto si el costo por visita supera ese valor |
+| **Reglas de valor** | ❌ **No crear** — déjalo como está. Esto es para negocios con múltiples tipos de conversiones de diferente valor. No lo necesitamos |
+| **Modelo de atribución** | ✅ Déjalo en **"Estándar"** (ya viene seleccionado) |
+| **Contenido dinámico** | ❌ **Déjalo desactivado**. Esto mezcla automáticamente tus textos e imágenes. Nosotros ya tenemos anuncios diseñados específicamente — no queremos que Facebook los reorganice |
+
 ---
 
 ### 3.3 — Presupuesto y calendario
