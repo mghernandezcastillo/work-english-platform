@@ -42,34 +42,63 @@
 }
 
 /* ── CTA BUTTON ── */
+@keyframes lpb-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes lpb-pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(0,255,136,0.35), 0 4px 16px rgba(0,0,0,0.4); }
+  50%       { box-shadow: 0 0 36px rgba(0,255,136,0.65), 0 4px 20px rgba(0,0,0,0.4); }
+}
 .lpb-btn-cta {
-  display: inline-block;
-  background: #00FF88;
-  color: #0a0a0a;
-  font-weight: 700;
-  font-size: 16px;
-  padding: 15px 32px;
-  border-radius: 12px;
+  display: block;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    #00e87a 0%,
+    #00FF88 40%,
+    #a7f3d0 55%,
+    #00FF88 70%,
+    #00e87a 100%
+  );
+  background-size: 200% auto;
+  color: #051a0e;
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  padding: 17px 28px;
+  border-radius: 100px;
   text-decoration: none;
   text-align: center;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 0 20px rgba(0, 255, 136, 0.25);
-  letter-spacing: -0.01em;
+  cursor: pointer;
+  animation:
+    lpb-shimmer 3s linear infinite,
+    lpb-pulse-glow 2.5s ease-in-out infinite;
+  transition: transform 0.15s ease, filter 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+.lpb-btn-cta:active {
+  transform: scale(0.97);
+  filter: brightness(0.92);
 }
 .lpb-btn-cta:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 32px rgba(0, 255, 136, 0.45);
+  filter: brightness(1.05);
 }
 .lpb-btn-full {
-  display: block;
-  width: 100%;
-  font-size: 17px;
-  padding: 16px 24px;
+  font-size: 18px;
+  padding: 18px 28px;
 }
 .lpb-btn-sm {
-  padding: 10px 18px;
+  width: auto;
+  display: inline-block;
+  padding: 11px 20px;
   font-size: 14px;
-  border-radius: 10px;
+  border-radius: 100px;
+  animation: lpb-pulse-glow 2.5s ease-in-out infinite;
+  background: #00FF88;
+  background-size: unset;
 }
 
 /* ═══════════════════════════════════
