@@ -198,6 +198,31 @@ export default function LandingPage() {
           </a>
           <p className="landing-subtext">{copy.hero.subtext}</p>
 
+          {/* Social proof strip — visible above fold (solo 2 por ahora) */}
+          <div className="hero-proof">
+            <div className="hero-proof-item">
+              <strong>36</strong>
+              <span>Lecciones</span>
+            </div>
+            <div className="hero-proof-divider" />
+            <div className="hero-proof-item">
+              <strong>15 min</strong>
+              <span>Por día</span>
+            </div>
+            {/* Ocultos por ahora — descomentar para mostrar:
+            <div className="hero-proof-divider" />
+            <div className="hero-proof-item">
+              <strong>3</strong>
+              <span>Rutas</span>
+            </div>
+            <div className="hero-proof-divider" />
+            <div className="hero-proof-item">
+              <strong>12</strong>
+              <span>Simulaciones</span>
+            </div>
+            */}
+          </div>
+
           {/* Hero app mockup */}
           <div className="hero-mockup">
             <div className="hero-mockup-phone">
@@ -211,29 +236,6 @@ export default function LandingPage() {
             <p className="hero-mockup-caption">
               👆 Así se ve una simulación real dentro de la app
             </p>
-          </div>
-
-          {/* Social proof strip */}
-          <div className="hero-proof">
-            <div className="hero-proof-item">
-              <strong>36</strong>
-              <span>Lecciones</span>
-            </div>
-            <div className="hero-proof-divider" />
-            <div className="hero-proof-item">
-              <strong>3</strong>
-              <span>Rutas</span>
-            </div>
-            <div className="hero-proof-divider" />
-            <div className="hero-proof-item">
-              <strong>12</strong>
-              <span>Simulaciones</span>
-            </div>
-            <div className="hero-proof-divider" />
-            <div className="hero-proof-item">
-              <strong>15 min</strong>
-              <span>Por día</span>
-            </div>
           </div>
         </div>
       </section>

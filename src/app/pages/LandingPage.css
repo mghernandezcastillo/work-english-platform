@@ -164,7 +164,7 @@
 
 /* ─── HERO ─── */
 .landing-hero {
-  padding: var(--space-12) 0 var(--space-10);
+  padding: var(--space-8) 0 var(--space-6);
   background: linear-gradient(180deg, #0B1120 0%, #111827 100%);
   text-align: center;
 }
@@ -193,14 +193,14 @@
 
 /* Hero app mockup */
 .hero-mockup {
-  margin-top: var(--space-6);
+  margin-top: var(--space-4);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 .hero-mockup-phone {
-  max-width: 240px;
-  width: 65%;
+  max-width: 170px;
+  width: 55%;
   overflow: hidden;
   border-radius: 20px;
   box-shadow:
@@ -230,7 +230,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-4);
-  margin-top: var(--space-8);
+  margin-top: var(--space-4);
   flex-wrap: wrap;
 }
 .hero-proof-item {
