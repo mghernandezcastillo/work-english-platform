@@ -220,12 +220,14 @@ export default function LandingPageB() {
             {/* App mockup + mini carousel */}
             <div className="lpb-hero-mockup">
               <div className="lpb-phone-frame">
-                <img
-                  src="/images/hero-simulation.webp"
-                  alt="Simulación de entrevista en English for Work"
-                  loading="eager"
-                  fetchpriority="high"
-                />
+                <div className="lpb-phone-inner">
+                  <img
+                    src="/images/hero-simulation.webp"
+                    alt="Simulación de entrevista en English for Work"
+                    loading="eager"
+                    fetchpriority="high"
+                  />
+                </div>
               </div>
               <MiniCarousel testimonials={testimonials} />
             </div>

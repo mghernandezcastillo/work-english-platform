@@ -172,33 +172,53 @@
   margin-top: 8px;
 }
 
-/* Phone frame — matches reference */
+/* ─── Neon Sweep (same as Landing A) ─── */
+@property --lpb-neon-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes lpb-neon-sweep {
+  to { --lpb-neon-angle: 360deg; }
+}
+@keyframes lpb-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+/* Outer frame: rotating neon border + float */
 .lpb-phone-frame {
   width: 100%;
-  max-width: 180px;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow:
-    0 16px 48px rgba(0, 255, 136, 0.12),
-    0 0 0 1px rgba(255, 255, 255, 0.08);
-  position: relative;
-}
-.lpb-phone-frame::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
+  max-width: 170px;
   border-radius: 22px;
-  background: linear-gradient(135deg, rgba(0,255,136,0.15), transparent 60%);
-  z-index: 0;
-  pointer-events: none;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--lpb-neon-angle),
+    transparent 0%,
+    transparent 65%,
+    rgba(0, 255, 136, 0.4) 76%,
+    #00FF88 83%,
+    #a7f3d0 87%,
+    rgba(0, 255, 136, 0.4) 91%,
+    transparent 97%
+  );
+  animation:
+    lpb-neon-sweep 3.5s linear infinite,
+    lpb-float 4s ease-in-out infinite;
+  box-shadow:
+    0 20px 60px rgba(0, 255, 136, 0.2),
+    0 0 40px rgba(0, 255, 136, 0.08);
+}
+/* Inner phone: fills frame so gradient shows only as border */
+.lpb-phone-inner {
+  overflow: hidden;
+  border-radius: 20px;
+  background: #0a0a0a;
 }
 .lpb-phone-frame img {
   width: 100%;
   height: auto;
   display: block;
-  position: relative;
-  z-index: 1;
-  border-radius: 20px;
 }
 
 /* Mini testimonial carousel below mockup */
