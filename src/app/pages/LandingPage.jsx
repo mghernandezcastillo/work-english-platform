@@ -8,6 +8,44 @@ import './LandingPage.css'
 
 const copy = lp1.lp1
 
+/* ─────────────────────────────────────────────
+   ROTATING WORD CONFIGURATION
+   Swap these words to test different angles.
+───────────────────────────────────────────── */
+const dynamicWords = [
+  'tu trabajo',
+  'entrevistas',
+  'el call center',
+  'tu jefe',
+  'clientes',
+]
+
+/* ── Rotating Word ── */
+function RotatingWord() {
+  const [index, setIndex] = useState(0)
+  const [visible, setVisible] = useState(true)
+
+  useEffect(() => {
+    const cycle = setInterval(() => {
+      setVisible(false)
+      setTimeout(() => {
+        setIndex(i => (i + 1) % dynamicWords.length)
+        setVisible(true)
+      }, 350) // half of CSS transition
+    }, 2600)
+    return () => clearInterval(cycle)
+  }, [])
+
+  return (
+    <span
+      className={`hero-rotating-word ${visible ? 'hero-word--visible' : 'hero-word--hidden'}`}
+    >
+      {dynamicWords[index]}
+    </span>
+  )
+}
+
+
 /* ── Countdown Timer ── */
 function CountdownTimer() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
@@ -144,7 +182,10 @@ export default function LandingPage() {
       <section className="landing-hero">
         <div className="landing-container">
           <span className="landing-tag">{copy.hero.tag}</span>
-          <h1 className="landing-h1">{copy.hero.headline}</h1>
+          <h1 className="landing-h1">
+            El inglés que necesitas para<br />
+            <RotatingWord />
+          </h1>
           <p className="landing-subheadline">{copy.hero.subheadline}</p>
           <a
             href={ctaUrl}
