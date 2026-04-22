@@ -186,7 +186,12 @@ export default function LandingPage() {
             El inglés que necesitas para<br />
             <RotatingWord />
           </h1>
-          <p className="landing-subheadline">{copy.hero.subheadline}</p>
+          <p className="landing-subheadline">
+            ¿Quieres ser contratado en un{' '}
+            <strong className="subheadline-highlight">empleo bilingüe</strong>?{' '}
+            El inglés que necesitas —{' '}
+            <strong className="subheadline-highlight">sin cursos, sin gramática aburrida.</strong>
+          </p>
           <a
             href={ctaUrl}
             target="_blank"

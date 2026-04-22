@@ -185,6 +185,11 @@
   margin: 0 auto var(--space-6);
   line-height: 1.7;
 }
+.subheadline-highlight {
+  color: #F1F5F9;
+  font-weight: 600;
+  font-style: normal;
+}
 .landing-subtext {
   font-size: var(--text-sm);
   color: var(--color-text-subtle);
