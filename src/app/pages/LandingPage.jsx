@@ -15,7 +15,7 @@ const copy = lp1.lp1
 const dynamicWords = [
   'el trabajo que mereces',
   'tu próxima entrevista',
-  'el call center',
+  'call center',
   'hablar con confianza',
   'tu trabajo',
 ]
