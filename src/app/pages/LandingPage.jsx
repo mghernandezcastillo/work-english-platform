@@ -187,10 +187,10 @@ export default function LandingPage() {
             <RotatingWord />
           </h1>
           <p className="landing-subheadline">
-            ¿Quieres ser contratado en un{' '}
-            <strong className="subheadline-highlight">empleo bilingüe</strong>?{' '}
-            El inglés que necesitas —{' '}
-            <strong className="subheadline-highlight">sin cursos, sin gramática aburrida.</strong>
+            Pasa la entrevista, consigue el{' '}
+            <strong className="subheadline-highlight">empleo bilingüe</strong>{' '}
+            y <strong className="subheadline-highlight">destaca en tu trabajo</strong>{' '}
+            — con el inglés exacto que necesitas.
           </p>
           <a
             href={ctaUrl}
