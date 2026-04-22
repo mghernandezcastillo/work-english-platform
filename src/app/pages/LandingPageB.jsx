@@ -184,8 +184,8 @@ export default function LandingPageB() {
                 y consigue trabajo
               </h1>
               <p className="lpb-sub">
-                Practica <strong className="lpb-accent">entrevistas reales</strong> en inglés
-                y consigue el trabajo que quieres.
+                Practica <strong className="lpb-accent">entrevistas</strong> en inglés
+                y <strong className="lpb-accent">consigue el trabajo</strong> que quieres.
               </p>
 
               {/* Pain point callout */}
