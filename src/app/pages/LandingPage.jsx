@@ -197,7 +197,7 @@ export default function LandingPage() {
             className="btn-cta btn-cta-hero"
             onClick={() => pixel.initiateCheckout(copy.price.current, 'USD')}
           >
-            Acceder ahora y empezar hoy →
+            Quiero acceder ahora →
           </a>
           <div className="hero-trust-badges">
             <span className="hero-trust-badge"><span className="hero-trust-icon">✓</span> Pago único</span>
@@ -383,7 +383,7 @@ export default function LandingPage() {
             className="btn-cta btn-cta-hero"
             onClick={() => pixel.initiateCheckout(47000, 'COP')}
           >
-            Acceder ahora y empezar hoy →
+            Quiero acceder ahora →
           </a>
         </div>
       </section>
@@ -404,7 +404,7 @@ export default function LandingPage() {
               className="btn-cta btn-cta-hero"
               onClick={() => pixel.initiateCheckout(47000, 'COP')}
             >
-              Acceder ahora y empezar hoy →
+              Quiero acceder ahora →
             </a>
             <div className="payment-methods">
               <span className="payment-methods-label">Pago seguro con:</span>
@@ -461,7 +461,7 @@ export default function LandingPage() {
             className="btn-cta btn-cta-hero"
             onClick={() => pixel.initiateCheckout(copy.price.current, 'USD')}
           >
-            Acceder ahora y empezar hoy →
+            Quiero acceder ahora →
           </a>
           <div className="trust-list" style={{ marginTop: 16 }}>
             {copy.finalCta.trust.map((t, i) => <span key={i}>{t}</span>)}
