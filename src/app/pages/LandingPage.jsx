@@ -13,11 +13,9 @@ const copy = lp1.lp1
    Swap these words to test different angles.
 ───────────────────────────────────────────── */
 const dynamicWords = [
-  'el trabajo que mereces',
+  'conseguir trabajo',
   'tu próxima entrevista',
-  'call center',
-  'hablar con confianza',
-  'tu trabajo',
+  'mejorar tus ingresos',
 ]
 
 /* ── Rotating Word ── */
