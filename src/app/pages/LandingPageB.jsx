@@ -180,8 +180,9 @@ export default function LandingPageB() {
               <span className="lpb-tag">🇺🇸 Inglés para trabajo</span>
               <h1 className="lpb-h1">
                 Prepárate para tu{' '}
-                <span className="lpb-highlight">entrevista en inglés</span>{' '}
-                y consigue trabajo
+                <span className="lpb-highlight">entrevista</span>{' '}en inglés
+                {' '}y{' '}
+                <span className="lpb-highlight">consigue trabajo</span>
               </h1>
               <p className="lpb-sub">
                 Practica <strong className="lpb-accent">entrevistas</strong> en inglés
