@@ -212,7 +212,7 @@ export default function LandingPageB() {
                 className="lpb-btn-cta"
                 onClick={() => pixel.initiateCheckout(47000, 'COP')}
               >
-                Acceder ahora y empezar hoy →
+                Quiero acceder ahora →
               </a>
               <p className="lpb-trust-line">✓ Pago único · ✓ Acceso de por vida · ✓ Garantía 7 días</p>
             </div>
@@ -241,7 +241,7 @@ export default function LandingPageB() {
           <div className="lpb-proof-avatar">👥</div>
           <div className="lpb-proof-content">
             <span className="lpb-proof-text">
-              Más de 500 personas ya están practicando y consiguiendo trabajo.
+              Personas como tú ya están practicando y consiguiendo trabajo.
             </span>
             <span className="lpb-proof-stars">★★★★★</span>
           </div>
