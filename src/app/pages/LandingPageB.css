@@ -62,7 +62,7 @@
     #00e87a 100%
   );
   background-size: 200% auto;
-  color: #051a0e;
+  color: #0a1a0f;
   font-weight: 800;
   font-size: 17px;
   letter-spacing: -0.01em;
@@ -84,7 +84,12 @@
 }
 .lpb-btn-cta:hover {
   transform: translateY(-2px);
-  filter: brightness(1.05);
+  filter: brightness(1.08);
+}
+@media (prefers-reduced-motion: reduce) {
+  .lpb-btn-cta {
+    animation: lpb-pulse-glow 2.5s ease-in-out infinite;
+  }
 }
 .lpb-btn-full {
   font-size: 18px;
