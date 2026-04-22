@@ -198,7 +198,7 @@ export default function LandingPage() {
           </a>
           <p className="landing-subtext">{copy.hero.subtext}</p>
 
-          {/* Social proof strip — visible above fold (solo 2 por ahora) */}
+          {/* Social proof strip — visible above fold */}
           <div className="hero-proof">
             <div className="hero-proof-item">
               <strong>36</strong>
@@ -209,7 +209,6 @@ export default function LandingPage() {
               <strong>15 min</strong>
               <span>Por día</span>
             </div>
-            {/* Ocultos por ahora — descomentar para mostrar:
             <div className="hero-proof-divider" />
             <div className="hero-proof-item">
               <strong>3</strong>
@@ -220,7 +219,6 @@ export default function LandingPage() {
               <strong>12</strong>
               <span>Simulaciones</span>
             </div>
-            */}
           </div>
 
           {/* Hero app mockup */}
