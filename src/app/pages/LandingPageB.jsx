@@ -184,8 +184,8 @@ export default function LandingPageB() {
                 y consigue trabajo
               </h1>
               <p className="lpb-sub">
-                Practica <strong className="lpb-accent">conversaciones reales</strong> con IA
-                y responde con seguridad en tu entrevista.
+                Practica <strong className="lpb-accent">entrevistas reales</strong> en inglés
+                y consigue el trabajo que quieres.
               </p>
 
               {/* Pain point callout */}
