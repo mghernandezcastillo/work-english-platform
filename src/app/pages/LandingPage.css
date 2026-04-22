@@ -26,21 +26,41 @@
 /* ─── Rotating Word ─── */
 .hero-rotating-word {
   display: inline-block;
+  position: relative;
   color: #10B981;
   background: rgba(16, 185, 129, 0.12);
-  border-bottom: 3px solid #10B981;
   border-radius: 4px;
-  padding: 0 6px 2px;
+  padding: 0 6px 6px;
   transition: opacity 0.35s ease, transform 0.35s ease;
   will-change: opacity, transform;
 }
+/* Underline as independent animated element */
+.hero-rotating-word::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 6px;
+  right: 6px;
+  height: 3px;
+  background: #10B981;
+  border-radius: 2px;
+  transition: opacity 0.4s ease 0.15s, transform 0.4s ease 0.15s;
+}
 .hero-word--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.hero-word--visible::after {
   opacity: 1;
   transform: translateY(0);
 }
 .hero-word--hidden {
   opacity: 0;
   transform: translateY(10px);
+}
+.hero-word--hidden::after {
+  opacity: 0;
+  transform: translateY(5px); /* starts below, slides up into place */
 }
 .landing-h2 {
   font-size: clamp(22px, 4vw, 32px);
