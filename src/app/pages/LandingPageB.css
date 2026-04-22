@@ -28,7 +28,8 @@
   line-height: 1.25;
 }
 .lpb-accent {
-  color: #00FF88;
+  color: #FFFFFF;
+  font-weight: 700;
 }
 .lpb-sub {
   color: #94A3B8;
@@ -36,7 +37,7 @@
   line-height: 1.5;
 }
 .lpb-highlight {
-  color: #00FF88;
+  color: #FFFFFF;
   font-weight: 800;
 }
 
