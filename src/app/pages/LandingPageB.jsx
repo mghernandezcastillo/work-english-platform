@@ -142,8 +142,14 @@ function FAQItem({ q, a }) {
 }
 
 
+const FALLBACK_TESTIMONIALS = [
+  { display_name: 'Christian S.', city: 'Colombia', rating: 5, text: 'Lo que más me gustó es que no enseña inglés por enseñar. Se nota que está enfocada en ayudarte con entrevistas.' },
+  { display_name: 'Marcela R.', city: 'Colombia', rating: 5, text: 'Me pareció muy buena porque se va directo a cosas útiles. Siento que sí puede ayudar a alguien a prepararse mejor.' },
+  { display_name: 'Raquel C.', city: 'Colombia', rating: 5, text: 'Me encanta que da respuestas sugeridas. Es como tener más claridad para entrevistas y situaciones laborales.' },
+]
+
 export default function LandingPageB() {
-  const [testimonials, setTestimonials] = useState([])
+  const [testimonials, setTestimonials] = useState(FALLBACK_TESTIMONIALS)
   const { settings } = useAppSettings()
   const ctaUrl = settings.hotmart_checkout_url || '#'
 
@@ -157,7 +163,7 @@ export default function LandingPageB() {
       .eq('show_on_landing', true)
       .order('display_order')
       .limit(3)
-      .then(({ data }) => setTestimonials(data || []))
+      .then(({ data }) => { if (data?.length) setTestimonials(data) })
   }, [])
 
   const stars = (n) => '★'.repeat(n)
