@@ -161,9 +161,12 @@ export default function LandingPage() {
           <div className="hero-mockup">
             <div className="hero-mockup-phone">
               <img
-                src="/images/hero-simulation.jpeg"
+                src="/images/hero-simulation.webp"
                 alt="Simulación de entrevista en English for Work"
                 loading="eager"
+                width="600"
+                height="1067"
+                fetchpriority="high"
               />
             </div>
             <p className="hero-mockup-caption">
@@ -248,17 +251,17 @@ export default function LandingPage() {
           </p>
           <div className="demo-screenshots">
             <div className="demo-phone">
-              <img src="/images/demo-phrases.png" alt="Frases clave con audio" loading="lazy" />
+              <img src="/images/demo-phrases.webp" alt="Frases clave con audio" loading="lazy" width="400" height="711" />
               <span className="demo-label">📚 Frases listas para usar</span>
               <span className="demo-sublabel">Escucha pronunciación nativa en cada frase</span>
             </div>
             <div className="demo-phone demo-phone--highlight">
-              <img src="/images/demo-simulation.png" alt="Simulación de entrevista" loading="lazy" />
+              <img src="/images/demo-simulation.webp" alt="Simulación de entrevista" loading="lazy" width="400" height="711" />
               <span className="demo-label">🎤 Simulaciones reales</span>
               <span className="demo-sublabel">Practica con reclutadores virtuales</span>
             </div>
             <div className="demo-phone">
-              <img src="/images/demo-completion.png" alt="Lección completada" loading="lazy" />
+              <img src="/images/demo-completion.webp" alt="Lección completada" loading="lazy" width="400" height="711" />
               <span className="demo-label">🏆 Progreso visible</span>
               <span className="demo-sublabel">Cada lección suma XP y logros</span>
             </div>
