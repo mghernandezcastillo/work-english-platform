@@ -91,9 +91,10 @@
 .lpb-hero-mockup {
   flex: 0 0 42%;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   padding-top: 36px;
+  gap: 0;
 }
 .lpb-tag {
   display: inline-block;
