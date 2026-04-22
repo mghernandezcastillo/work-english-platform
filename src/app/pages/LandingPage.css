@@ -39,12 +39,20 @@
   content: '';
   position: absolute;
   bottom: 2px;
-  left: 6px;
-  right: 6px;
+  left: 0;
+  right: 0;
   height: 3px;
-  background: #10B981;
-  border-radius: 2px;
-  transition: opacity 0.4s ease 0.15s, transform 0.4s ease 0.15s;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #10B981 25%,
+    #34D399 55%,
+    #10B981 80%,
+    transparent 100%
+  );
+  border-radius: 99px;
+  box-shadow: 0 1px 10px rgba(16, 185, 129, 0.55);
+  transition: opacity 0.45s ease 0.18s, transform 0.45s ease 0.18s;
 }
 .hero-word--visible {
   opacity: 1;
