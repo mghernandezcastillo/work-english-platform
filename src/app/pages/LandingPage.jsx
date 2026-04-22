@@ -355,6 +355,14 @@ export default function LandingPage() {
             >
               {copy.hero.cta}
             </a>
+            <div className="payment-methods">
+              <span className="payment-methods-label">Pago seguro con:</span>
+              <div className="payment-logos">
+                <img src="/paymentmethods/nequi.svg"        alt="Nequi"          width="64" height="24" loading="lazy" />
+                <img src="/paymentmethods/pse.webp"         alt="PSE"            width="48" height="24" loading="lazy" />
+                <img src="/paymentmethods/visa-mastercard.png" alt="Visa Mastercard" width="80" height="24" loading="lazy" />
+              </div>
+            </div>
             <div className="trust-list">
               {copy.finalCta.trust.map((t, i) => <span key={i}>{t}</span>)}
             </div>
