@@ -28,6 +28,7 @@ import Vocabulary from './app/pages/Vocabulary'
 
 // Lazy-loaded pages (code splitting — reduces initial bundle ~30%)
 const LandingPage = lazy(() => import('./app/pages/LandingPage'))
+const LandingPageB = lazy(() => import('./app/pages/LandingPageB'))
 const Simulations = lazy(() => import('./app/pages/Simulations'))
 const Flashcards = lazy(() => import('./app/pages/Flashcards'))
 const AdminDashboard = lazy(() => import('./app/admin/AdminDashboard'))
@@ -120,6 +121,7 @@ function AppRoutes() {
       {/* Public landing pages */}
       <Route path="/ingles-para-trabajo" element={<LandingPage />} />
       <Route path="/ingles-call-center" element={<LandingPage />} />
+      <Route path="/prueba-landing" element={<LandingPageB />} />
 
       {/* Auth-only no-layout pages */}
       <Route path="/onboarding" element={<OnboardingGuard />} />

@@ -85,30 +85,54 @@
 /* ─── CTA BUTTON ─── */
 .btn-cta {
   display: inline-block;
-  background: var(--color-primary);
-  color: white;
-  font-weight: var(--font-bold);
+  background: #00C96B;
+  color: #fff;
+  font-weight: 700;
   font-size: var(--text-base);
   padding: 16px 32px;
-  border-radius: var(--radius-full);
+  border-radius: 12px;
   text-decoration: none;
-  transition: all var(--transition);
-  box-shadow: 0 4px 20px rgba(16,185,129,0.35);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 0 24px rgba(0, 201, 107, 0.3);
   cursor: pointer;
   border: none;
+  letter-spacing: -0.01em;
 }
 .btn-cta:hover {
-  background: var(--color-primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(16,185,129,0.4);
+  box-shadow: 0 0 36px rgba(0, 201, 107, 0.5);
 }
 .btn-cta:active { transform: translateY(0); }
 .btn-cta-hero {
-  font-size: var(--text-lg);
+  font-size: 17px;
   padding: 18px 40px;
   display: block;
   width: fit-content;
   margin: 0 auto;
+}
+
+/* ─── Hero Trust Badges ─── */
+.hero-trust-badges {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.hero-trust-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #CBD5E1;
+}
+.hero-trust-icon {
+  color: #00C96B;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 /* ─── STICKY CTA ─── */
