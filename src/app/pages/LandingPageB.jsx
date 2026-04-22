@@ -201,10 +201,10 @@ export default function LandingPageB() {
 
               {/* Feature checklist */}
               <ul className="lpb-checklist">
-                <li><span className="lpb-check">✅</span> Simulaciones de entrevistas reales</li>
-                <li><span className="lpb-check">✅</span> Respuestas sugeridas y feedback</li>
-                <li><span className="lpb-check">✅</span> Mejora tu fluidez y confianza</li>
-                <li><span className="lpb-check">✅</span> Contenido 100% enfocado en trabajo</li>
+                <li><span className="lpb-check-icon"></span> Simulaciones de entrevistas reales</li>
+                <li><span className="lpb-check-icon"></span> Respuestas sugeridas y feedback</li>
+                <li><span className="lpb-check-icon"></span> Mejora tu fluidez y confianza</li>
+                <li><span className="lpb-check-icon"></span> Contenido 100% enfocado en trabajo</li>
               </ul>
 
               <a
