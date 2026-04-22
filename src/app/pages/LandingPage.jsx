@@ -14,10 +14,10 @@ const copy = lp1.lp1
 ───────────────────────────────────────────── */
 const dynamicWords = [
   'tu trabajo',
-  'entrevistas',
+  'tu próxima entrevista',
   'el call center',
-  'tu jefe',
-  'clientes',
+  'hablar con confianza',
+  'el trabajo que mereces',
 ]
 
 /* ── Rotating Word ── */
