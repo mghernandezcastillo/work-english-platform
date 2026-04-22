@@ -97,6 +97,36 @@ function StickyCtaBar({ ctaUrl }) {
   )
 }
 
+/* ── Mini Testimonial Carousel (hero sidebar) ── */
+function MiniCarousel({ testimonials }) {
+  const [idx, setIdx] = useState(0)
+
+  useEffect(() => {
+    if (testimonials.length < 2) return
+    const id = setInterval(() => setIdx(i => (i + 1) % testimonials.length), 4000)
+    return () => clearInterval(id)
+  }, [testimonials.length])
+
+  if (!testimonials.length) return null
+  const t = testimonials[idx]
+  const stars = n => '★'.repeat(n)
+
+  return (
+    <div className="lpb-mini-carousel">
+      <div className="lpb-mini-card" key={idx}>
+        <div className="lpb-mini-stars">{stars(t.rating)}</div>
+        <p className="lpb-mini-text">"{t.text.length > 90 ? t.text.slice(0, 90) + '…' : t.text}"</p>
+        <span className="lpb-mini-name">— {t.display_name}{t.city ? `, ${t.city}` : ''}</span>
+      </div>
+      <div className="lpb-mini-dots">
+        {testimonials.map((_, i) => (
+          <span key={i} className={`lpb-mini-dot ${i === idx ? 'active' : ''}`} onClick={() => setIdx(i)} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 /* ── FAQ Item ── */
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false)
@@ -181,7 +211,7 @@ export default function LandingPageB() {
               <p className="lpb-trust-line">✓ Pago único · ✓ Acceso de por vida · ✓ Garantía 7 días</p>
             </div>
 
-            {/* App mockup */}
+            {/* App mockup + mini carousel */}
             <div className="lpb-hero-mockup">
               <div className="lpb-phone-frame">
                 <img
@@ -191,6 +221,7 @@ export default function LandingPageB() {
                   fetchpriority="high"
                 />
               </div>
+              <MiniCarousel testimonials={testimonials} />
             </div>
           </div>
         </div>
