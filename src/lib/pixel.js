@@ -1,6 +1,6 @@
 /**
  * Facebook Meta Pixel helper
- * Pixel ID: 1789279795363607
+ * Pixel ID: 1292753856358206
  *
  * Usage:
  *   pixel.viewContent('English for Work Landing')
@@ -9,7 +9,7 @@
  *   pixel.purchase({ value: 37, currency: 'USD' })
  */
 
-const PIXEL_ID = '1789279795363607'
+const PIXEL_ID = '1292753856358206'
 
 function fbq(...args) {
   if (typeof window !== 'undefined' && window.fbq) {
