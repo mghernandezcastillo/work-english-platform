@@ -191,6 +191,16 @@
   margin-top: var(--space-3);
 }
 
+/* ─── Hero Mockup Neon Sweep ─── */
+@property --neon-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes neon-sweep {
+  to { --neon-angle: 360deg; }
+}
+
 /* Hero app mockup */
 .hero-mockup {
   margin-top: var(--space-4);
@@ -198,16 +208,34 @@
   flex-direction: column;
   align-items: center;
 }
-.hero-mockup-phone {
+/* Outer frame: carries the rotating neon border + float */
+.hero-mockup-frame {
   max-width: 170px;
   width: 55%;
+  border-radius: 22px;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--neon-angle),
+    transparent 0%,
+    transparent 65%,
+    rgba(16, 185, 129, 0.4) 76%,
+    #34D399 83%,
+    #a7f3d0 87%,
+    rgba(16, 185, 129, 0.4) 91%,
+    transparent 97%
+  );
+  animation:
+    neon-sweep 3.5s linear infinite,
+    hero-float 4s ease-in-out infinite;
+  box-shadow:
+    0 20px 60px rgba(16, 185, 129, 0.2),
+    0 0 40px rgba(16, 185, 129, 0.08);
+}
+/* Inner phone: fills frame so gradient shows only as border */
+.hero-mockup-phone {
   overflow: hidden;
   border-radius: 20px;
-  box-shadow:
-    0 20px 60px rgba(99, 102, 241, 0.3),
-    0 0 80px rgba(99, 102, 241, 0.15),
-    0 0 0 1px rgba(99, 102, 241, 0.2);
-  animation: hero-float 4s ease-in-out infinite;
+  background: #0F172A;
 }
 .hero-mockup-phone img {
   width: 100%;
