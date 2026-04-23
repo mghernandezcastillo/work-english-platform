@@ -246,15 +246,9 @@ export default function LandingPageB() {
 
       {/* ── SOCIAL PROOF BAR ── */}
       <div className="lpb-proof-bar">
-        <div className="lpb-proof-inner">
-          <div className="lpb-proof-avatar">👥</div>
-          <div className="lpb-proof-content">
-            <span className="lpb-proof-text">
-              Personas como tú ya están practicando y consiguiendo trabajo.
-            </span>
-            <span className="lpb-proof-stars">★★★★★</span>
-          </div>
-        </div>
+        <span className="lpb-proof-avatar">👥</span>
+        <span className="lpb-proof-stars">★★★★★</span>
+        <span className="lpb-proof-text">Personas como tú ya consiguiendo trabajo.</span>
       </div>
 
       {/* ── FEATURES ── */}
