@@ -118,10 +118,10 @@ function AppRoutes() {
       <Route path="/forgot-password" element={<PublicOnly><ForgotPassword /></PublicOnly>} />
       <Route path="/reset-password" element={<ResetPassword />} />
 
-      {/* Public landing pages */}
-      <Route path="/ingles-para-trabajo" element={<LandingPage />} />
-      <Route path="/ingles-call-center" element={<LandingPage />} />
-      <Route path="/prueba-landing" element={<LandingPageB />} />
+      {/* Public landing pages — swap con VITE_ACTIVE_LANDING=A|B en .env */}
+      <Route path="/ingles-para-trabajo" element={import.meta.env.VITE_ACTIVE_LANDING === 'B' ? <LandingPageB /> : <LandingPage />} />
+      <Route path="/ingles-call-center"  element={<LandingPage />} />
+      <Route path="/prueba-landing"      element={<LandingPageB />} />
 
       {/* Auth-only no-layout pages */}
       <Route path="/onboarding" element={<OnboardingGuard />} />
