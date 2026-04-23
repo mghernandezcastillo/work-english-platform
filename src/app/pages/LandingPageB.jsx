@@ -199,24 +199,33 @@ export default function LandingPageB() {
                 </div>
               </div>
 
-              {/* Feature checklist */}
-              <ul className="lpb-checklist">
-                <li><span className="lpb-check-icon"></span> Simulaciones de entrevistas reales</li>
-                <li><span className="lpb-check-icon"></span> Respuestas sugeridas y feedback</li>
-                <li><span className="lpb-check-icon"></span> Mejora tu fluidez y confianza</li>
-                <li><span className="lpb-check-icon"></span> Contenido 100% enfocado en trabajo</li>
-              </ul>
-
-              <a
-                href={ctaUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="lpb-btn-cta"
-                onClick={() => pixel.initiateCheckout(47000, 'COP')}
-              >
-                Quiero acceder ahora →
-              </a>
-              <p className="lpb-trust-line">✓ Pago único · ✓ Acceso de por vida · ✓ Garantía 7 días</p>
+              {/* Compact pricing card — replaces standalone button */}
+              <div className="lpb-hero-price-card">
+                <div className="lpb-hpc-badge">🔥 Oferta por lanzamiento</div>
+                <div className="lpb-hpc-body">
+                  <ul className="lpb-hpc-list">
+                    <li><span className="lpb-check-icon"></span>Simulaciones de entrevistas</li>
+                    <li><span className="lpb-check-icon"></span>Respuestas sugeridas y feedback</li>
+                    <li><span className="lpb-check-icon"></span>Mejora tu fluidez y confianza</li>
+                    <li><span className="lpb-check-icon"></span>Garantía de 7 días</li>
+                  </ul>
+                  <div className="lpb-hpc-right">
+                    <span className="lpb-hpc-label">Pago único</span>
+                    <span className="lpb-hpc-price">$47.000 <em>COP</em></span>
+                    <span className="lpb-hpc-access">Acceso de por vida</span>
+                    <a
+                      href={ctaUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="lpb-btn-cta lpb-hpc-btn"
+                      onClick={() => pixel.initiateCheckout(47000, 'COP')}
+                    >
+                      Quiero acceder →
+                    </a>
+                  </div>
+                </div>
+                <p className="lpb-hpc-secure">🔒 Pago seguro · VISA · Mastercard · Nequi</p>
+              </div>
             </div>
 
             {/* App mockup + mini carousel */}
