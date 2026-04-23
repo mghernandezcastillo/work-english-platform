@@ -429,6 +429,9 @@
 }
 .lpb-phone-slideshow {
   position: relative;
+  aspect-ratio: 1 / 2;
+  overflow: hidden;
+  border-radius: 20px;
 }
 .lpb-slide {
   width: 100%;

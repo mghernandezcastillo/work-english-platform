@@ -440,6 +440,9 @@ button { font-family: inherit; }
 }
 .lpb-phone-slideshow {
   position: relative;
+  aspect-ratio: 1 / 2; /* reserves space before images load — fixes CLS */
+  overflow: hidden;
+  border-radius: 20px;
 }
 .lpb-slide {
   width: 100%;
