@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../../lib/supabase'
 import { brand } from '../../lib/brand'
 import { useAppSettings } from '../../context/AppSettingsContext'
 import { pixel } from '../../lib/pixel'
@@ -159,14 +158,17 @@ export default function LandingPageB() {
   useEffect(() => {
     pixel.viewContent('Landing B — Entrevista')
 
-    supabase
-      .from('testimonials')
-      .select('display_name, city, rating, text')
-      .eq('status', 'approved')
-      .eq('show_on_landing', true)
-      .order('display_order')
-      .limit(4)
-      .then(({ data }) => { if (data?.length) setTestimonials(data) })
+    // Lazy-load Supabase after first paint — testimonials are not critical for LCP
+    import('../../lib/supabase').then(({ supabase }) => {
+      supabase
+        .from('testimonials')
+        .select('display_name, city, rating, text')
+        .eq('status', 'approved')
+        .eq('show_on_landing', true)
+        .order('display_order')
+        .limit(4)
+        .then(({ data }) => { if (data?.length) setTestimonials(data) })
+    })
   }, [])
 
   const stars = (n) => '★'.repeat(n)
