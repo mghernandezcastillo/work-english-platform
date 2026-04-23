@@ -9,13 +9,6 @@ p { margin: 0; }
 h1, h2, h3, h4 { margin: 0; }
 button { font-family: inherit; }
 
-/* Prevent font-swap CLS — use optional so no re-layout after first paint */
-@font-face {
-  font-family: 'Inter';
-  font-display: optional;
-  src: local('Inter');
-}
-
 /* ═══════════════════════════════════════════════
    LANDING PAGE B — Matches reference mockup
    Side-by-side hero, dark theme, green neon
