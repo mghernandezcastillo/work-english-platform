@@ -4,6 +4,7 @@
   "framework": "vite",
   "installCommand": "npm install --legacy-peer-deps",
   "rewrites": [
+    { "source": "/ingles-para-trabajo", "destination": "/ingles-para-trabajo/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
