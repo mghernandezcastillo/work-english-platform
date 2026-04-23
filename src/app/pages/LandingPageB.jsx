@@ -249,6 +249,7 @@ export default function LandingPageB() {
               <span className="lpb-pay-badge lpb-pay-nequi">Nequi</span>
               <span className="lpb-pay-badge lpb-pay-pse">PSE</span>
             </p>
+            <p className="lpb-hpc-delivery">📧 Acceso inmediato en tu correo tras el pago</p>
           </div>
         </div>
       </section>

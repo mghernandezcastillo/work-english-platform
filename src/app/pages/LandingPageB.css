@@ -362,6 +362,13 @@
   font-weight: 900;
   letter-spacing: 0.5px;
 }
+.lpb-hpc-delivery {
+  text-align: center;
+  font-size: 9px;
+  color: #64748B;
+  margin: 0;
+  padding: 2px 8px 6px;
+}
 
 /* ─── Neon Sweep (same as Landing A) ─── */
 @property --lpb-neon-angle {
