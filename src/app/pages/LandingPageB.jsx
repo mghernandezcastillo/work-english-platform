@@ -146,7 +146,7 @@ const FALLBACK_TESTIMONIALS = [
   { display_name: 'Christian S.', city: 'Colombia', rating: 5, text: 'Lo que más me gustó es que no enseña inglés por enseñar. Se nota que está enfocada en ayudarte con entrevistas.' },
   { display_name: 'Marcela R.', city: 'Colombia', rating: 5, text: 'Me pareció muy buena porque se va directo a cosas útiles. Siento que sí puede ayudar a alguien a prepararse mejor.' },
   { display_name: 'Raquel C.', city: 'Colombia', rating: 5, text: 'Me encanta que da respuestas sugeridas. Es como tener más claridad para entrevistas y situaciones laborales.' },
-  { display_name: 'Andrés M.', city: 'Colombia', rating: 5, text: 'Nunca había podido practicar inglés de trabajo de forma tan real. Me siento mucho más seguro para mi próxima entrevista.' },
+  { display_name: 'Mayra S.', city: 'Colombia', rating: 5, text: 'Me gustó porque está muy enfocada en el inglés para trabajar. Se siente como una ayuda real para entrevistas, atención al cliente y comunicación laboral en general.' },
 ]
 
 export default function LandingPageB() {
@@ -231,7 +231,7 @@ export default function LandingPageB() {
                   />
                 </div>
               </div>
-              <MiniCarousel testimonials={testimonials} />
+              <MiniCarousel testimonials={FALLBACK_TESTIMONIALS} />
             </div>
           </div>
         </div>
