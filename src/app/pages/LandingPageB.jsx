@@ -163,7 +163,7 @@ export default function LandingPageB() {
       .eq('status', 'approved')
       .eq('show_on_landing', true)
       .order('display_order')
-      .limit(3)
+      .limit(4)
       .then(({ data }) => { if (data?.length) setTestimonials(data) })
   }, [])
 
