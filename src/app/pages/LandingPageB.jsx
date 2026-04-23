@@ -190,41 +190,13 @@ export default function LandingPageB() {
                 y <strong className="lpb-accent">consigue el trabajo</strong> que quieres.
               </p>
 
-              {/* Pain point callout */}
+              {/* Pain point callout only — card moves below grid */}
               <div className="lpb-pain-callout">
                 <span className="lpb-pain-emoji">😶</span>
                 <div>
                   <p className="lpb-pain-text">¿Te quedas en blanco cuando te hablan en inglés?</p>
                   <p className="lpb-pain-cta">Esta app es para ti.</p>
                 </div>
-              </div>
-
-              {/* Compact pricing card — replaces standalone button */}
-              <div className="lpb-hero-price-card">
-                <div className="lpb-hpc-badge">🔥 Oferta por lanzamiento</div>
-                <div className="lpb-hpc-body">
-                  <ul className="lpb-hpc-list">
-                    <li><span className="lpb-check-icon"></span>Simulaciones de entrevistas</li>
-                    <li><span className="lpb-check-icon"></span>Respuestas sugeridas y feedback</li>
-                    <li><span className="lpb-check-icon"></span>Mejora tu fluidez y confianza</li>
-                    <li><span className="lpb-check-icon"></span>Garantía de 7 días</li>
-                  </ul>
-                  <div className="lpb-hpc-right">
-                    <span className="lpb-hpc-label">Pago único</span>
-                    <span className="lpb-hpc-price">$47.000 <em>COP</em></span>
-                    <span className="lpb-hpc-access">Acceso de por vida</span>
-                    <a
-                      href={ctaUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="lpb-btn-cta lpb-hpc-btn"
-                      onClick={() => pixel.initiateCheckout(47000, 'COP')}
-                    >
-                      Quiero acceder →
-                    </a>
-                  </div>
-                </div>
-                <p className="lpb-hpc-secure">🔒 Pago seguro · VISA · Mastercard · Nequi</p>
               </div>
             </div>
 
@@ -240,6 +212,34 @@ export default function LandingPageB() {
               </div>
               <MiniCarousel testimonials={FALLBACK_TESTIMONIALS} />
             </div>
+          </div>
+
+          {/* Compact pricing card — FULL WIDTH below the grid */}
+          <div className="lpb-hero-price-card">
+            <div className="lpb-hpc-badge">🔥 Oferta por lanzamiento</div>
+            <div className="lpb-hpc-body">
+              <ul className="lpb-hpc-list">
+                <li><span className="lpb-check-icon"></span>Simulaciones de entrevistas</li>
+                <li><span className="lpb-check-icon"></span>Respuestas sugeridas y feedback</li>
+                <li><span className="lpb-check-icon"></span>Mejora tu fluidez y confianza</li>
+                <li><span className="lpb-check-icon"></span>Garantía de 7 días</li>
+              </ul>
+              <div className="lpb-hpc-right">
+                <span className="lpb-hpc-label">Pago único</span>
+                <span className="lpb-hpc-price">$47.000 <em>COP</em></span>
+                <span className="lpb-hpc-access">Acceso de por vida</span>
+                <a
+                  href={ctaUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="lpb-btn-cta lpb-hpc-btn"
+                  onClick={() => pixel.initiateCheckout(47000, 'COP')}
+                >
+                  Quiero acceder →
+                </a>
+              </div>
+            </div>
+            <p className="lpb-hpc-secure">🔒 Pago seguro · VISA · Mastercard · Nequi</p>
           </div>
         </div>
       </section>
