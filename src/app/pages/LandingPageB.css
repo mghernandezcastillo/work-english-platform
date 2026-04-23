@@ -355,6 +355,13 @@
   color: #fff;
   font-size: 8px;
 }
+.lpb-pay-pse {
+  background: #00A651;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
 
 /* ─── Neon Sweep (same as Landing A) ─── */
 @property --lpb-neon-angle {
