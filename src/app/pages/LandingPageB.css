@@ -273,6 +273,30 @@
   display: block;
 }
 
+/* ── CSS Slideshow (4 images, crossfade, pure CSS) ── */
+@keyframes lpb-slide-show {
+  0%    { opacity: 0; }
+  5%    { opacity: 1; }
+  22%   { opacity: 1; }
+  27%   { opacity: 0; }
+  100%  { opacity: 0; }
+}
+.lpb-phone-slideshow {
+  position: relative;
+}
+.lpb-slide {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 20px;
+  animation: lpb-slide-show 16s linear infinite;
+  opacity: 0;
+}
+.lpb-slide-1 { animation-delay: 0s;   position: relative; }
+.lpb-slide-2 { animation-delay: 4s;   position: absolute; top: 0; left: 0; }
+.lpb-slide-3 { animation-delay: 8s;   position: absolute; top: 0; left: 0; }
+.lpb-slide-4 { animation-delay: 12s;  position: absolute; top: 0; left: 0; }
+
 /* Mini testimonial carousel below mockup */
 .lpb-mini-carousel {
   margin-top: 12px;

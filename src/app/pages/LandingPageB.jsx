@@ -222,13 +222,11 @@ export default function LandingPageB() {
             {/* App mockup + mini carousel */}
             <div className="lpb-hero-mockup">
               <div className="lpb-phone-frame">
-                <div className="lpb-phone-inner">
-                  <img
-                    src="/images/hero-simulation.webp"
-                    alt="Simulación de entrevista en English for Work"
-                    loading="eager"
-                    fetchpriority="high"
-                  />
+                <div className="lpb-phone-inner lpb-phone-slideshow">
+                  <img src="/images/hero-simulation.webp"  alt="Simulación entrevista"      className="lpb-slide lpb-slide-1" loading="eager"  fetchpriority="high" />
+                  <img src="/images/hero-sim2.webp"        alt="Práctica de vocabulario"    className="lpb-slide lpb-slide-2" loading="lazy" />
+                  <img src="/images/hero-sim3.webp"        alt="Feedback de respuestas"     className="lpb-slide lpb-slide-3" loading="lazy" />
+                  <img src="/images/hero-sim4.webp"        alt="Lección de inglés laboral"  className="lpb-slide lpb-slide-4" loading="lazy" />
                 </div>
               </div>
               <MiniCarousel testimonials={FALLBACK_TESTIMONIALS} />
