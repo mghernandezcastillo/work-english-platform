@@ -310,12 +310,50 @@
   margin-top: 3px;
 }
 .lpb-hpc-secure {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   font-size: 9px;
   color: #475569;
   margin: 0;
-  padding: 3px 8px 5px;
+  padding: 4px 8px 6px;
   border-top: 1px solid rgba(255,255,255,0.05);
+}
+/* Payment brand badges */
+.lpb-pay-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  padding: 1px 4px;
+  font-size: 8px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.3px;
+}
+.lpb-pay-visa {
+  background: #1A1F71;
+  color: #fff;
+  font-style: italic;
+  font-size: 9px;
+}
+.lpb-pay-mc {
+  background: #252525;
+  padding: 1px 3px;
+  gap: 0;
+}
+.lpb-pay-mc span:first-child { color: #EB001B; font-size: 11px; line-height: 0.9; }
+.lpb-pay-mc span:last-child  { color: #F79E1B; font-size: 11px; line-height: 0.9; margin-left: -4px; }
+.lpb-pay-amex {
+  background: #2E77BC;
+  color: #fff;
+  font-size: 8px;
+}
+.lpb-pay-nequi {
+  background: #5C068C;
+  color: #fff;
+  font-size: 8px;
 }
 
 /* ─── Neon Sweep (same as Landing A) ─── */

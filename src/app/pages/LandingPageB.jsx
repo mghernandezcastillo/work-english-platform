@@ -239,7 +239,13 @@ export default function LandingPageB() {
                 </a>
               </div>
             </div>
-            <p className="lpb-hpc-secure">🔒 Pago seguro · VISA · Mastercard · Nequi</p>
+            <p className="lpb-hpc-secure">
+              🔒
+              <span className="lpb-pay-badge lpb-pay-visa">VISA</span>
+              <span className="lpb-pay-badge lpb-pay-mc"><span>●</span><span>●</span></span>
+              <span className="lpb-pay-badge lpb-pay-amex">AMEX</span>
+              <span className="lpb-pay-badge lpb-pay-nequi">Nequi</span>
+            </p>
           </div>
         </div>
       </section>
