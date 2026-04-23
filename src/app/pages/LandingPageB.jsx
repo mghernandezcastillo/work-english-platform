@@ -144,9 +144,11 @@ function FAQItem({ q, a }) {
 
 const FALLBACK_TESTIMONIALS = [
   { display_name: 'Christian S.', city: 'Colombia', rating: 5, text: 'Lo que más me gustó es que no enseña inglés por enseñar. Se nota que está enfocada en ayudarte con entrevistas.' },
-  { display_name: 'Marcela R.', city: 'Colombia', rating: 5, text: 'Me pareció muy buena porque se va directo a cosas útiles. Siento que sí puede ayudar a alguien a prepararse mejor.' },
-  { display_name: 'Raquel C.', city: 'Colombia', rating: 5, text: 'Me encanta que da respuestas sugeridas. Es como tener más claridad para entrevistas y situaciones laborales.' },
-  { display_name: 'Mayra S.', city: 'Colombia', rating: 5, text: 'Me gustó porque está muy enfocada en el inglés para trabajar. Se siente como una ayuda real para entrevistas, atención al cliente y comunicación laboral en general.' },
+  { display_name: 'Marcela R.',   city: 'Colombia', rating: 5, text: 'Me pareció muy buena porque se va directo a cosas útiles. Siento que sí puede ayudar a alguien a prepararse mejor.' },
+  { display_name: 'Raquel C.',    city: 'Colombia', rating: 5, text: 'Me encanta que da respuestas sugeridas. Es como tener más claridad para entrevistas y situaciones laborales.' },
+  { display_name: 'Mayra S.',     city: 'Colombia', rating: 5, text: 'Me gustó porque está muy enfocada en el inglés para trabajar. Se siente como una ayuda real para entrevistas y atención al cliente.' },
+  { display_name: 'Andrés M.',    city: 'Colombia', rating: 5, text: 'Nunca había podido practicar inglés de trabajo de forma tan real. Me siento mucho más seguro para mi próxima entrevista.' },
+  { display_name: 'Laura V.',     city: 'Colombia', rating: 5, text: 'Muy práctica y enfocada. En pocas semanas noté cambios reales en cómo respondo en inglés en el trabajo.' },
 ]
 
 export default function LandingPageB() {
@@ -288,37 +290,33 @@ export default function LandingPageB() {
       </section>
 
       {/* ── TESTIMONIALS ── */}
-      {testimonials.length > 0 && (
-        <section className="lpb-section lpb-testimonials">
-          <div className="lpb-container">
-            <h2 className="lpb-h2">
-              Personas como tú ya están{' '}
-              <strong className="lpb-accent">consiguiendo sus objetivos</strong>
-            </h2>
-            <div className="lpb-testimonials-grid">
-              {testimonials.map((t, i) => {
-                const initials = t.display_name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
-                const colors = ['#10b981', '#6366f1', '#f59e0b']
-                return (
-                  <div key={i} className="lpb-testimonial-card">
-                    <div className="lpb-testimonial-header">
-                      <div className="lpb-testimonial-avatar" style={{ background: colors[i % 3] }}>
-                        {initials}
-                      </div>
-                      <div>
-                        <div className="lpb-testimonial-name">{t.display_name}</div>
-                        {t.city && <div className="lpb-testimonial-city">{t.city}</div>}
-                        <div className="lpb-testimonial-stars">{stars(t.rating)}</div>
-                      </div>
+      <section className="lpb-section lpb-testimonials">
+        <div className="lpb-container">
+          <h2 className="lpb-h2">
+            Personas como tú ya están{' '}
+            <strong className="lpb-accent">consiguiendo sus objetivos</strong>
+          </h2>
+          <div className="lpb-testimonials-grid">
+            {FALLBACK_TESTIMONIALS.map((t, i) => {
+              const initials = t.display_name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+              const colors = ['#10b981', '#6366f1', '#f59e0b', '#ec4899', '#3b82f6', '#14b8a6']
+              return (
+                <div key={i} className="lpb-testimonial-card">
+                  <div className="lpb-testimonial-header">
+                    <div className="lpb-testimonial-avatar" style={{ background: colors[i % 6] }}>{initials}</div>
+                    <div>
+                      <div className="lpb-testimonial-name">{t.display_name}</div>
+                      {t.city && <div className="lpb-testimonial-city">{t.city}</div>}
+                      <div className="lpb-testimonial-stars">{stars(t.rating)}</div>
                     </div>
-                    <p className="lpb-testimonial-text">"{t.text}"</p>
                   </div>
-                )
-              })}
-            </div>
+                  <p className="lpb-testimonial-text">"{t.text}"</p>
+                </div>
+              )
+            })}
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {/* ── PRICING ── */}
       <section className="lpb-section lpb-pricing">
