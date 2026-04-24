@@ -121,7 +121,7 @@ button { font-family: inherit; }
    HERO — Side by side like reference
    ═══════════════════════════════════ */
 .lpb-hero {
-  padding: 32px 0 16px;
+  padding: 18px 0 12px;
   background: linear-gradient(180deg, #0a0a0a 0%, #0d1117 100%);
 }
 .lpb-hero-grid {
@@ -146,11 +146,11 @@ button { font-family: inherit; }
   display: inline-block;
   background: rgba(0, 255, 136, 0.1);
   color: #00FF88;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  padding: 5px 12px;
+  padding: 4px 10px;
   border-radius: 20px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   border: 1px solid rgba(0, 255, 136, 0.2);
 }
 .lpb-h1 {
