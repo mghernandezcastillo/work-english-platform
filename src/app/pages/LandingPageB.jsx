@@ -202,6 +202,18 @@ export default function LandingPageB() {
                   <p className="lpb-pain-cta">Esta app es para ti.</p>
                 </div>
               </div>
+
+              {/* How to access — post-payment flow */}
+              <div className="lpb-how-card">
+                <p className="lpb-how-title">¿Cómo accedo?</p>
+                <div className="lpb-how-steps">
+                  <span>💳 Pagas</span>
+                  <span className="lpb-how-arr">→</span>
+                  <span>📧 Correo al instante</span>
+                  <span className="lpb-how-arr">→</span>
+                  <span>📱 Entras hoy</span>
+                </div>
+              </div>
             </div>
 
             {/* App mockup + mini carousel */}
