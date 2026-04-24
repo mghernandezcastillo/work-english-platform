@@ -202,6 +202,17 @@ export default function LandingPageB() {
                   <p className="lpb-pain-cta">Esta app es para ti.</p>
                 </div>
               </div>
+
+              {/* What you'll receive — fills empty space */}
+              <div className="lpb-receive-card">
+                <p className="lpb-receive-title">📦 Al pagar recibes:</p>
+                <ul className="lpb-receive-list">
+                  <li><span className="lpb-receive-icon">📱</span>Acceso inmediato a la app</li>
+                  <li><span className="lpb-receive-icon">🎤</span>Simulaciones de entrevistas reales</li>
+                  <li><span className="lpb-receive-icon">📚</span>36 lecciones de inglés laboral</li>
+                  <li><span className="lpb-receive-icon">♾️</span>Actualizaciones de por vida</li>
+                </ul>
+              </div>
             </div>
 
             {/* App mockup + mini carousel */}
