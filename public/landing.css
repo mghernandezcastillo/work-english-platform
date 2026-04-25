@@ -128,18 +128,18 @@ button { font-family: inherit; }
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 16px;
+  gap: 10px;
 }
 .lpb-hero-text {
   flex: 1;
   min-width: 0;
 }
 .lpb-hero-mockup {
-  flex: 0 0 42%;
+  flex: 0 0 44%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 36px;
+  padding-top: 24px;
   gap: 0;
 }
 .lpb-tag {
@@ -202,23 +202,21 @@ button { font-family: inherit; }
   margin: 2px 0 0;
 }
 .lpb-how-card {
-  background: rgba(255,255,255,0.02);
-  border: none;
-  border-top: 1px solid rgba(255,255,255,0.06);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  border-radius: 0;
-  padding: 8px 12px;
-  margin-top: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 8px 14px;
+  margin-top: 8px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
 }
 .lpb-how-title {
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 700;
   color: #475569;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.5px;
   margin: 0;
   white-space: nowrap;
   flex-shrink: 0;
@@ -226,18 +224,18 @@ button { font-family: inherit; }
 .lpb-how-steps {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 3px;
   flex-wrap: nowrap;
 }
 .lpb-how-steps span {
-  font-size: 11px;
+  font-size: 9px;
   color: #CBD5E1;
   white-space: nowrap;
 }
 .lpb-how-arr {
   color: #00FF88;
   font-weight: 700;
-  font-size: 10px;
+  font-size: 8px;
 }
 
 /* Checklist */
@@ -281,24 +279,25 @@ button { font-family: inherit; }
   display: inline-block;
   width: auto;
   margin-top: 10px;
-  margin-bottom: 6px;
-  padding: 14px 36px;
-  font-size: 16px;
+  margin-bottom: 4px;
+  padding: 13px 32px;
+  font-size: 15px;
   white-space: nowrap;
 }
 .lpb-trust-line {
   color: #64748B;
-  font-size: 9px;
-  margin-top: 4px;
+  font-size: 8px;
+  margin-top: 3px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
   flex-wrap: nowrap;
 }
 .lpb-trust-line span {
   white-space: nowrap;
   color: #00FF88;
   font-weight: 600;
+  font-size: 8px;
 }
 .lpb-hero-price-block {
   margin: 8px 0 2px;
@@ -494,7 +493,7 @@ button { font-family: inherit; }
 /* Outer frame: rotating neon border + float */
 .lpb-phone-frame {
   width: 100%;
-  max-width: 170px;
+  max-width: 185px;
   border-radius: 22px;
   padding: 2px;
   background: conic-gradient(
@@ -1048,11 +1047,11 @@ button { font-family: inherit; }
     font-size: 22px;
   }
   .lpb-hero-mockup {
-    flex: 0 0 38%;
-    padding-top: 28px;
+    flex: 0 0 40%;
+    padding-top: 20px;
   }
   .lpb-phone-frame {
-    max-width: 140px;
+    max-width: 150px;
   }
   .lpb-features-grid {
     grid-template-columns: repeat(2, 1fr);
