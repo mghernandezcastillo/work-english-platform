@@ -1047,64 +1047,103 @@ button { font-family: inherit; }
   transform: scale(1.1);
 }
 
-/* ═══════════════════════════════
-   RESPONSIVE — only for larger screens
-   The default IS mobile-first, matching
-   the reference image at 375px
-   ═══════════════════════════════ */
-@media (max-width: 400px) {
-  .lpb-h1 {
-    font-size: 22px;
-  }
-  .lpb-hero-mockup {
-    flex: 0 0 38%;
-    padding-top: 4px;
-  }
-  .lpb-phone-frame {
-    max-width: 150px;
-  }
-  .lpb-features-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .lpb-feature-card h4 {
-    font-size: 13px;
-  }
-  .lpb-feature-card p {
-    font-size: 12px;
-  }
-  .lpb-testimonials-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-  .lpb-price-body {
-    flex-direction: column;
-  }
+/* ═══════════════════════════════════════════
+   RESPONSIVE — complete breakpoint system
+   Base styles are optimized for ~360px (Moto G)
+   ═══════════════════════════════════════════ */
+
+/* Very small phones (<360px) */
+@media (max-width: 359px) {
+  .lpb-h1 { font-size: 20px; }
+  .lpb-hero-mockup { flex: 0 0 38%; padding-top: 4px; }
+  .lpb-phone-frame { max-width: 138px; }
+  .lpb-how-steps span { font-size: 9px; }
+  .lpb-mini-text { font-size: 10px; }
+  .lpb-hpb-price { font-size: 20px; }
 }
 
-@media (min-width: 401px) and (max-width: 639px) {
-  .lpb-features-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
+/* Medium phones: 390px iPhone 12 Pro / 414px iPhone Plus */
+@media (min-width: 380px) and (max-width: 479px) {
+  .lpb-hero-mockup { flex: 0 0 43%; }
+  .lpb-phone-frame { max-width: 195px; }
+  .lpb-h1 { font-size: clamp(24px, 6.2vw, 28px); }
+  .lpb-how-steps span { font-size: 12px; }
+  .lpb-mini-text { font-size: 13px; }
+  .lpb-mini-stars { font-size: 14px; }
+  .lpb-mini-name { font-size: 11px; }
+  .lpb-hpb-price { font-size: 26px; }
+  .lpb-trust-line { font-size: 9px; gap: 7px; }
+  .lpb-trust-line span { font-size: 9px; }
+  .lpb-checklist li { font-size: 12px; }
 }
 
+/* Large phones: 480px–639px */
+@media (min-width: 480px) and (max-width: 639px) {
+  .lpb-hero-mockup { flex: 0 0 44%; }
+  .lpb-phone-frame { max-width: 215px; }
+  .lpb-h1 { font-size: 28px; }
+  .lpb-how-steps span { font-size: 13px; }
+  .lpb-hpb-price { font-size: 28px; }
+  .lpb-features-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Tablets and up: 640px+ — switch hero to single column */
 @media (min-width: 640px) {
+  .lpb-hero-grid {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+  .lpb-hero-text {
+    text-align: center;
+    max-width: 560px;
+    width: 100%;
+  }
+  .lpb-trust-line { justify-content: center; }
   .lpb-hero-mockup {
-    flex: 0 0 300px;
+    flex: none;
+    width: 100%;
+    max-width: 320px;
+    padding-top: 0;
+    justify-content: center;
   }
-  .lpb-phone-frame {
-    max-width: 260px;
+  .lpb-phone-frame { max-width: 280px; }
+  .lpb-mini-carousel { max-width: 280px; }
+  .lpb-how-card {
+    justify-content: center;
   }
-  .lpb-features-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+  .lpb-how-steps span { font-size: 14px; }
+  .lpb-h1 { font-size: 36px; }
+  .lpb-hero .lpb-sub { font-size: 16px; }
+  .lpb-hpb-price { font-size: 32px; }
+  .lpb-checklist li { font-size: 14px; }
+  .lpb-mini-text { font-size: 14px; }
+  .lpb-mini-stars { font-size: 16px; }
+  .lpb-mini-name { font-size: 12px; }
+  .lpb-features-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .lpb-feature-card h4 { font-size: 14px; }
+  .lpb-feature-card p { font-size: 12px; }
+  .lpb-testimonials-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Desktop: 1024px+ */
+@media (min-width: 1024px) {
+  .lpb-hero-grid {
+    flex-direction: row;
+    align-items: stretch;
+    max-width: 960px;
+    margin: 0 auto;
   }
-  .lpb-feature-card h4 {
-    font-size: 14px;
+  .lpb-hero-text { flex: 1; text-align: left; }
+  .lpb-trust-line { justify-content: flex-start; }
+  .lpb-hero-mockup {
+    flex: 0 0 42%;
+    max-width: none;
+    justify-content: space-between;
   }
-  .lpb-feature-card p {
-    font-size: 12px;
-  }
-  .lpb-testimonials-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  .lpb-phone-frame { max-width: 320px; }
+  .lpb-mini-carousel { max-width: 300px; }
+  .lpb-h1 { font-size: 42px; }
+  .lpb-how-card { justify-content: flex-start; }
+  .lpb-how-steps span { font-size: 14px; }
 }
