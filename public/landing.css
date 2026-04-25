@@ -226,7 +226,6 @@ button { font-family: inherit; }
   align-items: center;
   gap: 5px;
   flex-wrap: nowrap;
-  overflow: hidden;
 }
 .lpb-how-steps span {
   font-size: 11px;
@@ -292,7 +291,7 @@ button { font-family: inherit; }
   display: flex;
   align-items: center;
   gap: 6px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 .lpb-trust-line span {
   white-space: nowrap;
