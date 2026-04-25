@@ -220,7 +220,8 @@ button { font-family: inherit; }
   display: flex;
   align-items: center;
   gap: 5px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow: hidden;
 }
 .lpb-how-steps span {
   font-size: 11px;
@@ -269,10 +270,48 @@ button { font-family: inherit; }
   border-left: none;
   transform: rotate(45deg) translate(-1px, -1px);
 }
+.lpb-hero-cta {
+  margin-top: 14px;
+  margin-bottom: 8px;
+}
 .lpb-trust-line {
   color: #64748B;
   font-size: 11px;
   margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.lpb-hero-price-block {
+  margin: 12px 0 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.lpb-hpb-label {
+  font-size: 10px;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+.lpb-hpb-price {
+  font-size: clamp(28px, 7vw, 36px);
+  font-weight: 900;
+  color: #F1F5F9;
+  line-height: 1.1;
+}
+.lpb-hpb-price em {
+  font-style: normal;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748B;
+}
+.lpb-hpb-access {
+  font-size: 12px;
+  color: #00FF88;
+  font-weight: 600;
 }
 
 /* ── Compact Hero Pricing Card ── */
