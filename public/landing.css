@@ -787,12 +787,12 @@ button { font-family: inherit; }
   text-align: left;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 3px;
 }
 .lpb-price-features li {
-  font-size: 12px;
+  font-size: 11px;
   color: #CBD5E1;
-  line-height: 1.4;
+  line-height: 1.3;
 }
 .lpb-price-amount {
   text-align: center;
