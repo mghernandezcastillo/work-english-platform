@@ -139,7 +139,7 @@ button { font-family: inherit; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 24px;
+  padding-top: 8px;
   gap: 0;
 }
 .lpb-tag {
@@ -206,13 +206,13 @@ button { font-family: inherit; }
   border: 1px solid rgba(255,255,255,0.07);
   border-radius: 12px;
   padding: 8px 14px;
-  margin-top: 4px;
+  margin-top: 2px;
   display: flex;
   align-items: center;
   gap: 6px;
 }
 .lpb-how-title {
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 700;
   color: #475569;
   text-transform: uppercase;
@@ -224,18 +224,18 @@ button { font-family: inherit; }
 .lpb-how-steps {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
   flex-wrap: nowrap;
 }
 .lpb-how-steps span {
-  font-size: 9px;
+  font-size: 11px;
   color: #CBD5E1;
   white-space: nowrap;
 }
 .lpb-how-arr {
   color: #00FF88;
   font-weight: 700;
-  font-size: 8px;
+  font-size: 9px;
 }
 
 .lpb-checklist {
@@ -291,6 +291,9 @@ button { font-family: inherit; }
   align-items: center;
   gap: 5px;
   flex-wrap: nowrap;
+  overflow: visible;
+  position: relative;
+  z-index: 2;
 }
 .lpb-trust-line span {
   white-space: nowrap;
@@ -553,7 +556,7 @@ button { font-family: inherit; }
 
 /* Mini testimonial carousel below mockup */
 .lpb-mini-carousel {
-  margin-top: 8px;
+  margin-top: 4px;
   width: 100%;
   max-width: 160px;
 }
@@ -589,12 +592,12 @@ button { font-family: inherit; }
 .lpb-mini-dots {
   display: flex;
   justify-content: center;
-  gap: 6px;
-  margin-top: 8px;
+  gap: 4px;
+  margin-top: 4px;
 }
 .lpb-mini-dot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.15);
   cursor: pointer;
