@@ -205,8 +205,11 @@ button { font-family: inherit; }
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.07);
   border-radius: 12px;
-  padding: 9px 12px;
-  margin-top: 8px;
+  padding: 8px 12px;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .lpb-how-title {
   font-size: 9px;
@@ -214,7 +217,9 @@ button { font-family: inherit; }
   color: #475569;
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  margin: 0 0 5px;
+  margin: 0;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .lpb-how-steps {
   display: flex;
@@ -247,7 +252,8 @@ button { font-family: inherit; }
   font-size: 12px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  white-space: nowrap;
 }
 .lpb-check-icon {
   display: inline-flex;
@@ -275,8 +281,9 @@ button { font-family: inherit; }
   width: auto;
   margin-top: 10px;
   margin-bottom: 6px;
-  padding: 14px 32px;
+  padding: 14px 36px;
   font-size: 16px;
+  white-space: nowrap;
 }
 .lpb-trust-line {
   color: #64748B;
